@@ -1,8 +1,13 @@
+import sys
+
 import requests
 from bs4 import BeautifulSoup
 
+import file_helper
+
 PTT_URL = 'https://www.ptt.cc'
 SOFTJOB_URI = '/bbs/Soft_Job/index.html'
+DIR = ''
 
 def get_web_page(url):
     resp = requests.get(url)
@@ -35,6 +40,9 @@ def get_articles(dom):
 
 
 def main():
+    DIR = file_helper.get_dir(sys.argv)
+    file_helper.create_dir_if_not_exist(DIR)
+
     board_page = get_web_page(PTT_URL + SOFTJOB_URI)
     if board_page:
         article_links = get_articles(board_page)
@@ -44,6 +52,7 @@ def main():
         if article_page:
             soup = BeautifulSoup(article_page, 'html.parser')
             article = soup.find(id='main-content')
+            file_helper.write_article(article.prettify(), article_meta['title'], DIR)
 
 if __name__ == '__main__':
     main()
