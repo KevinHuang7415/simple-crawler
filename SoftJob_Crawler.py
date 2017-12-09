@@ -33,7 +33,17 @@ def get_articles(dom):
             })
     return article_links
 
-if __name__ == '__main__':
+
+def main():
     board_page = get_web_page(PTT_URL + SOFTJOB_URI)
     if board_page:
         article_links = get_articles(board_page)
+
+        article_meta = article_links[-1]
+        article_page = get_web_page(PTT_URL + article_meta['href'])
+        if article_page:
+            soup = BeautifulSoup(article_page, 'html.parser')
+            article = soup.find(id='main-content')
+
+if __name__ == '__main__':
+    main()
