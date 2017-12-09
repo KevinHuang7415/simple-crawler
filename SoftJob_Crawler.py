@@ -1,9 +1,8 @@
 import requests
-
+from bs4 import BeautifulSoup
 
 PTT_URL = 'https://www.ptt.cc'
 SOFTJOB_URI = '/bbs/Soft_Job/index.html'
-
 
 def get_web_page(url):
     resp = requests.get(url)
@@ -13,5 +12,28 @@ def get_web_page(url):
     else:
         return resp.text
 
+def get_articles(dom):
+    soup = BeautifulSoup(dom, 'html.parser')
+
+    # articles under separation (aka pinned posts) should be ignored
+    list_sep = soup.find('div', 'r-list-sep')
+    divs = list_sep.find_all_previous('div', 'r-ent')
+
+    # reserve to the original order
+    divs = divs[::-1]
+    article_links = []
+    for div in divs:
+        # to avoid situation like <div class="title"> (本文已被刪除) [author] </div>
+        if div.find('a'):
+            href = div.find('a')['href']
+            title = div.find('a').string
+            article_links.append({
+                'title': title,
+                'href': href,
+            })
+    return article_links
+
 if __name__ == '__main__':
-    current_page = get_web_page(PTT_URL + SOFTJOB_URI)
+    board_page = get_web_page(PTT_URL + SOFTJOB_URI)
+    if board_page:
+        article_links = get_articles(board_page)
