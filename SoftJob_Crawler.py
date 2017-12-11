@@ -21,8 +21,20 @@ def get_web_page(url):
     else:
         return resp.text
 
+def find_prev_page_url(soup):
+    div_paging = soup.find('div', 'btn-group btn-group-paging')
+    # 0: earliest, 1: previous, 2: next, 3: latest
+    btn_prev_page = div_paging.find_all('a')[1]
+    
+    if 'href' in btn_prev_page.attrs:
+        return btn_prev_page['href']
+    else:
+        return None
+
 def get_articles_meta(dom):
     soup = BeautifulSoup(dom, 'html.parser')
+
+    prev_page_url = find_prev_page_url(soup)
 
     # articles under separation (aka pinned posts) should be ignored
     list_sep = soup.find('div', 'r-list-sep')
@@ -44,8 +56,8 @@ def get_articles_meta(dom):
 
     return articles_meta
 
-def get_article_content(link):
-    article_page = get_web_page(link)
+def get_article_content(url):
+    article_page = get_web_page(url)
     if article_page:
         soup = BeautifulSoup(article_page, 'html.parser')
         article = soup.find(id='main-content')
