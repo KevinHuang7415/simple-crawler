@@ -8,6 +8,7 @@ import file_helper
 
 PTT_URL = 'https://www.ptt.cc'
 SOFTJOB_URI = '/bbs/Soft_Job/index.html'
+LATEST_PAGE = True
 DIR = ''
 
 def get_web_page(url):
@@ -31,6 +32,7 @@ def find_prev_page_url(soup):
     else:
         return None
 
+#def get_articles(dom, date):
 def get_articles_meta(dom):
     soup = BeautifulSoup(dom, 'html.parser')
 
@@ -38,10 +40,13 @@ def get_articles_meta(dom):
 
     # articles under separation (aka pinned posts) should be ignored
     list_sep = soup.find('div', 'r-list-sep')
-    divs = list_sep.find_all_previous('div', 'r-ent')
+    if LATEST_PAGE and list_sep:
+        divs = list_sep.find_all_previous('div', 'r-ent')
+        # reserve to the original order
+        divs = divs[::-1]
+    else:
+        divs = soup.find_all('div', 'r-ent')
 
-    # reserve to the original order
-    divs = divs[::-1]
     articles_meta = []
     for div in divs:
         # to avoid situation like <div class="title"> (本文已被刪除) [author] </div>
@@ -72,6 +77,7 @@ def main():
     board_page = get_web_page(PTT_URL + SOFTJOB_URI)
     if board_page:
         articles_meta = get_articles_meta(board_page)
+        LATEST_PAGE = False
 
         for article_meta in articles_meta:
             article = get_article_content(PTT_URL + article_meta['href'])
