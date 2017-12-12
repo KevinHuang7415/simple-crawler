@@ -75,19 +75,21 @@ def get_articles_meta(dom):
             href = prop_a['href']
             title = prop_a.string
 
-            return title, href
+            # date format mm/dd and prefix for m is space instead of 0
+            date = dom.find('div', 'date').string.strip()
+            return title, href, date
         else:
-            return None, None
-
+            return None, None, None
 
     articles_meta = []
     for div in divs:
-        title, href = get_article_meta(div)
+        title, href, date = get_article_meta(div)
         # to avoid situation like <div class="title"> (本文已被刪除) [author] </div>
         if href:
             articles_meta.append({
                 'title': title,
-                'href': href
+                'href': href,
+                'date': date
             })
 
     return articles_meta
