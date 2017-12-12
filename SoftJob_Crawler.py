@@ -18,7 +18,7 @@ def set_data_path():
     file_helper.create_dir_if_not_exist(DIR)
 
 def crawler():
-    curr_page_url = PTT_URL + SOFTJOB_URI
+    curr_page_url = SOFTJOB_URI
 
     board_page = get_web_page(curr_page_url)
     if board_page:
@@ -26,7 +26,7 @@ def crawler():
         LATEST_PAGE = False
 
         for article_meta in articles_meta:
-            article = get_article_content(PTT_URL + article_meta['href'])
+            article = get_article_content(article_meta['href'])
             if article:
                 global DIR
                 file_helper.write_article(article, article_meta['title'], DIR)
@@ -35,7 +35,7 @@ def get_web_page(url):
     # to avoid being detected as DDOS
     time.sleep(0.5)  
 
-    resp = requests.get(url)
+    resp = requests.get(PTT_URL + url)
     if resp.status_code != 200:
         print('Invalid URL:', resp.url)
         return None
