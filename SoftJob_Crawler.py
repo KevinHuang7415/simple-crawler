@@ -73,10 +73,10 @@ def get_articles_meta(dom):
 
         if prop_a:
             href = prop_a['href']
-            title = prop_a.string
+            title = prop_a.text
 
             # date format mm/dd and prefix for m is space instead of 0
-            date = dom.find('div', 'date').string.strip()
+            date = dom.find('div', 'date').text.strip()
             return title, href, date
         else:
             return None, None, None
