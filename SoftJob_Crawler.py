@@ -57,19 +57,6 @@ def get_articles_meta(dom):
     else:
         divs = soup.find_all('div', 'r-ent')
 
-
-    def get_article_meta(dom):
-        prop_a = dom.find('a')
-
-        if prop_a:
-            href = prop_a['href']
-            title = prop_a.text
-            # date format mm/dd and prefix for m is space instead of 0
-            date = dom.find('div', 'date').text.strip()
-            return title, href, date
-        else:
-            return None, None, None
-
     articles_meta = []
     for div in divs:
         title, href, date = get_article_meta(div)
@@ -82,6 +69,7 @@ def get_articles_meta(dom):
             })
 
     if datetime_helper.check_expired(articles_meta[0]['date']):
+        articles_meta = remove_expired(articles_meta[1:])
         return None, articles_meta
     else:
         div_paging = soup.find('div', 'btn-group btn-group-paging')
@@ -92,6 +80,27 @@ def get_articles_meta(dom):
             return btn_prev_page['href'], articles_meta
         else:
             return None, articles_meta
+
+def remove_expired(articles_meta):
+    while len(articles_meta):
+        if datetime_helper.check_expired(articles_meta[0]['date']):
+            articles_meta.pop(0)
+        else:
+            break
+    
+    return articles_meta
+
+def get_article_meta(dom):
+    prop_a = dom.find('a')
+
+    if prop_a:
+        href = prop_a['href']
+        title = prop_a.text
+        # date format mm/dd and prefix for m is space instead of 0
+        date = dom.find('div', 'date').text.strip()
+        return title, href, date
+    else:
+        return None, None, None
 
 def get_article_content(url):
     article_page = get_web_page(url)
