@@ -21,16 +21,17 @@ def set_data_path():
 def crawler():
     curr_page_url = SOFTJOB_URI
 
-    board_page = get_web_page(curr_page_url)
+    while curr_page_url:
+        board_page = get_web_page(curr_page_url)
 
-    if board_page:
-        curr_page_url, articles_meta = get_articles_meta(board_page)
-        global LATEST_PAGE
-        LATEST_PAGE = False
+        if board_page:
+            curr_page_url, articles_meta = get_articles_meta(board_page)
+            global LATEST_PAGE
+            LATEST_PAGE = False
 
-        for article_meta in articles_meta:
-            article = get_article_content(article_meta['href'])
-            save_article(article, article_meta)
+            for article_meta in articles_meta:
+                article = get_article_content(article_meta['href'])
+                save_article(article, article_meta)
 
 def get_web_page(url):
     # to avoid being detected as DDOS
