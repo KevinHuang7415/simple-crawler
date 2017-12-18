@@ -22,7 +22,7 @@ def crawler():
     curr_page_url = SOFTJOB_URI
 
     while curr_page_url:
-        board_page = get_web_page(curr_page_url)
+        board_page = get_web_page(curr_page_url, 0)
 
         if board_page:
             curr_page_url, articles_meta = get_articles_meta(board_page)
@@ -33,9 +33,9 @@ def crawler():
                 article = get_article_content(article_meta['href'])
                 save_article(article, article_meta)
 
-def get_web_page(url):
+def get_web_page(url, t = 0.5):
     # to avoid being detected as DDOS
-    time.sleep(0.5)  
+    time.sleep(t)  
 
     resp = requests.get(PTT_URL + url)
     if resp.status_code != 200:
