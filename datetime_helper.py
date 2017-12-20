@@ -6,14 +6,14 @@ def expired(d, term_date):
 def gen_date(ptt_date):
     date_arr = ptt_date.split('/')
     year = date.today().year
-    month = date_arr[0]
-    day = date_arr[1]
+    month = int(date_arr[0])
+    day = int(date_arr[1])
     try:
-        return date(year, int(date_arr[0]), int(date_arr[1]))
+        return date(year, month, day)
     except ValueError:
         # no 2/29 this year, means the year must be earlier
-        # set 1 year ago can fit current scenario
-        if date_arr[0] == 2 and int(date_arr[1]) == 29:
+        # set 2/28 to last year can fit current scenario
+        if month == 2 and day == 29:
             return date(year - 1, 2, 28)
         else:
             print('Error exists on date {y}/{m}/{d}'.format(y = year, m = month, d = day))
