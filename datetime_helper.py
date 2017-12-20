@@ -1,8 +1,5 @@
 from datetime import date, timedelta
 
-def expired(d, term_date):
-    return date.today() - d >= timedelta(days = term_date)
-
 def gen_date(ptt_date):
     date_arr = ptt_date.split('/')
     year = date.today().year
@@ -19,22 +16,25 @@ def gen_date(ptt_date):
             print('Error exists on date {y}/{m}/{d}'.format(y = year, m = month, d = day))
             return None
 
-def earlier_date(date):
-    date_diff = date - date.today()
-    return date_diff <= timedelta(days=0)
+def check_date_earlier(d, term_date):
+    date_diff = date.today() - d
+    return date_diff >= timedelta(days = term_date), date_diff.days
 
 def check_expired(ptt_date, term_date = 15):
     d = gen_date(ptt_date)
     if not d:
         return True
 
-    if (earlier_date(d)):
-        return expired(d, term_date)
+    earlier, days_diff = check_date_earlier(d, 0)
+    if earlier:
+        return days_diff >= term_date
     else:
+        # no article date can be later in reality
+        # set year to last year can fit current scenario
         try:
-            d = d.replace(year = d.year - 1)
-            return expired(d, term_date)
+            d = d.replace(year=d.year - 1)
+            return check_date_earlier(d, term_date)[0]
         # case for 2/29
         except ValueError:
             d = d + (date(d.year - 1, 3, 1) - date(d.year, 3, 1))
-            return expired(d, term_date)
+            return check_date_earlier(d, term_date)[0]
