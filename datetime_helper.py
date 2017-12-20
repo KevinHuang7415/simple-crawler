@@ -1,10 +1,16 @@
+'''
+Helper functions for date-time.
+'''
+
 from datetime import date, timedelta
 
 def gen_date(ptt_date):
+    '''Generate date object for date in PTT format.'''
     date_arr = ptt_date.split('/')
     year = date.today().year
     month = int(date_arr[0])
     day = int(date_arr[1])
+
     try:
         return date(year, month, day)
     except ValueError:
@@ -13,14 +19,16 @@ def gen_date(ptt_date):
         if month == 2 and day == 29:
             return date(year - 1, 2, 28)
         else:
-            print('Error exists on date {y}/{m}/{d}'.format(y = year, m = month, d = day))
+            print('Error exists on date {y}/{m}/{d}'.format(y=year, m=month, d=day))
             return None
 
-def check_date_earlier(d, term_date):
+def check_date_earlier(d, days):
+    '''Check if the day is days earlier than today.'''
     date_diff = date.today() - d
-    return date_diff >= timedelta(days = term_date), date_diff.days
+    return date_diff >= timedelta(days=days), date_diff.days
 
-def check_expired(ptt_date, term_date = 15):
+def check_expired(ptt_date, term_date=15):
+    '''Check if the date in PTT format expired.'''
     d = gen_date(ptt_date)
     if not d:
         return True
