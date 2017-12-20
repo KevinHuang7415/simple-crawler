@@ -33,7 +33,7 @@ def check_expired(ptt_date, term_date = 15):
     else:
         try:
             d = d.replace(year = d.year - 1)
-            return expired(d.replace(year = d.year - 1), term_date)
+            return expired(d, term_date)
         # case for 2/29
         except ValueError:
             d = d + (date(d.year - 1, 3, 1) - date(d.year, 3, 1))
