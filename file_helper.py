@@ -14,8 +14,7 @@ def get_dir(argv):
     '''Find the directory assigned in arguments.'''
     if (len(argv) > 1 and path.isdir(argv[1])):
         return argv[1]
-    else:
-        return DEFAULT_DIR
+    return DEFAULT_DIR
 
 PATTERN = re.compile(r'[.\\/:*?"<>|\r\n]')
 def format_filename(name):

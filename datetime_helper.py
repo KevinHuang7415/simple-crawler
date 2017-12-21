@@ -4,6 +4,9 @@ Helper functions for date-time.
 
 from datetime import date, timedelta
 
+def ptt_date_format(d):
+    return d.strftime("%m/%d").lstrip('0')
+
 def gen_date(ptt_date):
     '''Generate date object for date in PTT format.'''
     date_arr = ptt_date.split('/')
@@ -18,9 +21,8 @@ def gen_date(ptt_date):
         # set 2/28 to last year can fit current scenario
         if month == 2 and day == 29:
             return date(year - 1, 2, 28)
-        else:
-            print('Error exists on date {y}/{m}/{d}'.format(y=year, m=month, d=day))
-            return None
+        print('Error exists on date {y}/{m}/{d}'.format(y=year, m=month, d=day))
+        return None
 
 def check_date_earlier(d, days):
     '''Check if the day is days earlier than today.'''
@@ -29,6 +31,10 @@ def check_date_earlier(d, days):
 
 def check_expired(ptt_date, term_date=15):
     '''Check if the date in PTT format expired.'''
+    if term_date < 0:
+        print('Given term date being later than today is illegal.')
+        return True
+
     d = gen_date(ptt_date)
     if not d:
         return True

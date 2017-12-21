@@ -43,13 +43,13 @@ def get_web_page(url, t=0.4):
     time.sleep(t)
 
     resp = requests.get(PTT_URL + url)
-    if resp.status_code != 200:
-        print('Invalid URL:', resp.url)
-        return None
-    else:
+    if resp.status_code == 200:
         return resp.text
+    print('Invalid URL:', resp.url)
+    return None
 
 def get_articles_meta(dom):
+    '''Retrieve meta for all articles in current page.'''
 
     def remove_expired(articles_meta):
         '''Remove data in dates which are expired.'''
@@ -71,8 +71,7 @@ def get_articles_meta(dom):
             # date format mm/dd and prefix for m is space instead of 0
             date = dom.find('div', 'date').text.strip()
             return title, href, date
-        else:
-            return None, None, None
+        return None, None, None
 
     def find_prev_page_url(dom):
         '''Find URL of previous page.'''
@@ -82,11 +81,9 @@ def get_articles_meta(dom):
 
         if btn_prev_page['href']:
             return btn_prev_page['href']
-        else:
-            return None
+        return None
 
 
-    '''Retrieve meta for all articles in current page.'''
     soup = BeautifulSoup(dom, 'html.parser')
 
     # articles under separation (aka pinned posts) should be ignored
@@ -113,9 +110,9 @@ def get_articles_meta(dom):
     if datetime_helper.check_expired(articles_meta[0]['date']):
         articles_meta = remove_expired(articles_meta[1:])
         return None, articles_meta
-    else:
-        prev_page_url = find_prev_page_url(soup)
-        return prev_page_url, articles_meta
+
+    prev_page_url = find_prev_page_url(soup)
+    return prev_page_url, articles_meta
 
 def get_article_content(url):
     '''Get complete article content.'''
@@ -124,8 +121,7 @@ def get_article_content(url):
         soup = BeautifulSoup(article_page, 'html.parser')
         article = soup.find(id='main-content')
         return article.text
-    else:
-        return None
+    return None
 
 def save_article(article, meta):
     '''Save cached article to file.'''
