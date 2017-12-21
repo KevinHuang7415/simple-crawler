@@ -116,7 +116,7 @@ def get_article_content(url):
     if article_page:
         soup = BeautifulSoup(article_page, 'html.parser')
         article = soup.find(id='main-content')
-        return article.prettify()
+        return article.text
     else:
         return None
 
@@ -137,3 +137,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
