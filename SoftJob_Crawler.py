@@ -50,6 +50,42 @@ def get_web_page(url, t=0.4):
         return resp.text
 
 def get_articles_meta(dom):
+
+    def remove_expired(articles_meta):
+        '''Remove data in dates which are expired.'''
+        while articles_meta:
+            if datetime_helper.check_expired(articles_meta[0]['date']):
+                articles_meta.pop(0)
+            else:
+                break
+
+        return articles_meta
+
+    def get_article_meta(dom):
+        '''Get article meta.'''
+        prop_a = dom.find('a')
+
+        if prop_a:
+            href = prop_a['href']
+            title = prop_a.text
+            # date format mm/dd and prefix for m is space instead of 0
+            date = dom.find('div', 'date').text.strip()
+            return title, href, date
+        else:
+            return None, None, None
+
+    def find_prev_page_url(dom):
+        '''Find URL of previous page.'''
+        div_paging = dom.find('div', 'btn-group btn-group-paging')
+        # 0: earliest, 1: previous, 2: next, 3: latest
+        btn_prev_page = div_paging.find_all('a')[1]
+
+        if btn_prev_page['href']:
+            return btn_prev_page['href']
+        else:
+            return None
+
+
     '''Retrieve meta for all articles in current page.'''
     soup = BeautifulSoup(dom, 'html.parser')
 
@@ -78,37 +114,8 @@ def get_articles_meta(dom):
         articles_meta = remove_expired(articles_meta[1:])
         return None, articles_meta
     else:
-        div_paging = soup.find('div', 'btn-group btn-group-paging')
-        # 0: earliest, 1: previous, 2: next, 3: latest
-        btn_prev_page = div_paging.find_all('a')[1]
-
-        if 'href' in btn_prev_page.attrs:
-            return btn_prev_page['href'], articles_meta
-        else:
-            return None, articles_meta
-
-def remove_expired(articles_meta):
-    '''Remove data in dates which are expired.'''
-    while articles_meta:
-        if datetime_helper.check_expired(articles_meta[0]['date']):
-            articles_meta.pop(0)
-        else:
-            break
-
-    return articles_meta
-
-def get_article_meta(dom):
-    '''Get article meta.'''
-    prop_a = dom.find('a')
-
-    if prop_a:
-        href = prop_a['href']
-        title = prop_a.text
-        # date format mm/dd and prefix for m is space instead of 0
-        date = dom.find('div', 'date').text.strip()
-        return title, href, date
-    else:
-        return None, None, None
+        prev_page_url = find_prev_page_url(soup)
+        return prev_page_url, articles_meta
 
 def get_article_content(url):
     '''Get complete article content.'''
