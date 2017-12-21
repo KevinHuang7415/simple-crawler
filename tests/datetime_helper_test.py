@@ -15,6 +15,11 @@ class DatetimeHelperTestCase(unittest.TestCase):
         for d in self.dates.values():
             self.assertEqual(datetime_helper.gen_date(d[0]), d[1])
 
+    def test_ptt_date_format(self):
+        self.assertEqual(datetime_helper.ptt_date_format(date(year=self.year, month=2, day=28)), '2/28')
+        self.assertEqual(datetime_helper.ptt_date_format(date(year=self.year, month=12, day=28)), '12/28')
+        self.assertEqual(datetime_helper.ptt_date_format(date(year=self.year, month=2, day=8)), '2/08')
+
     def test_check_date_earlier(self):
         self.fail("Not implemented")
 
