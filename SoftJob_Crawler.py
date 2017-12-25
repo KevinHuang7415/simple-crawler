@@ -41,8 +41,8 @@ def get_web_page(url, t=0.4):
     '''Get web page content.'''
     # to avoid being detected as DDOS
     time.sleep(t)
-
     resp = requests.get(PTT_URL + url)
+
     if resp.status_code == 200:
         return resp.text
     print('Invalid URL:', resp.url)
@@ -51,10 +51,11 @@ def get_web_page(url, t=0.4):
 def get_articles_meta(dom):
     '''Retrieve meta for all articles in current page.'''
 
+    term_date = 10
     def remove_expired(articles_meta):
         '''Remove data in dates which are expired.'''
         while articles_meta:
-            if datetime_helper.check_expired(articles_meta[0]['date']):
+            if datetime_helper.check_expired(articles_meta[0]['date'], term_date):
                 articles_meta.pop(0)
             else:
                 break
@@ -71,6 +72,7 @@ def get_articles_meta(dom):
             # date format mm/dd and prefix for m is space instead of 0
             date = dom.find('div', 'date').text.strip()
             return title, href, date
+
         return None, None, None
 
     def find_prev_page_url(dom):
@@ -88,6 +90,7 @@ def get_articles_meta(dom):
 
     # articles under separation (aka pinned posts) should be ignored
     list_sep = soup.find('div', 'r-list-sep')
+
     global LATEST_PAGE
     if LATEST_PAGE and list_sep:
         divs = list_sep.find_all_previous('div', 'r-ent')
@@ -107,7 +110,7 @@ def get_articles_meta(dom):
                 'date': date
             })
 
-    if datetime_helper.check_expired(articles_meta[0]['date']):
+    if datetime_helper.check_expired(articles_meta[0]['date'], term_date):
         articles_meta = remove_expired(articles_meta[1:])
         return None, articles_meta
 
@@ -117,10 +120,12 @@ def get_articles_meta(dom):
 def get_article_content(url):
     '''Get complete article content.'''
     article_page = get_web_page(url)
+
     if article_page:
         soup = BeautifulSoup(article_page, 'html.parser')
         article = soup.find(id='main-content')
         return article.text
+
     return None
 
 def save_article(article, meta):
@@ -140,4 +145,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
