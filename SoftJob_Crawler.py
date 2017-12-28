@@ -12,7 +12,14 @@ import file_helper
 import datetime_helper
 
 PTT_URL = 'https://www.ptt.cc'
+BOARD_NAME = 'Soft_Job'
 SOFTJOB_URI = '/bbs/Soft_Job/index.html'
+
+AUTHOR = '作者'
+BOARD = '看板'
+TITLE = '標題'
+TIME = '時間'
+
 LATEST_PAGE = True
 
 
@@ -34,7 +41,7 @@ def crawler():
             LATEST_PAGE = False
 
             for article_meta in articles_meta:
-                article = get_article_content(article_meta['href'])
+                article = get_article_content(article_meta)
                 save_article(article, article_meta)
 
 def get_web_page(url, t=0.4):
@@ -71,9 +78,11 @@ def get_articles_meta(dom):
             title = prop_a.text
             # date format mm/dd and prefix for m is space instead of 0
             date = dom.find('div', 'date').text.strip()
-            return title, href, date
+            author = dom.find('div', 'author').text
 
-        return None, None, None
+            return title, href, date, author
+
+        return None, None, None, None
 
     def find_prev_page_url(dom):
         '''Find URL of previous page.'''
@@ -101,13 +110,14 @@ def get_articles_meta(dom):
 
     articles_meta = []
     for div in divs:
-        title, href, date = get_article_meta(div)
+        title, href, date, author = get_article_meta(div)
         # to avoid situation like <div class="title"> (本文已被刪除) [author] </div>
         if href:
             articles_meta.append({
                 'title': title,
                 'href': href,
-                'date': date
+                'date': date,
+                'author': author
             })
 
     if datetime_helper.check_expired(articles_meta[0]['date'], term_date):
@@ -117,14 +127,43 @@ def get_articles_meta(dom):
     prev_page_url = find_prev_page_url(soup)
     return prev_page_url, articles_meta
 
-def get_article_content(url):
+def get_article_content(article_meta):
     '''Get complete article content.'''
-    article_page = get_web_page(url)
+
+    def get_create_time(dom):
+        metalines = dom.find_all('div', 'article-metaline')
+
+        for metaline in metalines:
+            article_meta_tag = metaline.find('span', 'article-meta-tag')
+
+            if article_meta_tag.text == TIME:
+                return metaline.find('span', 'article-meta-value').text
+
+        return None #TODO gen_date
+
+    def combine(prefix, meta):
+        return '  '.join([prefix, meta])
+
+    def format_article(dom):
+        before, sep, after = dom.text.partition('\n')
+        create_time = get_create_time(dom)
+
+        meta = []
+        meta.append(combine(AUTHOR, article_meta['author']))
+        meta.append(combine(BOARD, BOARD_NAME))
+        meta.append(combine(TITLE, article_meta['title']))
+        meta.append(combine(TIME, create_time) + '\n\n')
+        meta.append(after)
+
+        return sep.join(meta)
+        
+
+    article_page = get_web_page(article_meta['href'])
 
     if article_page:
         soup = BeautifulSoup(article_page, 'html.parser')
         article = soup.find(id='main-content')
-        return article.text
+        return format_article(article)
 
     return None
 
