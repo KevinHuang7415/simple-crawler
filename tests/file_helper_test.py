@@ -3,7 +3,8 @@ import unittest
 import file_helper
 
 class FileHelperTestCase(unittest.TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         self.path = r'.\tests\data'
         self.article = 'article'
         self.title = 'title'
