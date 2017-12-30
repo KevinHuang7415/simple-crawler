@@ -52,23 +52,36 @@ def should_choose_atcual(data):
 
 
 class BoardTest(unittest.TestCase):
+
+    BOARD_NAME = 'Soft_Job'
+
     @classmethod
     def setUpClass(cls):
-        cls.board = ptt.Board('Soft_Job', 5)
+        cls.board = {}
+        cls.board[0] = ptt.Board(cls.BOARD_NAME, 6)
+        cls.board[1] = ptt.Board(cls.BOARD_NAME, 6)
         #cls.board.get_dom()
-        cls.page_1 = read_file('testdata_input_1.html')
-        cls.expect_1 = load_json('expect_1.json')
-        cls.page_2 = read_file('testdata_input_2.html')
-        cls.expect_2 = load_json('expect_2.json')
+        cls.page = {}
+        cls.page[0] = read_file('testdata_input_1.html')
+        cls.page[1] = read_file('testdata_input_2.html')
+
+        cls.expect = {}
+        cls.expect[0] = load_json('expect_1.json')
+        cls.expect[1] = load_json('expect_2.json')
 
 
     def setUp(self):
-        return self.board.set_url(self.board.board_name, True)
+        for index, board in enumerate(self.board.values()):
+            board.set_url(self.BOARD_NAME, True)
+            board.page_to_soup(self.page[index])
+
+        self.board[0].latest_page = True
+        self.board[1].latest_page = False
 
 
     # TODO use mock to avoid real internet access
     def test_get_dom(self):
-        board = self.board
+        board = self.board[0]
         board.get_dom()
         self.assertNotEqual(board.dom, None)
 
@@ -78,20 +91,17 @@ class BoardTest(unittest.TestCase):
 
 
     def test_page_to_soup(self):
-        board = self.board
-        board.page_to_soup(self.page_1)
-        self.assertEqual(board.dom.find('title').text, self.expect_1['html_title'])
+        board = self.board[0]
+        board.page_to_soup(self.page[0])
+        self.assertEqual(board.dom.find('title').text, self.expect[0]['html_title'])
 
 
     def test_find_prev_page_url(self):
-        self.find_prev_page_url(self.page_1, self.expect_1)
-        self.find_prev_page_url(self.page_2, self.expect_2)
+        for index, board in enumerate(self.board.values()):
+            self.find_prev_page_url(board, self.expect[index])
 
 
-    def find_prev_page_url(self, page, expect):
-        board = self.board
-
-        board.page_to_soup(page)
+    def find_prev_page_url(self, board, expect):
         # this condition is decided outside being tested function
         if should_choose_atcual(expect):
             board.find_prev_page_url()
@@ -100,26 +110,21 @@ class BoardTest(unittest.TestCase):
         self.assertEqual(board.url, expect['prev_page_url'])
 
 
-
     def test_get_articles_meta(self):
-        board = self.board
+        for index, board in enumerate(self.board.values()):
+            self.get_articles_meta(board, self.expect[index]['articles_meta'])
 
-        board.page_to_soup(self.page_1)
-        self.compare_all_meta(board.get_articles_meta(), self.expect_1['articles_meta'])
 
-        board.page_to_soup(self.page_2)
-        self.compare_all_meta(board.get_articles_meta(), self.expect_2['articles_meta'])
+    def get_articles_meta(self, board, expect):
+        self.compare_all_meta(board.get_articles_meta(), expect)
 
 
     def test_get_article_blocks(self):
-        self.get_article_blocks(self.page_1, len(self.expect_1['articles_meta']))
-        self.get_article_blocks(self.page_2, len(self.expect_2['articles_meta']))
+        for index, board in enumerate(self.board.values()):
+            self.get_article_blocks(board, len(self.expect[index]['articles_meta']))
 
 
-    def get_article_blocks(self, page, expect):
-        board = self.board
-
-        board.page_to_soup(page)
+    def get_article_blocks(self, board, expect):
         article_blocks = [
                 article_block
                 for article_block in board.get_article_blocks()
@@ -129,14 +134,11 @@ class BoardTest(unittest.TestCase):
 
 
     def test_get_article_meta(self):
-        self.get_article_meta(self.page_1, self.expect_1['articles_meta'][0])
-        self.get_article_meta(self.page_2, self.expect_2['articles_meta'][0])
+        for index, board in enumerate(self.board.values()):
+            self.get_article_meta(board, self.expect[index]['articles_meta'][0])
 
 
-    def get_article_meta(self, page, expect):
-        board = self.board
-
-        board.page_to_soup(page)
+    def get_article_meta(self, board, expect):
         article_meta = next(
                 board.get_article_meta(article_block)
                 for article_block in board.get_article_blocks()
@@ -146,14 +148,11 @@ class BoardTest(unittest.TestCase):
 
 
     def test_remove_expired(self):
-        self.remove_expired(self.page_1, self.expect_1['remove_expired'])
-        self.remove_expired(self.page_2, self.expect_2['remove_expired'])
+        for index, board in enumerate(self.board.values()):
+            self.remove_expired(board, self.expect[index]['remove_expired'])
 
 
-    def remove_expired(self, page, expect):
-        board = self.board
-
-        board.page_to_soup(page)
+    def remove_expired(self, board, expect):
         after_remove = board.remove_expired(board.get_articles_meta())
         self.compare_all_meta(after_remove, expect)
 
