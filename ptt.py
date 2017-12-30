@@ -1,5 +1,6 @@
 import time
 import requests
+import datetime_helper
 
 class Page:
     """description of class"""
@@ -15,6 +16,7 @@ class Page:
 
 
     def set_url(self, uri=None, use_join=False):
+        '''Setup the URL for page.'''
         if not use_join:
             self.url = uri
         else:
@@ -26,6 +28,10 @@ class Page:
 
     def get_web_page(self, t=0.4):
         '''Get web page content.'''
+        if not self.url:
+            print('URL is not set.')
+            raise ValueError
+
         # to avoid being detected as DDOS
         time.sleep(t)
         resp = requests.get(self.PTT_URL + self.url)
