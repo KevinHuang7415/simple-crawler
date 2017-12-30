@@ -53,7 +53,6 @@ class Board(Page):
         self.set_url(board_name, True)
         self.term_date = term_date
         self.latest_page = True
-        self.get_dom()
 
 
     def __str__(self):
@@ -86,8 +85,10 @@ class Board(Page):
         btn_prev_page = div_paging.find_all('a')[1]
 
         if btn_prev_page['href']:
-            return btn_prev_page['href']
-        return None
+            self.url = btn_prev_page['href']
+            return
+
+        self.url = None
 
 
     def get_articles_meta(self):
