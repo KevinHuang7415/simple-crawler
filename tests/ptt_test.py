@@ -95,6 +95,9 @@ class BoardTest(unittest.TestCase):
         board.page_to_soup(self.pages[0])
         self.assertEqual(board.dom.find('title').text, self.expects[0]['html_title'])
 
+        board.page_to_soup(None)
+        self.assertEqual(board.dom, None)
+
 
     def test_find_prev_page_url(self):
         for index, board in enumerate(self.boards.values()):
