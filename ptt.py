@@ -159,3 +159,68 @@ class Board(Page):
             self.set_url()
 
         return articles_meta
+
+
+def combine(key, value):
+    return '  '.join([key, value])
+
+
+class Article(Page):
+    """description of class"""
+
+
+    AUTHOR = '作者'
+    BOARD = '看板'
+    TITLE = '標題'
+    TIME = '時間'
+
+
+    def __init__(self, board_name, **meta):
+        self.board_name = board_name
+        self.set_url(meta['href'])
+        self.meta = meta
+
+
+    def __str__(self):
+        page = super(Article, self).__str__(self)
+        article = 'Article: \'{0}  -  {1}\''.format(self.meta['date'], self.meta['title'])
+        return '\n'.join([article, page])
+
+    
+    def get_dom(self):
+        '''Retrieve DOM from URL.'''
+        resp = self.get_web_page()
+        self.get_content(resp)
+
+
+    def get_content(self, page):
+        '''Get complete article content.'''
+        if page:
+            soup = BeautifulSoup(page, 'html.parser')
+            self.dom = soup.find(id='main-content')
+        else:
+            self.dom = None
+
+
+    def format_article(self):
+        '''Get complete article content.'''
+        before, sep, after = self.dom.text.partition('\n')
+        create_time = self.get_create_time()
+
+        meta = []
+        meta.append(combine(self.AUTHOR, self.meta['author']))
+        meta.append(combine(self.BOARD, self.board_name))
+        meta.append(combine(self.TITLE, self.meta['title']))
+        meta.append(combine(self.TIME, create_time) + '\n\n')
+        meta.append(after)
+
+        return sep.join(meta)
+
+
+    def get_create_time(self):
+        '''Get create time of this article.'''
+        metalines = self.dom.find_all('div', 'article-metaline')
+        return next(
+            (metaline.find('span', 'article-meta-value').text
+             for metaline in metalines
+             if metaline.find('span', 'article-meta-tag').text == self.TIME), None)
