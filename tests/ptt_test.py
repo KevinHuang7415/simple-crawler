@@ -57,31 +57,31 @@ class BoardTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.board = {}
-        cls.board[0] = ptt.Board(cls.BOARD_NAME, 6)
-        cls.board[1] = ptt.Board(cls.BOARD_NAME, 6)
-        #cls.board.get_dom()
-        cls.page = {}
-        cls.page[0] = read_file('testdata_input_1.html')
-        cls.page[1] = read_file('testdata_input_2.html')
+        cls.boards = {}
+        cls.boards[0] = ptt.Board(cls.BOARD_NAME, 7)
+        cls.boards[1] = ptt.Board(cls.BOARD_NAME, 7) # 7 when 1/1
+        #cls.boards.get_dom()
+        cls.pages = {}
+        cls.pages[0] = read_file('testdata_input_board_1.html')
+        cls.pages[1] = read_file('testdata_input_board_2.html')
 
-        cls.expect = {}
-        cls.expect[0] = load_json('expect_1.json')
-        cls.expect[1] = load_json('expect_2.json')
+        cls.expects = {}
+        cls.expects[0] = load_json('expect_board_1.json')
+        cls.expects[1] = load_json('expect_board_2.json')
 
 
     def setUp(self):
-        for index, board in enumerate(self.board.values()):
+        for index, board in enumerate(self.boards.values()):
             board.set_url(self.BOARD_NAME, True)
-            board.page_to_soup(self.page[index])
+            board.page_to_soup(self.pages[index])
 
-        self.board[0].latest_page = True
-        self.board[1].latest_page = False
+        self.boards[0].latest_page = True
+        self.boards[1].latest_page = False
 
 
     # TODO use mock to avoid real internet access
     def test_get_dom(self):
-        board = self.board[0]
+        board = self.boards[0]
         board.get_dom()
         self.assertNotEqual(board.dom, None)
 
@@ -91,14 +91,14 @@ class BoardTest(unittest.TestCase):
 
 
     def test_page_to_soup(self):
-        board = self.board[0]
-        board.page_to_soup(self.page[0])
-        self.assertEqual(board.dom.find('title').text, self.expect[0]['html_title'])
+        board = self.boards[0]
+        board.page_to_soup(self.pages[0])
+        self.assertEqual(board.dom.find('title').text, self.expects[0]['html_title'])
 
 
     def test_find_prev_page_url(self):
-        for index, board in enumerate(self.board.values()):
-            self.find_prev_page_url(board, self.expect[index])
+        for index, board in enumerate(self.boards.values()):
+            self.find_prev_page_url(board, self.expects[index])
 
 
     def find_prev_page_url(self, board, expect):
@@ -111,8 +111,8 @@ class BoardTest(unittest.TestCase):
 
 
     def test_get_articles_meta(self):
-        for index, board in enumerate(self.board.values()):
-            self.get_articles_meta(board, self.expect[index]['articles_meta'])
+        for index, board in enumerate(self.boards.values()):
+            self.get_articles_meta(board, self.expects[index]['articles_meta'])
 
 
     def get_articles_meta(self, board, expect):
@@ -120,8 +120,8 @@ class BoardTest(unittest.TestCase):
 
 
     def test_get_article_blocks(self):
-        for index, board in enumerate(self.board.values()):
-            self.get_article_blocks(board, len(self.expect[index]['articles_meta']))
+        for index, board in enumerate(self.boards.values()):
+            self.get_article_blocks(board, len(self.expects[index]['articles_meta']))
 
 
     def get_article_blocks(self, board, expect):
@@ -134,8 +134,8 @@ class BoardTest(unittest.TestCase):
 
 
     def test_get_article_meta(self):
-        for index, board in enumerate(self.board.values()):
-            self.get_article_meta(board, self.expect[index]['articles_meta'][0])
+        for index, board in enumerate(self.boards.values()):
+            self.get_article_meta(board, self.expects[index]['articles_meta'][0])
 
 
     def get_article_meta(self, board, expect):
@@ -148,8 +148,8 @@ class BoardTest(unittest.TestCase):
 
 
     def test_remove_expired(self):
-        for index, board in enumerate(self.board.values()):
-            self.remove_expired(board, self.expect[index]['remove_expired'])
+        for index, board in enumerate(self.boards.values()):
+            self.remove_expired(board, self.expects[index]['remove_expired'])
 
 
     def remove_expired(self, board, expect):
