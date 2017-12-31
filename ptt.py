@@ -12,7 +12,7 @@ class Page:
 
 
     def __str__(self):
-        return str(self.url)
+        return str('At page: \'{0}\''.format(self.url))
 
 
     def set_url(self, uri=None, use_join=False):
@@ -38,7 +38,7 @@ class Page:
 
         if resp.status_code == 200:
             return resp.text
-        print('Invalid URL:', resp.url)
+        print('Invalid URL:', resp.url, '  , status code', resp.status_code)
         return None
 
 
@@ -56,7 +56,9 @@ class Board(Page):
 
 
     def __str__(self):
-        return str(self.board_name)
+        page = super(Board, self).__str__()
+        board = 'In board: \'{0}\''.format(self.board_name)
+        return '\n'.join([board, page])
 
     
     def get_dom(self):
