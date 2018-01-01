@@ -6,7 +6,7 @@ from tests.helper import read_file, load_json
 import ptt
 
 
-class PageTest(unittest.TestCase):
+class PageTestCase(unittest.TestCase):
     '''Test cases for ptt.Page.'''
 
     @classmethod
@@ -45,7 +45,7 @@ def should_choose_atcual(data):
     return len(data['articles_meta']) == len(data['remove_expired'])
 
 
-class BoardTest(unittest.TestCase):
+class BoardTestCase(unittest.TestCase):
     '''Test cases for ptt.Board.'''
 
     BOARD_NAME = 'Soft_Job'
@@ -177,7 +177,7 @@ class BoardTest(unittest.TestCase):
         self.assertEqual(act['author'], expect['author'])
 
 
-class ArticleTest(unittest.TestCase):
+class ArticleTestCase(unittest.TestCase):
     '''Test cases for ptt.Article.'''
 
     @classmethod

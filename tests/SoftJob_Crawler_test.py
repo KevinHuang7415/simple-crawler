@@ -9,7 +9,7 @@ import SoftJob_Crawler
 import ptt
 
 
-class SoftJob_CrawlerTest(unittest.TestCase):
+class SoftJob_CrawlerTestCase(unittest.TestCase):
     '''Test cases for SoftJob_Crawler.'''
 
     @classmethod
