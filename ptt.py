@@ -1,6 +1,11 @@
+'''
+Definitions about HTML BBS elements.
+'''
 import time
 import requests
+from bs4 import BeautifulSoup
 import datetime_helper
+
 
 class Page:
     """description of class"""
@@ -10,10 +15,8 @@ class Page:
     def __init__(self):
         self.set_url(use_join=True)
 
-
     def __str__(self):
         return str('At page: \'{0}\''.format(self.url))
-
 
     def set_url(self, uri=None, use_join=False):
         '''Setup the URL for page.'''
@@ -25,15 +28,14 @@ class Page:
             else:
                 self.url = '/bbs/index.html'
 
-
-    def get_web_page(self, t=0.4):
+    def get_web_page(self, sleep_time=0.4):
         '''Get web page content.'''
         if not self.url:
             print('URL is not set.')
             raise ValueError
 
         # to avoid being detected as DDOS
-        time.sleep(t)
+        time.sleep(sleep_time)
         resp = requests.get(self.PTT_URL + self.url)
 
         if resp.status_code == 200:
@@ -42,30 +44,26 @@ class Page:
         return None
 
 
-from bs4 import BeautifulSoup
-
-
 class Board(Page):
     """description of class"""
 
     def __init__(self, board_name, term_date=10):
         self.board_name = board_name
+        self.url = None
         self.set_url(board_name, True)
         self.term_date = term_date
         self.latest_page = True
-
+        self.dom = None
 
     def __str__(self):
-        page = super(Board, self).__str__()
+        page = super().__str__()
         board = 'In board: \'{0}\''.format(self.board_name)
         return '\n'.join([board, page])
 
-    
     def get_dom(self):
         '''Retrieve DOM from URL.'''
         resp = self.get_web_page(0)
         self.page_to_soup(resp)
-
 
     def page_to_soup(self, page):
         '''Transfer HTML content to BeautifulSoup object'''
@@ -73,7 +71,6 @@ class Board(Page):
             self.dom = BeautifulSoup(page, 'html.parser')
         else:
             self.dom = None
-
 
     def find_prev_page_url(self):
         '''Find URL of previous page.'''
@@ -92,7 +89,6 @@ class Board(Page):
 
         self.url = None
 
-
     def get_articles_meta(self):
         '''Retrieve meta for all articles in current page.'''
         article_blocks = self.get_article_blocks()
@@ -104,7 +100,6 @@ class Board(Page):
             for article_block in article_blocks
             if article_block.find('a')
         ]
-
 
     def get_article_blocks(self):
         '''Get all blocks that contain article meta.'''
@@ -126,9 +121,7 @@ class Board(Page):
         else:
             article_blocks = dom.find_all('div', 'r-ent')
 
-
         return article_blocks
-
 
     def get_article_meta(self, dom):
         '''Get article meta in precise DOM area.'''
@@ -142,7 +135,6 @@ class Board(Page):
         article_meta['author'] = dom.find('div', 'author').text
 
         return article_meta
-
 
     def remove_expired(self, articles_meta):
         '''Remove data in dates which is expired.'''
@@ -162,36 +154,34 @@ class Board(Page):
 
 
 def combine(key, value):
+    '''A helper function to combine key-value pair'''
     return '  '.join([key, value])
 
 
 class Article(Page):
     """description of class"""
 
-
     AUTHOR = '作者'
     BOARD = '看板'
     TITLE = '標題'
     TIME = '時間'
 
-
     def __init__(self, board_name, **meta):
         self.board_name = board_name
+        self.url = None
         self.set_url(meta['href'])
         self.meta = meta
-
+        self.dom = None
 
     def __str__(self):
-        page = super(Article, self).__str__(self)
+        page = super().__str__()
         article = 'Article: \'{0}  -  {1}\''.format(self.meta['date'], self.meta['title'])
         return '\n'.join([article, page])
 
-    
     def get_dom(self):
         '''Retrieve DOM from URL.'''
         resp = self.get_web_page()
         self.get_content(resp)
-
 
     def get_content(self, page):
         '''Get complete article content.'''
@@ -201,10 +191,9 @@ class Article(Page):
         else:
             self.dom = None
 
-
     def format_article(self):
         '''Get complete article content.'''
-        before, sep, after = self.dom.text.partition('\n')
+        _, sep, after = self.dom.text.partition('\n')
         create_time = self.get_create_time()
 
         meta = []
@@ -216,11 +205,12 @@ class Article(Page):
 
         return sep.join(meta)
 
-
     def get_create_time(self):
         '''Get create time of this article.'''
         metalines = self.dom.find_all('div', 'article-metaline')
         return next(
             (metaline.find('span', 'article-meta-value').text
              for metaline in metalines
-             if metaline.find('span', 'article-meta-tag').text == self.TIME), None)
+             if metaline.find('span', 'article-meta-tag').text == self.TIME),
+            None
+        )

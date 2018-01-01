@@ -1,5 +1,5 @@
 '''
-Helper functions for file operations.
+Main functions for crawler.
 '''
 import sys
 
@@ -29,6 +29,7 @@ def crawler():
 
 
 def parse_board(board):
+    '''Parse board page for required information.'''
     if not board:
         return None
 
@@ -38,6 +39,7 @@ def parse_board(board):
 
 
 def retrieve_article(**article_meta):
+    '''Retrieve article content.'''
     if not article_meta:
         return None
 
