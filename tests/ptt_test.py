@@ -1,12 +1,9 @@
 '''
 Unit tests for ptt module.
 '''
-import json
-import os
 import unittest
+from tests.helper import read_file, load_json
 import ptt
-
-TEST_DIR = 'tests'
 
 
 class PageTest(unittest.TestCase):
@@ -41,18 +38,6 @@ class PageTest(unittest.TestCase):
         self.page.set_url()
         with self.assertRaises(ValueError):
             self.page.get_web_page()
-
-
-def read_file(filename):
-    '''A helper function to read file.'''
-    with open(os.path.join(TEST_DIR, filename), 'r', encoding='utf-8') as file:
-        return file.read()
-
-
-def load_json(filename):
-    '''A helper function to read JSON-format file.'''
-    with open(os.path.join(TEST_DIR, filename), 'r', encoding='utf-8') as file:
-        return json.load(file)
 
 
 def should_choose_atcual(data):

@@ -1,27 +1,12 @@
 '''
 Unit tests for SoftJob_Crawler module.
 '''
-import json
 import os
 import unittest
 from file_helper import DEFAULT_DIR
+from tests.helper import read_file, load_json
 import SoftJob_Crawler
 import ptt
-
-
-TEST_DIR = 'tests'
-
-
-def read_file(filename):
-    '''A helper function to read file.'''
-    with open(os.path.join(TEST_DIR, filename), 'r', encoding='utf-8') as file:
-        return file.read()
-
-
-def load_json(filename):
-    '''A helper function to read JSON-format file.'''
-    with open(os.path.join(TEST_DIR, filename), 'r', encoding='utf-8') as file:
-        return json.load(file)
 
 
 class SoftJob_CrawlerTest(unittest.TestCase):
