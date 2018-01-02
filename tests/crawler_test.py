@@ -1,16 +1,16 @@
 '''
-Unit tests for SoftJob_Crawler module.
+Unit tests for crawler module.
 '''
 import os
 import unittest
 from file_helper import DEFAULT_DIR
 from tests.helper import read_file, load_json
-import SoftJob_Crawler
+import crawler
 import ptt
 
 
-class SoftJob_CrawlerTestCase(unittest.TestCase):
-    '''Test cases for SoftJob_Crawler.'''
+class CrawlerTestCase(unittest.TestCase):
+    '''Test cases for crawler.'''
 
     @classmethod
     def setUpClass(cls):
@@ -32,30 +32,34 @@ class SoftJob_CrawlerTestCase(unittest.TestCase):
         cls.contents = {}
         cls.articles = {}
         for index, article_meta in enumerate(cls.meta.values()):
-            cls.articles[index] = ptt.Article(article_meta['board_name'], **article_meta['article_meta'])
+            board_name = article_meta['board_name']
+            article_meta = article_meta['article_meta']
+
+            cls.articles[index] = ptt.Article(board_name, **article_meta)
             cls.articles[index].get_content(cls.pages[index])
+
             cls.contents[index] = cls.articles[index].format_article()
 
     def test_setup_path(self):
-        '''Unit test for SoftJob_Crawler.setup_path.'''
-        SoftJob_Crawler.setup_path()
+        '''Unit test for crawler.setup_path.'''
+        crawler.setup_path()
         self.assertEqual(os.path.isdir(DEFAULT_DIR), True)
 
     @unittest.skip("just skipping")
     def test_crawler(self):
-        '''Unit test for SoftJob_Crawler.crawler.'''
-        #SoftJob_Crawler.crawler()
+        '''Unit test for crawler.crawler.'''
+        #crawler.crawler()
         #self.fail("Not implemented")
         pass
 
     def test_parse_board(self):
-        '''Unit test for SoftJob_Crawler.parse_board.'''
-        articles_meta = SoftJob_Crawler.parse_board(None)
+        '''Unit test for crawler.parse_board.'''
+        articles_meta = crawler.parse_board(None)
         self.assertEqual(articles_meta, None)
 
     def test_retrieve_article(self):
-        '''Unit test for SoftJob_Crawler.retrieve_article.'''
-        articles = SoftJob_Crawler.retrieve_article()
+        '''Unit test for crawler.retrieve_article.'''
+        articles = crawler.retrieve_article()
         self.assertEqual(articles, None)
 
         for index, meta in enumerate(self.meta.values()):
@@ -63,18 +67,21 @@ class SoftJob_CrawlerTestCase(unittest.TestCase):
 
     def retrieve_article(self, meta, expect):
         '''A helper function for test_retrieve_article.'''
-        article_content = SoftJob_Crawler.retrieve_article(**meta)
+        article_content = crawler.retrieve_article(**meta)
         self.assertEqual(article_content, expect)
 
     def test_save_article(self):
-        '''Unit test for SoftJob_Crawler.save_article.'''
+        '''Unit test for crawler.save_article.'''
         for index, content in enumerate(self.contents.values()):
-            self.save_article(content, self.meta[index]['article_meta'], self.expects[index]['filename'])
+            article_meta = self.meta[index]['article_meta']
+            expect = self.expects[index]['filename']
+            self.save_article(content, article_meta, expect)
 
     def save_article(self, content, meta, expect):
         '''A helper function for test_save_article.'''
-        SoftJob_Crawler.save_article(content, **meta)
-        self.assertEqual(os.path.isfile(os.path.join(DEFAULT_DIR, expect)), True)
+        crawler.save_article(content, **meta)
+        path = os.path.join(DEFAULT_DIR, expect)
+        self.assertEqual(os.path.isfile(path), True)
 
 
 if __name__ == '__main__':
