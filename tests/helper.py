@@ -5,7 +5,7 @@ import json
 import os
 
 
-TEST_DIR = 'tests'
+TEST_DIR = r'tests\data'
 
 
 def read_file(filename):

@@ -12,7 +12,7 @@ class FileHelperTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         '''The class level setup.'''
-        cls.path = r'.\tests\data'
+        cls.path = r'.\tests\for_test'
         cls.article = 'article'
         cls.title = 'title'
 
