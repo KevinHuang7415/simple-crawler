@@ -1,23 +1,29 @@
 '''
 Main functions for crawler.
 '''
-import sys
-
+import config
 import file_helper
 import ptt
 
-BOARD_NAME = 'Soft_Job'
+CONFIG = config.Config()
+SECTION = 'Crawler'
 
 
-def setup_path():
-    '''Set path for saving files.'''
-    dir_path = file_helper.get_dir(sys.argv)
-    file_helper.create_dir_if_not_exist(dir_path)
+def setup():
+    '''Setup configurations.'''
+    try:
+        CONFIG.load()
+    except ValueError:
+        CONFIG.use_default = True
+
+    file_helper.create_dir_if_not_exist(CONFIG.get(SECTION, 'data_path'))
 
 
 def crawler():
     '''Grab all articles in recent days.'''
-    board = ptt.Board(BOARD_NAME)
+    term_date = CONFIG.getint(SECTION, 'term_date')
+    board_name = CONFIG.get(SECTION, 'board')
+    board = ptt.Board(board_name, term_date)
 
     while board.url:
         board.retrieve_dom()
@@ -43,7 +49,8 @@ def retrieve_article(**article_meta):
     if not article_meta:
         return None
 
-    article = ptt.Article(BOARD_NAME, **article_meta)
+    board_name = CONFIG.get(SECTION, 'board')
+    article = ptt.Article(board_name, **article_meta)
     article.retrieve_dom()
     return article.format_article()
 
@@ -56,13 +63,13 @@ def save_article(article, **meta):
         title_id = meta['href'].split('/')[-1].split('.')[1]
         title = ' - '.join([meta['date'], meta['title'], title_id])
 
-        dir_path = file_helper.get_dir(sys.argv)
-        file_helper.write_article(article, title, dir_path)
+        data_path = CONFIG.get(SECTION, 'data_path')
+        file_helper.write_article(article, title, data_path)
 
 
 def main():
     '''Main function.'''
-    setup_path()
+    setup()
     crawler()
 
 

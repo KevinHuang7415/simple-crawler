@@ -3,7 +3,6 @@ Unit tests for crawler module.
 '''
 import os
 import unittest
-from file_helper import DEFAULT_DIR
 from tests.helper import read_file, load_json
 import crawler
 import ptt
@@ -40,10 +39,13 @@ class CrawlerTestCase(unittest.TestCase):
 
             cls.contents[index] = cls.articles[index].format_article()
 
-    def test_setup_path(self):
-        '''Unit test for crawler.setup_path.'''
-        crawler.setup_path()
-        self.assertEqual(os.path.isdir(DEFAULT_DIR), True)
+        crawler.setup()
+
+    def test_setup(self):
+        '''Unit test for crawler.setup.'''
+        crawler.setup()
+        data_path = crawler.CONFIG.get('Crawler', 'data_path')
+        self.assertTrue(os.path.isdir(data_path))
 
     @unittest.skip("just skipping")
     def test_crawler(self):
@@ -80,7 +82,8 @@ class CrawlerTestCase(unittest.TestCase):
     def save_article(self, content, meta, expect):
         '''A helper function for test_save_article.'''
         crawler.save_article(content, **meta)
-        path = os.path.join(DEFAULT_DIR, expect)
+
+        path = os.path.join(crawler.CONFIG.get('Crawler', 'data_path'), expect)
         self.assertEqual(os.path.isfile(path), True)
 
 

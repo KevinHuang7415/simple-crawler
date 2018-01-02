@@ -7,15 +7,6 @@ from os import path
 import re
 import sys
 
-DEFAULT_DIR = '.'
-
-
-def get_dir(argv):
-    '''Find the directory assigned in arguments.'''
-    if (len(argv) > 1 and path.isdir(argv[1])):
-        return argv[1]
-    return DEFAULT_DIR
-
 
 _PATTERN = re.compile(r'[.\\/:*?"<>|\r\n]')
 
