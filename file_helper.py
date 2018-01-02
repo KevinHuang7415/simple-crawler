@@ -17,12 +17,12 @@ def get_dir(argv):
     return DEFAULT_DIR
 
 
-PATTERN = re.compile(r'[.\\/:*?"<>|\r\n]')
+_PATTERN = re.compile(r'[.\\/:*?"<>|\r\n]')
 
 
 def format_filename(name):
     '''Make the name matches file naming restriction.'''
-    return PATTERN.sub('', name)
+    return _PATTERN.sub('', name)
 
 
 def create_dir_if_not_exist(dir_path):

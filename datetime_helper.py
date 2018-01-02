@@ -9,7 +9,7 @@ def to_ptt_date_format(date_obj):
     return date_obj.strftime("%m/%d").lstrip('0')
 
 
-def gen_date(ptt_date):
+def _gen_date(ptt_date):
     '''Generate date object for date in PTT format.'''
     date_arr = ptt_date.split('/')
     year = date.today().year
@@ -27,7 +27,7 @@ def gen_date(ptt_date):
         return None
 
 
-def check_date_earlier(this_day, days):
+def _check_date_earlier(this_day, days):
     '''Check if the day is days earlier than today.'''
     date_diff = date.today() - this_day
     return date_diff >= timedelta(days=days), date_diff.days
@@ -39,11 +39,11 @@ def check_expired(ptt_date, term_date=15):
         print('Given term date being later than today is illegal.')
         return True
 
-    date_obj = gen_date(ptt_date)
+    date_obj = _gen_date(ptt_date)
     if not date_obj:
         return True
 
-    earlier, days_diff = check_date_earlier(date_obj, 0)
+    earlier, days_diff = _check_date_earlier(date_obj, 0)
     if earlier:
         return days_diff >= term_date
     else:
@@ -51,8 +51,8 @@ def check_expired(ptt_date, term_date=15):
         # set year to last year can fit current scenario
         try:
             date_obj = date_obj.replace(year=date_obj.year - 1)
-            return check_date_earlier(date_obj, term_date)[0]
+            return _check_date_earlier(date_obj, term_date)[0]
         # case for 2/29
         except ValueError:
             date_obj = date_obj + (date(date_obj.year - 1, 3, 1) - date(date_obj.year, 3, 1))
-            return check_date_earlier(date_obj, term_date)[0]
+            return _check_date_earlier(date_obj, term_date)[0]

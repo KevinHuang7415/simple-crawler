@@ -40,7 +40,7 @@ class PageTestCase(unittest.TestCase):
             self.page.get_web_page()
 
 
-def should_choose_atcual(data):
+def _should_choose_atcual(data):
     '''A helper function to combine key-value pair'''
     return len(data['articles_meta']) == len(data['remove_expired'])
 
@@ -69,7 +69,7 @@ class BoardTestCase(unittest.TestCase):
         '''The test case level setup.'''
         for index, board in enumerate(self.boards.values()):
             board.set_url(self.BOARD_NAME, True)
-            board.page_to_soup(self.pages[index])
+            board._page_to_soup(self.pages[index])
 
         self.boards[0].latest_page = True
         self.boards[1].latest_page = False
@@ -85,16 +85,16 @@ class BoardTestCase(unittest.TestCase):
         with self.assertRaises(ValueError):
             board.retrieve_dom()
 
-    def test_page_to_soup(self):
-        '''Unit test for ptt.Board.page_to_soup.'''
+    def test__page_to_soup(self):
+        '''Unit test for ptt.Board._page_to_soup.'''
         board = self.boards[0]
-        board.page_to_soup(self.pages[0])
+        board._page_to_soup(self.pages[0])
         self.assertEqual(
             board.dom.find('title').text,
             self.expects[0]['html_title']
         )
 
-        board.page_to_soup(None)
+        board._page_to_soup(None)
         self.assertEqual(board.dom, None)
 
     def test_find_prev_page_url(self):
@@ -105,7 +105,7 @@ class BoardTestCase(unittest.TestCase):
     def find_prev_page_url(self, board, expect):
         '''A helper function for test_find_prev_page_url.'''
         # this condition is decided outside being tested function
-        if should_choose_atcual(expect):
+        if _should_choose_atcual(expect):
             board.find_prev_page_url()
         else:
             board.url = None
@@ -123,36 +123,36 @@ class BoardTestCase(unittest.TestCase):
         for index, expect in enumerate(expects):
             self.compare_meta(articles_meta[index], expect)
 
-    def test_get_article_blocks(self):
-        '''Unit test for ptt.Board.get_article_blocks.'''
+    def test__get_article_blocks(self):
+        '''Unit test for ptt.Board._get_article_blocks.'''
         for index, board in enumerate(self.boards.values()):
-            self.get_article_blocks(
+            self._get_article_blocks(
                 board,
                 len(self.expects[index]['articles_meta'])
             )
 
-    def get_article_blocks(self, board, expect):
-        '''A helper function for test_get_article_blocks.'''
+    def _get_article_blocks(self, board, expect):
+        '''A helper function for test__get_article_blocks.'''
         article_blocks = [
             article_block
-            for article_block in board.get_article_blocks()
+            for article_block in board._get_article_blocks()
             if article_block.find('a')
         ]
         self.assertEqual(len(article_blocks), expect)
 
-    def test_get_article_meta(self):
-        '''Unit test for ptt.Board.get_article_meta.'''
+    def test__get_article_meta(self):
+        '''Unit test for ptt.Board._get_article_meta.'''
         for index, board in enumerate(self.boards.values()):
-            self.get_article_meta(
+            self._get_article_meta(
                 board,
                 self.expects[index]['articles_meta'][0]
             )
 
-    def get_article_meta(self, board, expect):
-        '''A helper function for test_get_article_meta.'''
+    def _get_article_meta(self, board, expect):
+        '''A helper function for test__get_article_meta.'''
         article_meta = next(
-            board.get_article_meta(article_block)
-            for article_block in board.get_article_blocks()
+            board._get_article_meta(article_block)
+            for article_block in board._get_article_blocks()
             if article_block.find('a')
         )
         self.compare_meta(article_meta, expect)
@@ -206,7 +206,7 @@ class ArticleTestCase(unittest.TestCase):
         '''The test case level setup.'''
         for index, article in enumerate(self.articles.values()):
             article.set_url(self.meta[index]['article_meta']['href'])
-            article.get_content(self.pages[index])
+            article._get_content(self.pages[index])
 
     # TODO use mock to avoid real internet access
     def test_retrieve_dom(self):
@@ -219,13 +219,13 @@ class ArticleTestCase(unittest.TestCase):
         with self.assertRaises(ValueError):
             article.retrieve_dom()
 
-    def test_get_content(self):
-        '''Unit test for ptt.Article.get_content.'''
+    def test__get_content(self):
+        '''Unit test for ptt.Article._get_content.'''
         article = self.articles[0]
-        article.get_content(self.pages[0])
+        article._get_content(self.pages[0])
         self.assertNotEqual(article.dom, None)
 
-        article.get_content(None)
+        article._get_content(None)
         self.assertEqual(article.dom, None)
 
     def test_format_article(self):
@@ -239,14 +239,14 @@ class ArticleTestCase(unittest.TestCase):
         self.assertEqual(len(content), len(expect))
         #self.assertEqual(article.format_article(), expect)
 
-    def test_get_create_time(self):
-        '''Unit test for ptt.Article.get_create_time.'''
+    def test__get_create_time(self):
+        '''Unit test for ptt.Article._get_create_time.'''
         for index, article in enumerate(self.articles.values()):
-            self.get_create_time(article, self.expects[index]['create_time'])
+            self._get_create_time(article, self.expects[index]['create_time'])
 
-    def get_create_time(self, article, expect):
-        '''A helper function for test_get_create_time.'''
-        self.assertEqual(article.get_create_time(), expect)
+    def _get_create_time(self, article, expect):
+        '''A helper function for test__get_create_time.'''
+        self.assertEqual(article._get_create_time(), expect)
 
 
 if __name__ == '__main__':

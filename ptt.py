@@ -64,9 +64,9 @@ class Board(Page):
     def retrieve_dom(self):
         '''Retrieve DOM from URL.'''
         resp = self.get_web_page(0)
-        self.page_to_soup(resp)
+        self._page_to_soup(resp)
 
-    def page_to_soup(self, page):
+    def _page_to_soup(self, page):
         '''Transfer HTML content to BeautifulSoup object'''
         if page:
             self.dom = BeautifulSoup(page, 'html.parser')
@@ -92,17 +92,17 @@ class Board(Page):
 
     def get_articles_meta(self):
         '''Retrieve meta for all articles in current page.'''
-        article_blocks = self.get_article_blocks()
+        article_blocks = self._get_article_blocks()
 
         # not to retrieve delete article which looks like
         # <div class="title"> (本文已被刪除) [author] </div>
         return [
-            self.get_article_meta(article_block)
+            self._get_article_meta(article_block)
             for article_block in article_blocks
             if article_block.find('a')
         ]
 
-    def get_article_blocks(self):
+    def _get_article_blocks(self):
         '''Get all blocks that contain article meta.'''
         dom = self.dom
         if not dom:
@@ -124,7 +124,7 @@ class Board(Page):
 
         return article_blocks
 
-    def get_article_meta(self, dom):
+    def _get_article_meta(self, dom):
         '''Get article meta in precise DOM area.'''
         prop_a = dom.find('a')
         article_meta = {}
@@ -154,7 +154,7 @@ class Board(Page):
         return articles_meta
 
 
-def combine(key, value):
+def _combine(key, value):
     '''A helper function to combine key-value pair'''
     return '  '.join([key, value])
 
@@ -182,9 +182,9 @@ class Article(Page):
     def retrieve_dom(self):
         '''Retrieve DOM from URL.'''
         resp = self.get_web_page()
-        self.get_content(resp)
+        self._get_content(resp)
 
-    def get_content(self, page):
+    def _get_content(self, page):
         '''Get complete article content.'''
         if page:
             soup = BeautifulSoup(page, 'html.parser')
@@ -195,18 +195,18 @@ class Article(Page):
     def format_article(self):
         '''Get complete article content.'''
         _, sep, after = self.dom.text.partition('\n')
-        create_time = self.get_create_time()
+        create_time = self._get_create_time()
 
         meta = []
-        meta.append(combine(self.AUTHOR, self.meta['author']))
-        meta.append(combine(self.BOARD, self.board_name))
-        meta.append(combine(self.TITLE, self.meta['title']))
-        meta.append(combine(self.TIME, create_time) + '\n\n')
+        meta.append(_combine(self.AUTHOR, self.meta['author']))
+        meta.append(_combine(self.BOARD, self.board_name))
+        meta.append(_combine(self.TITLE, self.meta['title']))
+        meta.append(_combine(self.TIME, create_time) + '\n\n')
         meta.append(after)
 
         return sep.join(meta)
 
-    def get_create_time(self):
+    def _get_create_time(self):
         '''Get create time of this article.'''
         metalines = self.dom.find_all('div', 'article-metaline')
         return next(
