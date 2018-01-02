@@ -20,7 +20,7 @@ def crawler():
     board = ptt.Board(BOARD_NAME)
 
     while board.url:
-        board.get_dom()
+        board.retrieve_dom()
         articles_meta = parse_board(board)
 
         for article_meta in articles_meta:
@@ -44,7 +44,7 @@ def retrieve_article(**article_meta):
         return None
 
     article = ptt.Article(BOARD_NAME, **article_meta)
-    article.get_dom()
+    article.retrieve_dom()
     return article.format_article()
 
 

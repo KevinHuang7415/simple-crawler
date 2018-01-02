@@ -54,8 +54,8 @@ class BoardTestCase(unittest.TestCase):
     def setUpClass(cls):
         '''The class level setup.'''
         cls.boards = {}
-        cls.boards[0] = ptt.Board(cls.BOARD_NAME, 7)
-        cls.boards[1] = ptt.Board(cls.BOARD_NAME, 7)  # 7 when 1/1
+        cls.boards[0] = ptt.Board(cls.BOARD_NAME, 8)
+        cls.boards[1] = ptt.Board(cls.BOARD_NAME, 8)  # 7 when 1/1
 
         cls.pages = {}
         cls.pages[0] = read_file('testdata_input_board_1.html')
@@ -75,15 +75,15 @@ class BoardTestCase(unittest.TestCase):
         self.boards[1].latest_page = False
 
     # TODO use mock to avoid real internet access
-    def test_get_dom(self):
-        '''Unit test for ptt.Board.get_dom.'''
+    def test_retrieve_dom(self):
+        '''Unit test for ptt.Board.retrieve_dom.'''
         board = self.boards[0]
-        board.get_dom()
+        board.retrieve_dom()
         self.assertNotEqual(board.dom, None)
 
         board.set_url()
         with self.assertRaises(ValueError):
-            board.get_dom()
+            board.retrieve_dom()
 
     def test_page_to_soup(self):
         '''Unit test for ptt.Board.page_to_soup.'''
@@ -209,15 +209,15 @@ class ArticleTestCase(unittest.TestCase):
             article.get_content(self.pages[index])
 
     # TODO use mock to avoid real internet access
-    def test_get_dom(self):
-        '''Unit test for ptt.Article.get_dom.'''
+    def test_retrieve_dom(self):
+        '''Unit test for ptt.Article.retrieve_dom.'''
         article = self.articles[0]
-        article.get_dom()
+        article.retrieve_dom()
         self.assertNotEqual(article.dom, None)
 
         article.set_url()
         with self.assertRaises(ValueError):
-            article.get_dom()
+            article.retrieve_dom()
 
     def test_get_content(self):
         '''Unit test for ptt.Article.get_content.'''

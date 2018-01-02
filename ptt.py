@@ -13,6 +13,7 @@ class Page:
     PTT_URL = 'https://www.ptt.cc'
 
     def __init__(self):
+        self.url = None
         self.set_url(use_join=True)
 
     def __str__(self):
@@ -60,7 +61,7 @@ class Board(Page):
         board = 'In board: \'{0}\''.format(self.board_name)
         return '\n'.join([board, page])
 
-    def get_dom(self):
+    def retrieve_dom(self):
         '''Retrieve DOM from URL.'''
         resp = self.get_web_page(0)
         self.page_to_soup(resp)
@@ -178,7 +179,7 @@ class Article(Page):
         article = 'Article: \'{0}  -  {1}\''.format(self.meta['date'], self.meta['title'])
         return '\n'.join([article, page])
 
-    def get_dom(self):
+    def retrieve_dom(self):
         '''Retrieve DOM from URL.'''
         resp = self.get_web_page()
         self.get_content(resp)
