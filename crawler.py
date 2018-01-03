@@ -1,12 +1,15 @@
 '''
 Main functions for crawler.
 '''
+import logging
+import logging.config
 import config
 import file_helper
 import ptt
 
 CONFIG = config.Config()
 SECTION = 'Crawler'
+LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
 
 
 def setup():
@@ -16,18 +19,25 @@ def setup():
     except ValueError:
         CONFIG.use_default = True
 
+    logger_path = CONFIG.get('Log', 'conf')
+    logging.config.fileConfig(logger_path, disable_existing_loggers=False)
+
     file_helper.create_dir_if_not_exist(CONFIG.get(SECTION, 'data_path'))
 
 
 def crawler():
     '''Grab all articles in recent days.'''
     term_date = CONFIG.getint(SECTION, 'term_date')
+    LOGGER.info('Term date as [%d] days.', term_date)
+
     board_name = CONFIG.get(SECTION, 'board')
     board = ptt.Board(board_name, term_date)
+    LOGGER.info('Retrive articles from board [%s] board_name.', board_name)
 
     while board.url:
         board.retrieve_dom(0)
         articles_meta = parse_board(board)
+        LOGGER.info('[%d] articles\' meta retrieved.', len(articles_meta))
 
         for article_meta in articles_meta:
             article = retrieve_article(**article_meta)
@@ -59,18 +69,28 @@ def save_article(article, **meta):
     '''Save cached article to file.'''
     if article:
         # to avoid the titles collision
-        # format PTT_URL/..../M.number.A.RND.html, take the number part
-        title_id = meta['href'].split('/')[-1].split('.')[1]
-        title = ' - '.join([meta['date'], meta['title'], title_id])
+        # format: PTT_URL/..../M.number.A.RND.html
+        # take the number part
+        article_id = meta['href'].rpartition('/')[-1].split('.')[1]
+        # date - title - title_id
+        file_title = ' - '.join([meta['date'], meta['title'], article_id])
 
         data_path = CONFIG.get(SECTION, 'data_path')
-        file_helper.write_article(article, title, data_path)
+        file_helper.write_article(article, file_title, data_path)
 
 
 def main():
     '''Main function.'''
     setup()
-    crawler()
+    try:
+        crawler()
+    except Exception:
+        LOGGER.error('Unexpected error.', exc_info=True)
+    finally:
+        handlers = LOGGER.handlers[:]
+        for handler in handlers:
+            handler.close()
+            LOGGER.removeHandler(handler)
 
 
 if __name__ == '__main__':
