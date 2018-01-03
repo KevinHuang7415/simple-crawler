@@ -31,13 +31,16 @@ class PageTestCase(unittest.TestCase):
         page.set_url(uri, True)
         self.assertEqual(page.url, '/bbs/{0}/index.html'.format(uri))
 
-    def test_get_web_page(self):
-        '''Unit test for ptt.Page.get_web_page.'''
-        self.assertNotEqual(self.page.get_web_page(0), None)
-
+    # TODO use mock to avoid real internet access
+    def test_retrieve_dom(self):
+        '''Unit test for ptt.Page.retrieve_dom.'''
         self.page.set_url()
         with self.assertRaises(ValueError):
-            self.page.get_web_page()
+            self.page.retrieve_dom()
+
+        self.page.set_url(use_join=True)
+        with self.assertRaises(NotImplementedError):
+            self.page.retrieve_dom()
 
 
 def _should_choose_atcual(data):
@@ -54,8 +57,8 @@ class BoardTestCase(unittest.TestCase):
     def setUpClass(cls):
         '''The class level setup.'''
         cls.boards = {}
-        cls.boards[0] = ptt.Board(cls.BOARD_NAME, 8)
-        cls.boards[1] = ptt.Board(cls.BOARD_NAME, 8)  # 7 when 1/1
+        cls.boards[0] = ptt.Board(cls.BOARD_NAME, 9)
+        cls.boards[1] = ptt.Board(cls.BOARD_NAME, 9)  # 7 when 1/1
 
         cls.pages = {}
         cls.pages[0] = read_file('testdata_input_board_1.html')
@@ -69,7 +72,7 @@ class BoardTestCase(unittest.TestCase):
         '''The test case level setup.'''
         for index, board in enumerate(self.boards.values()):
             board.set_url(self.BOARD_NAME, True)
-            board._page_to_soup(self.pages[index])
+            board._get_content(self.pages[index])
 
         self.boards[0].latest_page = True
         self.boards[1].latest_page = False
@@ -78,24 +81,13 @@ class BoardTestCase(unittest.TestCase):
     def test_retrieve_dom(self):
         '''Unit test for ptt.Board.retrieve_dom.'''
         board = self.boards[0]
+
         board.retrieve_dom()
         self.assertNotEqual(board.dom, None)
 
         board.set_url()
         with self.assertRaises(ValueError):
             board.retrieve_dom()
-
-    def test__page_to_soup(self):
-        '''Unit test for ptt.Board._page_to_soup.'''
-        board = self.boards[0]
-        board._page_to_soup(self.pages[0])
-        self.assertEqual(
-            board.dom.find('title').text,
-            self.expects[0]['html_title']
-        )
-
-        board._page_to_soup(None)
-        self.assertEqual(board.dom, None)
 
     def test_find_prev_page_url(self):
         '''Unit test for ptt.Board.find_prev_page_url.'''
@@ -109,6 +101,7 @@ class BoardTestCase(unittest.TestCase):
             board.find_prev_page_url()
         else:
             board.url = None
+
         self.assertEqual(board.url, expect['prev_page_url'])
 
     def test_get_articles_meta(self):
@@ -138,6 +131,7 @@ class BoardTestCase(unittest.TestCase):
             for article_block in board._get_article_blocks()
             if article_block.find('a')
         ]
+
         self.assertEqual(len(article_blocks), expect)
 
     def test__get_article_meta(self):
@@ -155,6 +149,7 @@ class BoardTestCase(unittest.TestCase):
             for article_block in board._get_article_blocks()
             if article_block.find('a')
         )
+
         self.compare_meta(article_meta, expect)
 
     def test_remove_expired(self):
@@ -212,21 +207,13 @@ class ArticleTestCase(unittest.TestCase):
     def test_retrieve_dom(self):
         '''Unit test for ptt.Article.retrieve_dom.'''
         article = self.articles[0]
+
         article.retrieve_dom()
         self.assertNotEqual(article.dom, None)
 
         article.set_url()
         with self.assertRaises(ValueError):
             article.retrieve_dom()
-
-    def test__get_content(self):
-        '''Unit test for ptt.Article._get_content.'''
-        article = self.articles[0]
-        article._get_content(self.pages[0])
-        self.assertNotEqual(article.dom, None)
-
-        article._get_content(None)
-        self.assertEqual(article.dom, None)
 
     def test_format_article(self):
         '''Unit test for ptt.Article.format_article.'''

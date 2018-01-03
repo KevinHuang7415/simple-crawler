@@ -26,7 +26,7 @@ def crawler():
     board = ptt.Board(board_name, term_date)
 
     while board.url:
-        board.retrieve_dom()
+        board.retrieve_dom(0)
         articles_meta = parse_board(board)
 
         for article_meta in articles_meta:

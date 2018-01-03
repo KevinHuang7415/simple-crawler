@@ -29,7 +29,12 @@ class Page:
             else:
                 self.url = '/bbs/index.html'
 
-    def get_web_page(self, sleep_time=0.4):
+    def retrieve_dom(self, sleep_time=0.4):
+        '''Retrieve DOM from URL.'''
+        page = self._get_web_page(sleep_time)
+        self._get_content(page)
+
+    def _get_web_page(self, sleep_time=0.4):
         '''Get web page content.'''
         if not self.url:
             print('URL is not set.')
@@ -41,8 +46,12 @@ class Page:
 
         if resp.status_code == 200:
             return resp.text
+
         print('Invalid URL:', resp.url, '  , status code', resp.status_code)
         return None
+
+    def _get_content(self, page):
+        raise NotImplementedError
 
 
 class Board(Page):
@@ -61,12 +70,7 @@ class Board(Page):
         board = 'In board: \'{0}\''.format(self.board_name)
         return '\n'.join([board, page])
 
-    def retrieve_dom(self):
-        '''Retrieve DOM from URL.'''
-        resp = self.get_web_page(0)
-        self._page_to_soup(resp)
-
-    def _page_to_soup(self, page):
+    def _get_content(self, page):
         '''Transfer HTML content to BeautifulSoup object'''
         if page:
             self.dom = BeautifulSoup(page, 'html.parser')
@@ -178,11 +182,6 @@ class Article(Page):
         page = super().__str__()
         article = 'Article: \'{0}  -  {1}\''.format(self.meta['date'], self.meta['title'])
         return '\n'.join([article, page])
-
-    def retrieve_dom(self):
-        '''Retrieve DOM from URL.'''
-        resp = self.get_web_page()
-        self._get_content(resp)
 
     def _get_content(self, page):
         '''Get complete article content.'''
