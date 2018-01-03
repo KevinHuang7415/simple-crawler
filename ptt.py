@@ -158,6 +158,12 @@ class Board(Page):
         return articles_meta
 
 
+_AUTHOR = '作者'
+_BOARD = '看板'
+_TITLE = '標題'
+_TIME = '時間'
+
+
 def _combine(key, value):
     '''A helper function to combine key-value pair'''
     return '  '.join([key, value])
@@ -165,11 +171,6 @@ def _combine(key, value):
 
 class Article(Page):
     """description of class"""
-
-    AUTHOR = '作者'
-    BOARD = '看板'
-    TITLE = '標題'
-    TIME = '時間'
 
     def __init__(self, board_name, **meta):
         self.board_name = board_name
@@ -197,10 +198,10 @@ class Article(Page):
         create_time = self._get_create_time()
 
         meta = []
-        meta.append(_combine(self.AUTHOR, self.meta['author']))
-        meta.append(_combine(self.BOARD, self.board_name))
-        meta.append(_combine(self.TITLE, self.meta['title']))
-        meta.append(_combine(self.TIME, create_time) + '\n\n')
+        meta.append(_combine(_AUTHOR, self.meta['author']))
+        meta.append(_combine(_BOARD, self.board_name))
+        meta.append(_combine(_TITLE, self.meta['title']))
+        meta.append(_combine(_TIME, create_time) + '\n\n')
         meta.append(after)
 
         return sep.join(meta)
@@ -211,6 +212,6 @@ class Article(Page):
         return next(
             (metaline.find('span', 'article-meta-value').text
              for metaline in metalines
-             if metaline.find('span', 'article-meta-tag').text == self.TIME),
+             if metaline.find('span', 'article-meta-tag').text == _TIME),
             None
         )
