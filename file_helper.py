@@ -2,13 +2,14 @@
 Helper functions for file operations.
 '''
 import errno
+import logging
 import os
 from os import path
 import re
-import sys
 
 
 _PATTERN = re.compile(r'[.\\/:*?"<>|\r\n]')
+LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
 
 
 def format_filename(name):
@@ -18,10 +19,13 @@ def format_filename(name):
 
 def create_dir_if_not_exist(dir_path):
     '''Create the directory if it does not exist.'''
+    LOGGER.info('create directory [%s].', dir_path)
+
     try:
         os.makedirs(dir_path)
     except OSError as err:
         if err.errno != errno.EEXIST:
+            LOGGER.error('Failed to write file.', exc_info=True)
             raise
 
 
@@ -30,9 +34,8 @@ def write_article(article, title, dir_path):
     filename = format_filename(title) + '.txt'
 
     with open(path.join(dir_path, filename), 'w', encoding='utf-8') as file:
+        LOGGER.debug('Write article with filename [%s].', filename)
         try:
             file.write(article)
-        except IOError as err:
-            print('I/O error on writing file {0}({1}): {2}'.format(filename, err.errno, err.strerror))
-        except:
-            print("Unexpected error on writing file {0}:{1}".format(filename, sys.exc_info()[0]))
+        except Exception:
+            LOGGER.error('Failed to write file.', exc_info=True)

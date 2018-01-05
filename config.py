@@ -2,10 +2,12 @@
 Configuration utility module.
 '''
 import configparser
+import logging
 import os
 import singleton
 
 DEFAULT_FILE = r'config\ptt_crawler.conf'
+LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
 DEFAULT_CONFIGS = {
     'Crawler': {
         'term_date': 10,
@@ -54,10 +56,13 @@ class Config(singleton.Singleton):
         try:
             return method(section, option)
         except configparser.NoSectionError:
-            print('Section {} not exists.'.format(section))
+            LOGGER.error('Section [%s] not exists.', section)
             return None
         except configparser.NoOptionError:
-            print('Option {} not exists in section {}.'.format(option, section))
+            LOGGER.error(
+                'Option [%s] not exists in section [%s].',
+                option, section
+            )
             return None
 
     def get(self, section, option):

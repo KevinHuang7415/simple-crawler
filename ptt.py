@@ -1,10 +1,13 @@
 '''
 Definitions about HTML BBS elements.
 '''
+import logging
 import time
 import requests
 from bs4 import BeautifulSoup
 import datetime_helper
+
+LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
 
 
 class Page:
@@ -37,7 +40,7 @@ class Page:
     def _get_web_page(self, sleep_time=0.4):
         '''Get web page content.'''
         if not self.url:
-            print('URL is not set.')
+            LOGGER.error('URL is not set.')
             raise ValueError
 
         # to avoid being detected as DDOS
@@ -47,7 +50,11 @@ class Page:
         if resp.status_code == 200:
             return resp.text
 
-        print('Invalid URL:', resp.url, '  , status code', resp.status_code)
+        LOGGER.warning(
+            'Invalid URL:[%s] , status code [%d]',
+            resp.url,
+            resp.status_code
+        )
         return None
 
     def _get_content(self, page):
@@ -80,7 +87,7 @@ class Board(Page):
     def find_prev_page_url(self):
         '''Find URL of previous page.'''
         if not self.dom:
-            print('No content for parsing.')
+            LOGGER.error('No content for parsing previous page link.')
             raise ValueError
 
         div_paging = self.dom.find('div', 'btn-group btn-group-paging')
@@ -92,6 +99,7 @@ class Board(Page):
             self.url = btn_prev_page['href']
             return
 
+        LOGGER.info('No previous page link found.')
         self.url = None
 
     def get_articles_meta(self):
@@ -110,7 +118,7 @@ class Board(Page):
         '''Get all blocks that contain article meta.'''
         dom = self.dom
         if not dom:
-            print('No content for parsing.')
+            LOGGER.error('No content for parsing article blocks.')
             raise ValueError
 
         # articles under separation (aka pinned posts) should be ignored
@@ -153,6 +161,7 @@ class Board(Page):
                 break
 
         if count > len(articles_meta):
+            LOGGER.info('Term date reached.')
             self.set_url()
 
         return articles_meta
@@ -196,6 +205,11 @@ class Article(Page):
         '''Get complete article content.'''
         _, sep, after = self.dom.text.partition('\n')
         create_time = self._get_create_time()
+        LOGGER.debug(
+            'Article [%s](%s) created at [%s]',
+            self.meta['title'],
+            self.url,
+            create_time)
 
         meta = []
         meta.append(_combine(_AUTHOR, self.meta['author']))

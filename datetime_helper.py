@@ -2,6 +2,9 @@
 Helper functions for date-time.
 '''
 from datetime import date, timedelta
+import logging
+
+LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
 
 
 def to_ptt_date_format(date_obj):
@@ -23,7 +26,7 @@ def _gen_date(ptt_date):
         # set 2/28 to last year can fit current scenario
         if month == 2 and day == 29:
             return date(year - 1, 2, 28)
-        print('Error exists on date {y}/{m}/{d}'.format(y=year, m=month, d=day))
+        LOGGER.error('Error exists on date [%d/%d/%d]', year, month, day)
         return None
 
 
@@ -36,9 +39,13 @@ def _check_date_earlier(this_day, days):
 def check_expired(ptt_date, term_date=15):
     '''Check if the date in PTT format expired.'''
     if term_date < 0:
-        print('Given term date being later than today is illegal.')
+        LOGGER.warning(
+            'Given term date being later than today is illegal: [%d]',
+            term_date
+        )
         return True
 
+    LOGGER.debug('Input date: [%s]', ptt_date)
     date_obj = _gen_date(ptt_date)
     if not date_obj:
         return True
