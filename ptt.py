@@ -189,9 +189,11 @@ class Article(Page):
         self.dom = None
 
     def __str__(self):
-        page = super().__str__()
-        article = 'Article: \'{0}  -  {1}\''.format(self.meta['date'], self.meta['title'])
-        return '\n'.join([article, page])
+        page_str = super().__str__()
+        date = self.meta['date']
+        title = self.meta['title']
+        article = 'Article: \'{0}  -  {1}\''.format(date, title)
+        return '\n'.join([article, page_str])
 
     def _get_content(self, page):
         '''Get complete article content.'''
@@ -211,14 +213,14 @@ class Article(Page):
             self.url,
             create_time)
 
-        meta = []
-        meta.append(_combine(_AUTHOR, self.meta['author']))
-        meta.append(_combine(_BOARD, self.board_name))
-        meta.append(_combine(_TITLE, self.meta['title']))
-        meta.append(_combine(_TIME, create_time) + '\n\n')
-        meta.append(after)
+        contents = []
+        contents.append(_combine(_AUTHOR, self.meta['author']))
+        contents.append(_combine(_BOARD, self.board_name))
+        contents.append(_combine(_TITLE, self.meta['title']))
+        contents.append(_combine(_TIME, create_time) + '\n\n')
+        contents.append(after)
 
-        return sep.join(meta)
+        return sep.join(contents)
 
     def _get_create_time(self):
         '''Get create time of this article.'''
