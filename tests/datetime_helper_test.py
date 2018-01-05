@@ -39,13 +39,6 @@ class DatetimeHelperTestCase(unittest.TestCase):
             ]
             cls.test_cases[term_date] = zip(dates, term_dates[term_date])
 
-    def test__gen_date(self):
-        '''Unit test for datetime_helper._gen_date.'''
-        for dates in self.dates.values():
-            ptt_date = dates[0]
-            expect = dates[1]
-            self.assertEqual(datetime_helper._gen_date(ptt_date), expect)
-
     def test_to_ptt_date_format(self):
         '''Unit test for datetime_helper.to_ptt_date_format.'''
         expect = date.today().strftime("%m/%d").lstrip('0')
@@ -64,11 +57,6 @@ class DatetimeHelperTestCase(unittest.TestCase):
             ptt_date = datetime_helper.to_ptt_date_format()
 
         self.assertEqual(ptt_date, expect)
-
-    @unittest.skip("just skipping")
-    def test__check_date_earlier(self):
-        '''Unit test for datetime_helper._check_date_earlier.'''
-        self.fail("Not implemented")
 
     def test_check_expired(self):
         '''Unit test for pdatetime_helper.check_expired.'''

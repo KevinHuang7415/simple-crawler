@@ -116,47 +116,6 @@ class BoardTestCase(unittest.TestCase):
         for index, expect in enumerate(expects):
             self.compare_meta(articles_meta[index], expect)
 
-    def test__get_article_blocks(self):
-        '''Unit test for ptt.Board._get_article_blocks.'''
-        for index, board in enumerate(self.boards.values()):
-            self._get_article_blocks(
-                board,
-                len(self.expects[index]['articles_meta'])
-            )
-
-        board = ptt.Board(self.BOARD_NAME, 11)
-        board._get_content(None)
-        with self.assertRaises(ValueError):
-            board._get_article_blocks()
-
-    def _get_article_blocks(self, board, expect):
-        '''A helper function for test__get_article_blocks.'''
-        article_blocks = [
-            article_block
-            for article_block in board._get_article_blocks()
-            if article_block.find('a')
-        ]
-
-        self.assertEqual(len(article_blocks), expect)
-
-    def test__get_article_meta(self):
-        '''Unit test for ptt.Board._get_article_meta.'''
-        for index, board in enumerate(self.boards.values()):
-            self._get_article_meta(
-                board,
-                self.expects[index]['articles_meta'][0]
-            )
-
-    def _get_article_meta(self, board, expect):
-        '''A helper function for test__get_article_meta.'''
-        article_meta = next(
-            board._get_article_meta(article_block)
-            for article_block in board._get_article_blocks()
-            if article_block.find('a')
-        )
-
-        self.compare_meta(article_meta, expect)
-
     def test_remove_expired(self):
         '''Unit test for ptt.Board.remove_expired.'''
         for index, board in enumerate(self.boards.values()):
@@ -238,23 +197,6 @@ class ArticleTestCase(unittest.TestCase):
         content = article.format_article()
         self.assertEqual(len(content), len(expect))
         # self.assertEqual(article.format_article(), expect)
-
-    def test__get_create_time(self):
-        '''Unit test for ptt.Article._get_create_time.'''
-        for index, article in enumerate(self.articles.values()):
-            self._get_create_time(article, self.expects[index]['create_time'])
-
-        article = ptt.Article(
-            self.meta[0]['board_name'],
-            **self.meta[0]['article_meta']
-        )
-        article._get_content(None)
-        with self.assertRaises(ValueError):
-            article._get_create_time()
-
-    def _get_create_time(self, article, expect):
-        '''A helper function for test__get_create_time.'''
-        self.assertEqual(article._get_create_time(), expect)
 
 
 if __name__ == '__main__':
