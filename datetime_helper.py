@@ -53,13 +53,14 @@ def check_expired(ptt_date, term_date=15):
     earlier, days_diff = _check_date_earlier(date_obj, 0)
     if earlier:
         return days_diff >= term_date
-    else:
-        # no article date can be later in reality
-        # set year to last year can fit current scenario
-        try:
-            date_obj = date_obj.replace(year=date_obj.year - 1)
-            return _check_date_earlier(date_obj, term_date)[0]
-        # case for 2/29
-        except ValueError:
-            date_obj = date_obj + (date(date_obj.year - 1, 3, 1) - date(date_obj.year, 3, 1))
-            return _check_date_earlier(date_obj, term_date)[0]
+
+    # no article date can be later in reality
+    # set year to last year can fit current scenario
+    try:
+        date_obj = date_obj.replace(year=date_obj.year - 1)
+        return _check_date_earlier(date_obj, term_date)[0]
+    # case for 2/29
+    except ValueError:
+        days = date(date_obj.year - 1, 3, 1) - date(date_obj.year, 3, 1)
+        date_obj += days
+        return _check_date_earlier(date_obj, term_date)[0]
