@@ -6,6 +6,7 @@ import logging.config
 import config
 import datetime_helper
 import file_helper
+import log_config
 import ptt
 
 CONFIG = config.Config()
@@ -20,8 +21,7 @@ def setup():
     except ValueError:
         CONFIG.use_default = True
 
-    logger_path = CONFIG.get('Log', 'conf')
-    logging.config.fileConfig(logger_path, disable_existing_loggers=False)
+    logging.config.dictConfig(log_config.LOGGING)
 
     file_helper.create_dir_if_not_exist(CONFIG.get(SECTION, 'data_path'))
 
