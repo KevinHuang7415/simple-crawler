@@ -34,7 +34,7 @@ def crawler():
 
     board_name = CONFIG.get(SECTION, 'board')
     board = ptt.Board(board_name, term_date)
-    LOGGER.info('Retrive articles from board [%s] board_name.', board_name)
+    LOGGER.info('Retrive articles from board [%s].', board_name)
 
     while board.url:
         board.retrieve_dom(0)
