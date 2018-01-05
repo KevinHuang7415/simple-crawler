@@ -4,6 +4,7 @@ Main functions for crawler.
 import logging
 import logging.config
 import config
+import datetime_helper
 import file_helper
 import ptt
 
@@ -28,6 +29,7 @@ def setup():
 def crawler():
     '''Grab all articles in recent days.'''
     term_date = CONFIG.getint(SECTION, 'term_date')
+    LOGGER.info('Start date:[%s]', datetime_helper.to_ptt_date_format())
     LOGGER.info('Term date as [%d] days.', term_date)
 
     board_name = CONFIG.get(SECTION, 'board')

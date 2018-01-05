@@ -7,7 +7,7 @@ import logging
 LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
 
 
-def to_ptt_date_format(date_obj):
+def to_ptt_date_format(date_obj=date.today()):
     '''Date time object to PTT format string.'''
     return date_obj.strftime("%m/%d").lstrip('0')
 

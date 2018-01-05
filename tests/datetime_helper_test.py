@@ -48,6 +48,9 @@ class DatetimeHelperTestCase(unittest.TestCase):
 
     def test_to_ptt_date_format(self):
         '''Unit test for datetime_helper.to_ptt_date_format.'''
+        expect = date.today().strftime("%m/%d").lstrip('0')
+        self.to_ptt_date_format(None, expect)
+
         year = self.year
         self.to_ptt_date_format(date(year=year, month=2, day=28), '2/28')
         self.to_ptt_date_format(date(year=year, month=12, day=28), '12/28')
@@ -55,7 +58,12 @@ class DatetimeHelperTestCase(unittest.TestCase):
 
     def to_ptt_date_format(self, this_day, expect):
         '''A helper function for test_to_ptt_date_format.'''
-        self.assertEqual(datetime_helper.to_ptt_date_format(this_day), expect)
+        if this_day:
+            ptt_date = datetime_helper.to_ptt_date_format(this_day)
+        else:
+            ptt_date = datetime_helper.to_ptt_date_format()
+
+        self.assertEqual(ptt_date, expect)
 
     @unittest.skip("just skipping")
     def test__check_date_earlier(self):
