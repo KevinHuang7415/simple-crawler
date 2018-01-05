@@ -6,13 +6,13 @@ from tests.helper import read_file, load_json
 import ptt
 
 
-class PageTestCase(unittest.TestCase):
+class AbstractPageTestCase(unittest.TestCase):
     '''Test cases for ptt.Page.'''
 
     @classmethod
     def setUpClass(cls):
         '''The class level setup.'''
-        cls.page = ptt.Page()
+        cls.page = ptt.AbstractPage()
 
     def test_set_url(self):
         '''Unit test for ptt.Page.set_url.'''

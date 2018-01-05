@@ -10,7 +10,7 @@ import datetime_helper
 LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
 
 
-class Page:
+class AbstractPage:
     """description of class"""
 
     PTT_URL = 'https://www.ptt.cc'
@@ -55,7 +55,7 @@ class Page:
         raise NotImplementedError
 
 
-class Board(Page):
+class Board(AbstractPage):
     """description of class"""
 
     def __init__(self, board_name, term_date=10):
@@ -179,7 +179,7 @@ def _combine(key, value):
     return '  '.join([key, value])
 
 
-class Article(Page):
+class Article(AbstractPage):
     """description of class"""
 
     def __init__(self, board_name, **meta):
