@@ -17,20 +17,14 @@ class Page:
 
     def __init__(self):
         self.url = None
-        self.set_url(use_join=True)
+        self.set_url()
 
     def __str__(self):
         return str('At page: \'{0}\''.format(self.url))
 
-    def set_url(self, uri=None, use_join=False):
-        '''Setup the URL for page.'''
-        if not use_join:
-            self.url = uri
-        else:
-            if uri:
-                self.url = '/'.join(['/bbs', uri, 'index.html'])
-            else:
-                self.url = '/bbs/index.html'
+    def set_url(self, uri=None):
+        '''Setup the URL with full uri.'''
+        self.url = uri
 
     def retrieve_dom(self, sleep_time=0.4):
         '''Retrieve DOM from URL.'''
@@ -67,7 +61,7 @@ class Board(Page):
     def __init__(self, board_name, term_date=10):
         self.board_name = board_name
         self.url = None
-        self.set_url(board_name, True)
+        self.set_url(board_name)
         self.term_date = term_date
         self.latest_page = True
         self.dom = None
@@ -76,6 +70,13 @@ class Board(Page):
         page = super().__str__()
         board = 'In board: \'{0}\''.format(self.board_name)
         return '\n'.join([board, page])
+
+    def set_url(self, uri=None):
+        '''Setup the URL with board name.'''
+        if uri:
+            self.url = '/'.join(['/bbs', uri, 'index.html'])
+        else:
+            self.url = None
 
     def _get_content(self, page):
         '''Transfer HTML content to BeautifulSoup object'''

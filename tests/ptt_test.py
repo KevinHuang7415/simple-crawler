@@ -21,25 +21,15 @@ class PageTestCase(unittest.TestCase):
         page.set_url()
         self.assertEqual(page.url, None)
 
-        page.set_url(use_join=True)
-        self.assertEqual(page.url, '/bbs/index.html')
-
-        uri = 'board'
+        uri = 'board/index.html'
         page.set_url(uri)
         self.assertEqual(page.url, uri)
-
-        page.set_url(uri, True)
-        self.assertEqual(page.url, '/bbs/{0}/index.html'.format(uri))
 
     # TODO use mock to avoid real internet access
     def test_retrieve_dom(self):
         '''Unit test for ptt.Page.retrieve_dom.'''
         self.page.set_url()
         with self.assertRaises(ValueError):
-            self.page.retrieve_dom()
-
-        self.page.set_url(use_join=True)
-        with self.assertRaises(NotImplementedError):
             self.page.retrieve_dom()
 
 
@@ -71,11 +61,22 @@ class BoardTestCase(unittest.TestCase):
     def setUp(self):
         '''The test case level setup.'''
         for index, board in enumerate(self.boards.values()):
-            board.set_url(self.BOARD_NAME, True)
+            board.set_url(self.BOARD_NAME)
             board._get_content(self.pages[index])
 
         self.boards[0].latest_page = True
         self.boards[1].latest_page = False
+
+    def test_set_url(self):
+        '''Unit test for ptt.Board.set_url.'''
+        board_name = self.BOARD_NAME
+        board = ptt.Board(board_name, 11)
+
+        board.set_url()
+        self.assertEqual(board.url, None)
+
+        board.set_url(board_name)
+        self.assertEqual(board.url, '/bbs/{0}/index.html'.format(board_name))
 
     # TODO use mock to avoid real internet access
     def test_retrieve_dom(self):
