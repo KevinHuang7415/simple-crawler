@@ -1,9 +1,12 @@
 '''
 Unit tests for ptt module.
 '''
+import logging
 import unittest
 from tests.helper import read_file, load_json
 import ptt
+
+logging.disable(logging.CRITICAL)
 
 
 class AbstractPageTestCase(unittest.TestCase):

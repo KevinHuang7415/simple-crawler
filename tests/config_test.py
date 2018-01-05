@@ -1,9 +1,12 @@
 '''
 Unit tests for config module.
 '''
+import logging
 import os
 import unittest
 import config
+
+logging.disable(logging.CRITICAL)
 
 
 class ConfigTestCase(unittest.TestCase):

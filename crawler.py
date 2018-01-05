@@ -26,6 +26,10 @@ def setup():
     file_helper.create_dir_if_not_exist(CONFIG.get(SECTION, 'data_path'))
 
 
+def shutdown():
+    logging.shutdown()
+
+
 def crawler():
     '''Grab all articles in recent days.'''
     term_date = CONFIG.getint(SECTION, 'term_date')
@@ -89,7 +93,7 @@ def main():
     except Exception:
         LOGGER.error('Unexpected error.', exc_info=True)
     finally:
-        logging.shutdown()
+        shutdown()
 
 
 if __name__ == '__main__':

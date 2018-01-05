@@ -1,11 +1,14 @@
 '''
 Unit tests for crawler module.
 '''
+import logging
 import os
 import unittest
 from tests.helper import read_file, load_json
 import crawler
 import ptt
+
+logging.disable(logging.CRITICAL)
 
 
 class CrawlerTestCase(unittest.TestCase):
@@ -39,11 +42,16 @@ class CrawlerTestCase(unittest.TestCase):
 
             cls.contents[index] = cls.articles[index].format_article()
 
+    def setUp(self):
+        '''The test case level setup.'''
         crawler.setup()
+
+    def tearDown(self):
+        '''The test case level clean-up.'''
+        crawler.shutdown()
 
     def test_setup(self):
         '''Unit test for crawler.setup.'''
-        crawler.setup()
         data_path = crawler.CONFIG.get('Crawler', 'data_path')
         self.assertTrue(os.path.isdir(data_path))
 

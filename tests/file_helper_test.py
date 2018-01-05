@@ -1,9 +1,12 @@
 '''
 Unit tests for file_helper module.
 '''
+import logging
 import os
 import unittest
 import file_helper
+
+logging.disable(logging.CRITICAL)
 
 
 class FileHelperTestCase(unittest.TestCase):

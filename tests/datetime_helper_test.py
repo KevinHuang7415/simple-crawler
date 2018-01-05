@@ -1,9 +1,12 @@
 '''
 Unit tests for datetime_helper module.
 '''
+import logging
 import unittest
 from datetime import date, timedelta
 import datetime_helper
+
+logging.disable(logging.CRITICAL)
 
 
 class DatetimeHelperTestCase(unittest.TestCase):
