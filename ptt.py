@@ -19,8 +19,8 @@ class AbstractPage:
         self.url = None
         self.set_url()
 
-    def __str__(self):
-        return str('At page: \'{0}\''.format(self.url))
+    def __repr__(self):
+        return (f'{self.__class__.__name__}('')')
 
     def set_url(self, uri=None):
         '''Setup the URL with full uri.'''
@@ -66,10 +66,12 @@ class Board(AbstractPage):
         self.latest_page = True
         self.dom = None
 
-    def __str__(self):
-        page = super().__str__()
-        board = 'In board: \'{0}\''.format(self.board_name)
-        return '\n'.join([board, page])
+    def __repr__(self):
+        return (
+            f'{self.__class__.__name__}('
+            f'{self.board_name!r}, \
+{self.term_date!r}, {self.url!r}, {self.latest_page!r})'
+        )
 
     def set_url(self, uri=None):
         '''Setup the URL with board name.'''
@@ -188,12 +190,8 @@ class Article(AbstractPage):
         self.meta = meta
         self.dom = None
 
-    def __str__(self):
-        page_str = super().__str__()
-        date = self.meta['date']
-        title = self.meta['title']
-        article = 'Article: \'{0}  -  {1}\''.format(date, title)
-        return '\n'.join([article, page_str])
+    def __repr__(self):
+        return (f'{self.__class__.__name__}('f'{self.meta!r})')
 
     def _get_content(self, page):
         '''Get complete article content.'''

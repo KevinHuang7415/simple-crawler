@@ -27,6 +27,12 @@ class Config(singleton.Singleton):
             self.config = configparser.ConfigParser()
             self.__use_default = False
 
+    def __repr__(self):
+        return (
+            f'{self.__class__.__name__}('
+            f'{self.PATH!r}, {self.__use_default!r})'
+        )
+
     @property
     def use_default(self):
         '''Getter of use_default'''
