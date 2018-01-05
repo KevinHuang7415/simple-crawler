@@ -57,8 +57,8 @@ class BoardTestCase(unittest.TestCase):
     def setUpClass(cls):
         '''The class level setup.'''
         cls.boards = {}
-        cls.boards[0] = ptt.Board(cls.BOARD_NAME, 9)
-        cls.boards[1] = ptt.Board(cls.BOARD_NAME, 9)  # 7 when 1/1
+        cls.boards[0] = ptt.Board(cls.BOARD_NAME, 11)
+        cls.boards[1] = ptt.Board(cls.BOARD_NAME, 11)  # 7 when 1/1
 
         cls.pages = {}
         cls.pages[0] = read_file('testdata_input_board_1.html')
@@ -123,6 +123,11 @@ class BoardTestCase(unittest.TestCase):
                 board,
                 len(self.expects[index]['articles_meta'])
             )
+
+        board = ptt.Board(self.BOARD_NAME, 11)
+        board._get_content(None)
+        with self.assertRaises(ValueError):
+            board._get_article_blocks()
 
     def _get_article_blocks(self, board, expect):
         '''A helper function for test__get_article_blocks.'''
@@ -224,7 +229,7 @@ class ArticleTestCase(unittest.TestCase):
         '''A helper function for test_format_article.'''
         content = article.format_article()
         self.assertEqual(len(content), len(expect))
-        #self.assertEqual(article.format_article(), expect)
+        # self.assertEqual(article.format_article(), expect)
 
     def test__get_create_time(self):
         '''Unit test for ptt.Article._get_create_time.'''
