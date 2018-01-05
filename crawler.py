@@ -89,10 +89,7 @@ def main():
     except Exception:
         LOGGER.error('Unexpected error.', exc_info=True)
     finally:
-        handlers = LOGGER.handlers[:]
-        for handler in handlers:
-            handler.close()
-            LOGGER.removeHandler(handler)
+        logging.shutdown()
 
 
 if __name__ == '__main__':
