@@ -50,9 +50,8 @@ class CrawlerTestCase(unittest.TestCase):
     @unittest.skip("just skipping")
     def test_crawler(self):
         '''Unit test for crawler.crawler.'''
-        #crawler.crawler()
-        #self.fail("Not implemented")
-        pass
+        crawler.crawler()
+        self.fail("Not implemented")
 
     def test_parse_board(self):
         '''Unit test for crawler.parse_board.'''

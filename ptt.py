@@ -105,13 +105,12 @@ class Board(AbstractPage):
 
     def get_articles_meta(self):
         '''Retrieve meta for all articles in current page.'''
-        article_blocks = self._get_article_blocks()
 
         # not to retrieve delete article which looks like
         # <div class="title"> (本文已被刪除) [author] </div>
         return [
             self._get_article_meta(article_block)
-            for article_block in article_blocks
+            for article_block in self._get_article_blocks()
             if article_block.find('a')
         ]
 
