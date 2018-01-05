@@ -225,6 +225,14 @@ class ArticleTestCase(unittest.TestCase):
         for index, article in enumerate(self.articles.values()):
             self.format_article(article, self.expects[index]['article'])
 
+        article = ptt.Article(
+            self.meta[0]['board_name'],
+            **self.meta[0]['article_meta']
+        )
+        article._get_content(None)
+        with self.assertRaises(ValueError):
+            article.format_article()
+
     def format_article(self, article, expect):
         '''A helper function for test_format_article.'''
         content = article.format_article()
@@ -235,6 +243,14 @@ class ArticleTestCase(unittest.TestCase):
         '''Unit test for ptt.Article._get_create_time.'''
         for index, article in enumerate(self.articles.values()):
             self._get_create_time(article, self.expects[index]['create_time'])
+
+        article = ptt.Article(
+            self.meta[0]['board_name'],
+            **self.meta[0]['article_meta']
+        )
+        article._get_content(None)
+        with self.assertRaises(ValueError):
+            article._get_create_time()
 
     def _get_create_time(self, article, expect):
         '''A helper function for test__get_create_time.'''

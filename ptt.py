@@ -205,7 +205,12 @@ class Article(Page):
 
     def format_article(self):
         '''Get complete article content.'''
-        _, sep, after = self.dom.text.partition('\n')
+        dom = self.dom
+        if not dom:
+            LOGGER.error('No content for parsing article.')
+            raise ValueError
+
+        _, sep, after = dom.text.partition('\n')
         create_time = self._get_create_time()
         LOGGER.debug(
             'Article [%s](%s) created at [%s]',
@@ -224,7 +229,12 @@ class Article(Page):
 
     def _get_create_time(self):
         '''Get create time of this article.'''
-        metalines = self.dom.find_all('div', 'article-metaline')
+        dom = self.dom
+        if not dom:
+            LOGGER.error('No content for parsing create time.')
+            raise ValueError
+
+        metalines = dom.find_all('div', 'article-metaline')
         return next(
             (metaline.find('span', 'article-meta-value').text
              for metaline in metalines
