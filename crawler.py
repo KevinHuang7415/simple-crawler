@@ -19,7 +19,7 @@ def setup():
     try:
         CONFIG.load()
     except ValueError:
-        CONFIG.use_default = True
+        CONFIG.load_default()
 
     logging.config.dictConfig(log_config.LOGGING)
 

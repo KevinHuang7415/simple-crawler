@@ -19,6 +19,11 @@ class ConfigTestCase(unittest.TestCase):
         cls.config_name = r'tests\test.conf'
         cls.config.load(os.path.abspath(cls.config_name))
 
+    def test_load_default(self):
+        '''Unit test for config.load_default.'''
+        self.config.load_default()
+        self.assertTrue(self.config.config.has_option('Crawler', 'board'))
+
     def test_load(self):
         '''Unit test for config.load.'''
         with self.assertRaises(ValueError):

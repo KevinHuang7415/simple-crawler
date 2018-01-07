@@ -25,29 +25,13 @@ class Config(singleton.Singleton):
     def __init__(self):
         if not self.PATH:
             self.config = configparser.ConfigParser()
-            self.__use_default = False
 
     def __repr__(self):
-        return (
-            f'{self.__class__.__name__}('
-            f'{self.PATH!r}, {self.__use_default!r})'
-        )
+        return (f'{self.__class__.__name__}('f'{self.PATH!r})')
 
-    @property
-    def use_default(self):
-        '''Getter of use_default'''
-        return self.__use_default
-
-    @use_default.setter
-    def use_default(self, value):
-        '''Setter of use_default'''
-        if self.__use_default != value:
-            self.config.clear()
-
-            if value is True:
-                self.config.read_dict(DEFAULT_CONFIGS)
-
-        self.__use_default = value
+    def load_default(self):
+        self.config.clear()
+        self.config.read_dict(DEFAULT_CONFIGS)
 
     def load(self, path=DEFAULT_FILE):
         '''Load the configuration file.'''
