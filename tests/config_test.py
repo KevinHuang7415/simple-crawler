@@ -30,13 +30,10 @@ class ConfigTestCase(unittest.TestCase):
             self.config.load('no_this_config')
 
         self.config.load()
-        section = 'Crawler'
-        option = 'board'
-        value = config.DEFAULT_CONFIGS[section][option]
-        self.get_value(self.config.get, section, option, value)
+        self.assertTrue(self.config.config.has_option('Crawler', 'board'))
 
         self.config.load(os.path.abspath(self.config_name))
-        self.assertNotEqual(self.config.config['Test'], None)
+        self.assertTrue(self.config.config.has_section('Test'))
 
     def test_get(self):
         '''Unit test for config.get.'''
