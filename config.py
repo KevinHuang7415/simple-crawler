@@ -25,9 +25,10 @@ class Config(singleton.Singleton):
         self.path = None
 
     def __repr__(self):
-        return (f'{self.__class__.__name__}('f'{self.path!r})')
+        return f'{self.__class__.__name__}('f'{self.path!r})'
 
     def load_default(self):
+        '''Load configuration using default dictionary.'''
         self.config.clear()
         self.config.read_dict(DEFAULT_CONFIGS)
 

@@ -20,7 +20,7 @@ class AbstractPage:
         self.set_url()
 
     def __repr__(self):
-        return (f'{self.__class__.__name__}('')')
+        return f'{self.__class__.__name__}('')'
 
     def set_url(self, uri=None):
         '''Setup the URL with full uri.'''
@@ -59,6 +59,7 @@ class Board(AbstractPage):
     """description of class"""
 
     def __init__(self, board_name, term_date=10):
+        super().__init__()
         self.board_name = board_name
         self.url = None
         self.set_url(board_name)
@@ -184,6 +185,7 @@ class Article(AbstractPage):
     """description of class"""
 
     def __init__(self, board_name, **meta):
+        super().__init__()
         self.board_name = board_name
         self.url = None
         self.set_url(meta['href'])
@@ -191,7 +193,7 @@ class Article(AbstractPage):
         self.dom = None
 
     def __repr__(self):
-        return (f'{self.__class__.__name__}('f'{self.meta!r})')
+        return f'{self.__class__.__name__}('f'{self.meta!r})'
 
     def _get_content(self, page):
         '''Get complete article content.'''

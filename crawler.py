@@ -27,6 +27,7 @@ def setup():
 
 
 def shutdown():
+    '''Prepare for shutdown.'''
     logging.shutdown()
 
 
