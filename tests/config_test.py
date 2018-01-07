@@ -26,13 +26,19 @@ class ConfigTestCase(unittest.TestCase):
 
     def test_load(self):
         '''Unit test for config.load.'''
+        path = self.config.path
         with self.assertRaises(ValueError):
             self.config.load('no_this_config')
+            self.assertEqual(self.config.path, path)
 
+        path = os.path.abspath(config.DEFAULT_FILE)
         self.config.load()
+        self.assertEqual(self.config.path, path)
         self.assertTrue(self.config.config.has_option('Crawler', 'board'))
 
-        self.config.load(os.path.abspath(self.config_name))
+        path = os.path.abspath(self.config_name)
+        self.config.load(path)
+        self.assertEqual(self.config.path, path)
         self.assertTrue(self.config.config.has_section('Test'))
 
     def test_get(self):

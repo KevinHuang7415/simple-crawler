@@ -33,11 +33,15 @@ class Config(singleton.Singleton):
 
     def load(self, path=DEFAULT_FILE):
         '''Load the configuration file.'''
-        self.path = os.path.abspath(path)
+        new_path = os.path.abspath(path)
+        new_config = configparser.ConfigParser()
 
-        if not self.config.read(self.PATH):
-            msg = 'Failed to open configuration file: {0}'.format(self.PATH)
+        if not new_config.read(new_path):
+            msg = 'Failed to open configuration file: {0}'.format(new_path)
             raise ValueError(msg)
+
+        self.config = new_config
+        self.path = new_path
 
     def __get_value(self, method, section, option):
         '''Fetch a value from configuration.'''
