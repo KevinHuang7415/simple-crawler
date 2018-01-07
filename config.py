@@ -20,14 +20,12 @@ DEFAULT_CONFIGS = {
 class Config(singleton.Singleton):
     """description of class"""
 
-    PATH = None
-
     def __init__(self):
-        if not self.PATH:
-            self.config = configparser.ConfigParser()
+        self.config = configparser.ConfigParser()
+        self.path = None
 
     def __repr__(self):
-        return (f'{self.__class__.__name__}('f'{self.PATH!r})')
+        return (f'{self.__class__.__name__}('f'{self.path!r})')
 
     def load_default(self):
         self.config.clear()
@@ -35,7 +33,7 @@ class Config(singleton.Singleton):
 
     def load(self, path=DEFAULT_FILE):
         '''Load the configuration file.'''
-        self.PATH = os.path.abspath(path)
+        self.path = os.path.abspath(path)
 
         if not self.config.read(self.PATH):
             msg = 'Failed to open configuration file: {0}'.format(self.PATH)
