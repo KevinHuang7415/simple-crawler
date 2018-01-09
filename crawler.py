@@ -50,6 +50,8 @@ def crawler():
             article = retrieve_article(**article_meta)
             save_article(article, **article_meta)
 
+    LOGGER.info('Job finished.')
+
 
 def parse_board(board):
     '''Parse board page for required information.'''
