@@ -4,8 +4,8 @@ Definitions about HTML BBS elements.
 import logging
 import time
 import requests
-from bs4 import BeautifulSoup
 import datetime_helper
+import dom_operation
 
 LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
 
@@ -84,73 +84,38 @@ class Board(AbstractPage):
     def _get_content(self, page):
         '''Transfer HTML content to BeautifulSoup object'''
         if page:
-            self.dom = BeautifulSoup(page, 'html.parser')
+            self.dom = dom_operation.get_board_content(page)
         else:
             self.dom = None
 
     def find_prev_page_url(self):
         '''Find URL of previous page.'''
-        if not self.dom:
+        dom = self.dom
+        if not dom:
             LOGGER.error('No content for parsing previous page link.')
             raise ValueError
 
-        div_paging = self.dom.find('div', 'btn-group btn-group-paging')
-
-        # 0: earliest, 1: previous, 2: next, 3: latest
-        btn_prev_page = div_paging.find_all('a')[1]
-
-        if btn_prev_page['href']:
-            self.url = btn_prev_page['href']
-            return
-
-        LOGGER.info('No previous page link found.')
-        self.url = None
+        self.url = dom_operation.find_prev_page_url(dom)
+        if not self.url:
+            LOGGER.info('No previous page link found.')
 
     def get_articles_meta(self):
         '''Retrieve meta for all articles in current page.'''
-
-        # not to retrieve delete article which looks like
-        # <div class="title"> (本文已被刪除) [author] </div>
-        return [
-            self._get_article_meta(article_block)
-            for article_block in self._get_article_blocks()
-            if article_block.find('a')
-        ]
-
-    def _get_article_blocks(self):
-        '''Get all blocks that contain article meta.'''
         dom = self.dom
         if not dom:
             LOGGER.error('No content for parsing article blocks.')
             raise ValueError
 
-        # articles under separation (aka pinned posts) should be ignored
-        list_sep = dom.find('div', 'r-list-sep')
+        article_blocks = dom_operation.get_article_blocks(dom, self.latest_page)
+        self.latest_page = False
 
-        if self.latest_page:
-            if list_sep:
-                article_blocks = list_sep.find_all_previous('div', 'r-ent')
-                # reserve to the original order
-                article_blocks = article_blocks[::-1]
-
-            self.latest_page = False
-        else:
-            article_blocks = dom.find_all('div', 'r-ent')
-
-        return article_blocks
-
-    def _get_article_meta(self, dom):
-        '''Get article meta in precise DOM area.'''
-        prop_a = dom.find('a')
-        article_meta = {}
-
-        article_meta['title'] = prop_a.text
-        article_meta['href'] = prop_a['href']
-        # date format mm/dd and prefix for m is space instead of 0
-        article_meta['date'] = dom.find('div', 'date').text.lstrip()
-        article_meta['author'] = dom.find('div', 'author').text
-
-        return article_meta
+        # not to retrieve delete article which looks like
+        # <div class="title"> (本文已被刪除) [author] </div>
+        return [
+            dom_operation.get_article_meta(article_block)
+            for article_block in article_blocks
+            if article_block.find('a')
+        ]
 
     def remove_expired(self, articles_meta):
         '''Remove data in dates which is expired.'''
@@ -198,8 +163,7 @@ class Article(AbstractPage):
     def _get_content(self, page):
         '''Get complete article content.'''
         if page:
-            soup = BeautifulSoup(page, 'html.parser')
-            self.dom = soup.find(id='main-content')
+            self.dom = dom_operation.get_article_content(page)
         else:
             self.dom = None
 
@@ -211,7 +175,7 @@ class Article(AbstractPage):
             raise ValueError
 
         _, sep, after = dom.text.partition('\n')
-        create_time = self._get_create_time()
+        create_time = dom_operation.get_create_time(dom)
         LOGGER.debug(
             'Article [%s](%s) created at [%s]',
             self.meta['title'],
@@ -226,18 +190,3 @@ class Article(AbstractPage):
         contents.append(after)
 
         return sep.join(contents)
-
-    def _get_create_time(self):
-        '''Get create time of this article.'''
-        dom = self.dom
-        if not dom:
-            LOGGER.error('No content for parsing create time.')
-            raise ValueError
-
-        metalines = dom.find_all('div', 'article-metaline')
-        return next(
-            (metaline.find('span', 'article-meta-value').text
-             for metaline in metalines
-             if metaline.find('span', 'article-meta-tag').text == _TIME),
-            None
-        )

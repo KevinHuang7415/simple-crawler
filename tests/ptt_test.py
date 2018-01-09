@@ -101,6 +101,10 @@ class BoardTestCase(unittest.TestCase):
         for index, board in enumerate(self.boards.values()):
             self.find_prev_page_url(board, self.expects[index])
 
+        board = self.build_test_board()
+        with self.assertRaises(ValueError):
+            board.find_prev_page_url()
+
     def find_prev_page_url(self, board, expect):
         '''A helper function for test_find_prev_page_url.'''
         # this condition is decided outside being tested function
@@ -115,6 +119,10 @@ class BoardTestCase(unittest.TestCase):
         '''Unit test for ptt.Board.get_articles_meta.'''
         for index, board in enumerate(self.boards.values()):
             self.get_articles_meta(board, self.expects[index]['articles_meta'])
+
+        board = self.build_test_board()
+        with self.assertRaises(ValueError):
+            board.get_articles_meta()
 
     def get_articles_meta(self, board, expects):
         '''A helper function for test_get_articles_meta.'''
@@ -141,6 +149,12 @@ class BoardTestCase(unittest.TestCase):
         self.assertEqual(act['href'], expect['href'])
         self.assertEqual(act['date'], expect['date'])
         self.assertEqual(act['author'], expect['author'])
+
+    def build_test_board(self):
+        '''Build a temporary board object.'''
+        board = ptt.Board(self.BOARD_NAME, 0)
+        board._get_content(None)
+        return board
 
 
 class ArticleTestCase(unittest.TestCase):
