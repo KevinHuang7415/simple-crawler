@@ -1,6 +1,7 @@
 '''
 Unit tests for ptt module.
 '''
+from datetime import date
 import logging
 import unittest
 from tests.helper import read_file, load_json
@@ -49,9 +50,11 @@ class BoardTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         '''The class level setup.'''
+        date_diff = (date.today() - date(year=2017, month=12, day=25)).days
+
         cls.boards = {}
-        cls.boards[0] = ptt.Board(cls.BOARD_NAME, 11)
-        cls.boards[1] = ptt.Board(cls.BOARD_NAME, 11)  # 7 when 1/1
+        cls.boards[0] = ptt.Board(cls.BOARD_NAME, date_diff)
+        cls.boards[1] = ptt.Board(cls.BOARD_NAME, date_diff)
 
         cls.pages = {}
         cls.pages[0] = read_file('testdata_input_board_1.html')
