@@ -69,9 +69,7 @@ class BoardTestCase(unittest.TestCase):
         for index, board in enumerate(self.boards.values()):
             board.set_url(self.BOARD_NAME)
             board._get_content(self.pages[index])
-
-        self.boards[0].latest_page = True
-        self.boards[1].latest_page = False
+            board.latest_page = self.expects[index]['latest_page']
 
     def test_set_url(self):
         '''Unit test for ptt.Board.set_url.'''
