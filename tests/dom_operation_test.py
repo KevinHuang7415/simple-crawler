@@ -3,7 +3,8 @@ Unit tests for config module.
 '''
 import logging
 import unittest
-from tests.helper import read_files, load_jsons
+import tests.board_helper
+import tests.article_helper
 import dom_operation
 
 logging.disable(logging.CRITICAL)
@@ -18,28 +19,17 @@ class DomOperationTestCase(unittest.TestCase):
     '''Test cases for dom_operation.'''
 
     BOARD_NAME = 'Soft_Job'
-    COUNT_BOARD_TEST_DATA = 2
-    COUNT_ARTICLE_TEST_DATA = 2
 
     @classmethod
     def setUpClass(cls):
         '''The class level setup.'''
         # board part
-        cls.board_pages = read_files(
-            cls.COUNT_BOARD_TEST_DATA,
-            'testdata_input_board_',
-            'html'
-        )
+        cls.board_pages, cls.board_expects = tests.board_helper.setup()
 
         cls.board_dom = [
             dom_operation.get_board_content(board_page)
             for board_page in cls.board_pages
         ]
-
-        cls.board_expects = load_jsons(
-            cls.COUNT_BOARD_TEST_DATA,
-            'expect_board_'
-        )
 
         cls.board_last_page = [
             board_expect['latest_page']
@@ -47,26 +37,12 @@ class DomOperationTestCase(unittest.TestCase):
         ]
 
         # article part
-        cls.article_pages = read_files(
-            cls.COUNT_ARTICLE_TEST_DATA,
-            'testdata_input_article_',
-            'html'
-        )
+        cls.article_pages, cls.article_meta, cls.article_expects = tests.article_helper.setup()
 
         cls.article_dom = [
             dom_operation.get_article_content(article_page)
             for article_page in cls.article_pages
         ]
-
-        cls.article_meta = load_jsons(
-            cls.COUNT_ARTICLE_TEST_DATA,
-            'article_meta_'
-        )
-
-        cls.article_expects = load_jsons(
-            cls.COUNT_ARTICLE_TEST_DATA,
-            'expect_article_'
-        )
 
     def setUp(self):
         '''The test case level setup.'''

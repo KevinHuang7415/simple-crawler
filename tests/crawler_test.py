@@ -4,7 +4,8 @@ Unit tests for crawler module.
 import logging
 import os
 import unittest
-from tests.helper import read_files, load_jsons
+from tests.helper import load_jsons
+import tests.article_helper
 import crawler
 import ptt
 
@@ -14,22 +15,13 @@ logging.disable(logging.CRITICAL)
 class CrawlerTestCase(unittest.TestCase):
     '''Test cases for crawler.'''
 
-    COUNT_TEST_DATA = 3
-
     @classmethod
     def setUpClass(cls):
         '''The class level setup.'''
         cls.path = 'test_path'
 
-        cls.pages = read_files(
-            cls.COUNT_TEST_DATA,
-            'testdata_input_article_',
-            'html'
-        )
-
-        cls.meta = load_jsons(cls.COUNT_TEST_DATA, 'article_meta_')
-
-        cls.expects = load_jsons(cls.COUNT_TEST_DATA, 'expect_crawler_')
+        cls.pages, cls.meta, _ = tests.article_helper.setup()
+        cls.expects = load_jsons(len(cls.pages), 'expect_crawler_')
 
         cls.contents = {}
         cls.articles = {}

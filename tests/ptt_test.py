@@ -4,7 +4,8 @@ Unit tests for ptt module.
 from datetime import date
 import logging
 import unittest
-from tests.helper import read_files, load_jsons
+import tests.board_helper
+import tests.article_helper
 import ptt
 
 logging.disable(logging.CRITICAL)
@@ -46,25 +47,18 @@ class BoardTestCase(unittest.TestCase):
     '''Test cases for ptt.Board.'''
 
     BOARD_NAME = 'Soft_Job'
-    COUNT_TEST_DATA = 2
 
     @classmethod
     def setUpClass(cls):
         '''The class level setup.'''
         date_diff = (date.today() - date(year=2017, month=12, day=25)).days
 
+        cls.pages, cls.expects = tests.board_helper.setup()
+
         cls.boards = [
             ptt.Board(cls.BOARD_NAME, date_diff)
-            for index in range(cls.COUNT_TEST_DATA)
+            for index in range(len(cls.pages))
         ]
-
-        cls.pages = read_files(
-            cls.COUNT_TEST_DATA,
-            'testdata_input_board_',
-            'html'
-        )
-
-        cls.expects = load_jsons(cls.COUNT_TEST_DATA, 'expect_board_')
 
     def setUp(self):
         '''The test case level setup.'''
@@ -160,20 +154,10 @@ class BoardTestCase(unittest.TestCase):
 class ArticleTestCase(unittest.TestCase):
     '''Test cases for ptt.Article.'''
 
-    COUNT_TEST_DATA = 3
-
     @classmethod
     def setUpClass(cls):
         '''The class level setup.'''
-        cls.pages = read_files(
-            cls.COUNT_TEST_DATA,
-            'testdata_input_article_',
-            'html'
-        )
-
-        cls.meta = load_jsons(cls.COUNT_TEST_DATA, 'article_meta_')
-
-        cls.expects = load_jsons(cls.COUNT_TEST_DATA, 'expect_article_')
+        cls.pages, cls.meta, cls.expects = tests.article_helper.setup()
 
         cls.articles = [
             ptt.Article(
