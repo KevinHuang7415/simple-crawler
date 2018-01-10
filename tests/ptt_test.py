@@ -4,7 +4,7 @@ Unit tests for ptt module.
 from datetime import date
 import logging
 import unittest
-from tests.helper import read_file, load_json
+from tests.helper import read_files, load_jsons
 import ptt
 
 logging.disable(logging.CRITICAL)
@@ -46,27 +46,29 @@ class BoardTestCase(unittest.TestCase):
     '''Test cases for ptt.Board.'''
 
     BOARD_NAME = 'Soft_Job'
+    COUNT_TEST_DATA = 2
 
     @classmethod
     def setUpClass(cls):
         '''The class level setup.'''
         date_diff = (date.today() - date(year=2017, month=12, day=25)).days
 
-        cls.boards = {}
-        cls.boards[0] = ptt.Board(cls.BOARD_NAME, date_diff)
-        cls.boards[1] = ptt.Board(cls.BOARD_NAME, date_diff)
+        cls.boards = [
+            ptt.Board(cls.BOARD_NAME, date_diff)
+            for index in range(cls.COUNT_TEST_DATA)
+        ]
 
-        cls.pages = {}
-        cls.pages[0] = read_file('testdata_input_board_1.html')
-        cls.pages[1] = read_file('testdata_input_board_2.html')
+        cls.pages = read_files(
+            cls.COUNT_TEST_DATA,
+            'testdata_input_board_',
+            'html'
+        )
 
-        cls.expects = {}
-        cls.expects[0] = load_json('expect_board_1.json')
-        cls.expects[1] = load_json('expect_board_2.json')
+        cls.expects = load_jsons(cls.COUNT_TEST_DATA, 'expect_board_')
 
     def setUp(self):
         '''The test case level setup.'''
-        for index, board in enumerate(self.boards.values()):
+        for index, board in enumerate(self.boards):
             board.set_url(self.BOARD_NAME)
             board._get_content(self.pages[index])
             board.latest_page = self.expects[index]['latest_page']
@@ -96,7 +98,7 @@ class BoardTestCase(unittest.TestCase):
 
     def test_find_prev_page_url(self):
         '''Unit test for ptt.Board.find_prev_page_url.'''
-        for index, board in enumerate(self.boards.values()):
+        for index, board in enumerate(self.boards):
             self.find_prev_page_url(board, self.expects[index])
 
         board = self.build_test_board()
@@ -115,7 +117,7 @@ class BoardTestCase(unittest.TestCase):
 
     def test_get_articles_meta(self):
         '''Unit test for ptt.Board.get_articles_meta.'''
-        for index, board in enumerate(self.boards.values()):
+        for index, board in enumerate(self.boards):
             self.get_articles_meta(board, self.expects[index]['articles_meta'])
 
         board = self.build_test_board()
@@ -131,7 +133,7 @@ class BoardTestCase(unittest.TestCase):
 
     def test_remove_expired(self):
         '''Unit test for ptt.Board.remove_expired.'''
-        for index, board in enumerate(self.boards.values()):
+        for index, board in enumerate(self.boards):
             self.remove_expired(board, self.expects[index]['remove_expired'])
 
     def remove_expired(self, board, expects):
@@ -158,34 +160,32 @@ class BoardTestCase(unittest.TestCase):
 class ArticleTestCase(unittest.TestCase):
     '''Test cases for ptt.Article.'''
 
+    COUNT_TEST_DATA = 3
+
     @classmethod
     def setUpClass(cls):
         '''The class level setup.'''
-        cls.pages = {}
-        cls.pages[0] = read_file('testdata_input_article_1.html')
-        cls.pages[1] = read_file('testdata_input_article_2.html')
-        cls.pages[2] = read_file('testdata_input_article_3.html')
+        cls.pages = read_files(
+            cls.COUNT_TEST_DATA,
+            'testdata_input_article_',
+            'html'
+        )
 
-        cls.meta = {}
-        cls.meta[0] = load_json('article_meta_1.json')
-        cls.meta[1] = load_json('article_meta_2.json')
-        cls.meta[2] = load_json('article_meta_3.json')
+        cls.meta = load_jsons(cls.COUNT_TEST_DATA, 'article_meta_')
 
-        cls.expects = {}
-        cls.expects[0] = load_json('expect_article_1.json')
-        cls.expects[1] = load_json('expect_article_2.json')
-        cls.expects[2] = load_json('expect_article_3.json')
+        cls.expects = load_jsons(cls.COUNT_TEST_DATA, 'expect_article_')
 
-        cls.articles = {}
-        for index, article_meta in enumerate(cls.meta.values()):
-            cls.articles[index] = ptt.Article(
+        cls.articles = [
+            ptt.Article(
                 article_meta['board_name'],
                 **article_meta['article_meta']
             )
+            for article_meta in cls.meta
+        ]
 
     def setUp(self):
         '''The test case level setup.'''
-        for index, article in enumerate(self.articles.values()):
+        for index, article in enumerate(self.articles):
             article.set_url(self.meta[index]['article_meta']['href'])
             article._get_content(self.pages[index])
 
@@ -203,7 +203,7 @@ class ArticleTestCase(unittest.TestCase):
 
     def test_format_article(self):
         '''Unit test for ptt.Article.format_article.'''
-        for index, article in enumerate(self.articles.values()):
+        for index, article in enumerate(self.articles):
             self.format_article(article, self.expects[index]['article'])
 
         article = ptt.Article(

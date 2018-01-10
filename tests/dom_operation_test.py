@@ -3,7 +3,7 @@ Unit tests for config module.
 '''
 import logging
 import unittest
-from tests.helper import read_file, load_json
+from tests.helper import read_files, load_jsons
 import dom_operation
 
 logging.disable(logging.CRITICAL)
@@ -18,49 +18,59 @@ class DomOperationTestCase(unittest.TestCase):
     '''Test cases for dom_operation.'''
 
     BOARD_NAME = 'Soft_Job'
+    COUNT_BOARD_TEST_DATA = 2
+    COUNT_ARTICLE_TEST_DATA = 2
 
     @classmethod
     def setUpClass(cls):
         '''The class level setup.'''
         # board part
-        cls.board_pages = {}
-        cls.board_pages[0] = read_file('testdata_input_board_1.html')
-        cls.board_pages[1] = read_file('testdata_input_board_2.html')
+        cls.board_pages = read_files(
+            cls.COUNT_BOARD_TEST_DATA,
+            'testdata_input_board_',
+            'html'
+        )
 
-        cls.board_dom = {}
-        for index, board_page in enumerate(cls.board_pages.values()):
-            cls.board_dom[index] = dom_operation.get_board_content(board_page)
+        cls.board_dom = [
+            dom_operation.get_board_content(board_page)
+            for board_page in cls.board_pages
+        ]
 
-        cls.board_last_page = {}
+        cls.board_expects = load_jsons(
+            cls.COUNT_BOARD_TEST_DATA,
+            'expect_board_'
+        )
 
-        cls.board_expects = {}
-        cls.board_expects[0] = load_json('expect_board_1.json')
-        cls.board_expects[1] = load_json('expect_board_2.json')
+        cls.board_last_page = [
+            board_expect['latest_page']
+            for board_expect in cls.board_expects
+        ]
 
         # article part
-        cls.article_pages = {}
-        cls.article_pages[0] = read_file('testdata_input_article_1.html')
-        cls.article_pages[1] = read_file('testdata_input_article_2.html')
+        cls.article_pages = read_files(
+            cls.COUNT_ARTICLE_TEST_DATA,
+            'testdata_input_article_',
+            'html'
+        )
 
-        cls.article_dom = {}
-        for index, article_page in enumerate(cls.article_pages.values()):
-            cls.article_dom[index] =\
-                dom_operation.get_article_content(article_page)
+        cls.article_dom = [
+            dom_operation.get_article_content(article_page)
+            for article_page in cls.article_pages
+        ]
 
-        cls.article_meta = {}
-        cls.article_meta[0] = load_json('article_meta_1.json')
-        cls.article_meta[1] = load_json('article_meta_2.json')
+        cls.article_meta = load_jsons(
+            cls.COUNT_ARTICLE_TEST_DATA,
+            'article_meta_'
+        )
 
-        cls.article_expects = {}
-        cls.article_expects[0] = load_json('expect_article_1.json')
-        cls.article_expects[1] = load_json('expect_article_2.json')
+        cls.article_expects = load_jsons(
+            cls.COUNT_ARTICLE_TEST_DATA,
+            'expect_article_'
+        )
 
     def setUp(self):
         '''The test case level setup.'''
-        self.board_last_page[0] = True
-        self.board_last_page[1] = False
-
-        for index, article_page in enumerate(self.article_pages.values()):
+        for index, article_page in enumerate(self.article_pages):
             self.article_dom[index] =\
                 dom_operation.get_article_content(article_page)
 
@@ -79,7 +89,7 @@ class DomOperationTestCase(unittest.TestCase):
 
     def test_find_prev_page_url(self):
         '''Unit test for dom_operation.find_prev_page_url.'''
-        for index, dom in enumerate(self.board_dom.values()):
+        for index, dom in enumerate(self.board_dom):
             self.find_prev_page_url(dom, self.board_expects[index])
 
     def find_prev_page_url(self, dom, expect):
@@ -94,7 +104,7 @@ class DomOperationTestCase(unittest.TestCase):
 
     def test_get_article_blocks(self):
         '''Unit test for dom_operation.get_article_blocks.'''
-        for index, dom in enumerate(self.board_dom.values()):
+        for index, dom in enumerate(self.board_dom):
             self.get_article_blocks(
                 dom,
                 self.board_last_page[index],
@@ -112,7 +122,7 @@ class DomOperationTestCase(unittest.TestCase):
 
     def test_get_article_meta(self):
         '''Unit test for dom_operation.get_article_meta.'''
-        for index, dom in enumerate(self.board_dom.values()):
+        for index, dom in enumerate(self.board_dom):
             self.get_article_meta(
                 dom,
                 self.board_last_page[index],
@@ -131,7 +141,7 @@ class DomOperationTestCase(unittest.TestCase):
 
     def test_parse_article(self):
         '''Unit test for dom_operation.parse_article.'''
-        for index, dom in enumerate(self.article_dom.values()):
+        for index, dom in enumerate(self.article_dom):
             self.parse_article(
                 dom,
                 self.article_expects[index]['article']

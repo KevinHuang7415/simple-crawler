@@ -14,7 +14,24 @@ def read_file(filename):
         return file.read()
 
 
+def read_files(count, name, ext):
+    '''A helper function to read files.'''
+    return [
+        read_file('{}{}.{}'.format(name, index+1, ext))
+        for index in range(count)
+    ]
+
+
 def load_json(filename):
     '''A helper function to read JSON-format file.'''
     with open(os.path.join(TEST_DIR, filename), 'r', encoding='utf-8') as file:
         return json.load(file)
+
+
+
+def load_jsons(count, name):
+    '''A helper function to read JSON-format files.'''
+    return [
+        load_json('{}{}.json'.format(name, index+1))
+        for index in range(count)
+    ]

@@ -4,7 +4,7 @@ Unit tests for crawler module.
 import logging
 import os
 import unittest
-from tests.helper import read_file, load_json
+from tests.helper import read_files, load_jsons
 import crawler
 import ptt
 
@@ -14,26 +14,26 @@ logging.disable(logging.CRITICAL)
 class CrawlerTestCase(unittest.TestCase):
     '''Test cases for crawler.'''
 
+    COUNT_TEST_DATA = 3
+
     @classmethod
     def setUpClass(cls):
         '''The class level setup.'''
         cls.path = 'test_path'
 
-        cls.pages = {}
-        cls.pages[0] = read_file('testdata_input_article_1.html')
-        cls.pages[1] = read_file('testdata_input_article_2.html')
+        cls.pages = read_files(
+            cls.COUNT_TEST_DATA,
+            'testdata_input_article_',
+            'html'
+        )
 
-        cls.meta = {}
-        cls.meta[0] = load_json('article_meta_1.json')
-        cls.meta[1] = load_json('article_meta_2.json')
+        cls.meta = load_jsons(cls.COUNT_TEST_DATA, 'article_meta_')
 
-        cls.expects = {}
-        cls.expects[0] = load_json('expect_crawler_1.json')
-        cls.expects[1] = load_json('expect_crawler_2.json')
+        cls.expects = load_jsons(cls.COUNT_TEST_DATA, 'expect_crawler_')
 
         cls.contents = {}
         cls.articles = {}
-        for index, article_meta in enumerate(cls.meta.values()):
+        for index, article_meta in enumerate(cls.meta):
             board_name = article_meta['board_name']
             article_meta = article_meta['article_meta']
 
@@ -71,7 +71,7 @@ class CrawlerTestCase(unittest.TestCase):
         articles = crawler.retrieve_article()
         self.assertEqual(articles, None)
 
-        for index, meta in enumerate(self.meta.values()):
+        for index, meta in enumerate(self.meta):
             self.retrieve_article(meta['article_meta'], self.contents[index])
 
     def retrieve_article(self, meta, expect):
