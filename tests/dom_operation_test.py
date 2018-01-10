@@ -22,6 +22,7 @@ class DomOperationTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         '''The class level setup.'''
+        # board part
         cls.board_pages = {}
         cls.board_pages[0] = read_file('testdata_input_board_1.html')
         cls.board_pages[1] = read_file('testdata_input_board_2.html')
@@ -36,14 +37,15 @@ class DomOperationTestCase(unittest.TestCase):
         cls.board_expects[0] = load_json('expect_board_1.json')
         cls.board_expects[1] = load_json('expect_board_2.json')
 
-
+        # article part
         cls.article_pages = {}
         cls.article_pages[0] = read_file('testdata_input_article_1.html')
         cls.article_pages[1] = read_file('testdata_input_article_2.html')
 
         cls.article_dom = {}
         for index, article_page in enumerate(cls.article_pages.values()):
-            cls.article_dom[index] = dom_operation.get_article_content(article_page)
+            cls.article_dom[index] =\
+                dom_operation.get_article_content(article_page)
 
         cls.article_meta = {}
         cls.article_meta[0] = load_json('article_meta_1.json')
@@ -59,7 +61,8 @@ class DomOperationTestCase(unittest.TestCase):
         self.board_last_page[1] = False
 
         for index, article_page in enumerate(self.article_pages.values()):
-            self.article_dom[index] = dom_operation.get_article_content(article_page)
+            self.article_dom[index] =\
+                dom_operation.get_article_content(article_page)
 
     def test_get_board_content(self):
         '''Unit test for dom_operation.get_board_content.'''
@@ -126,14 +129,18 @@ class DomOperationTestCase(unittest.TestCase):
 
         self.compare_meta(article_meta, expect)
 
-    def test_get_create_time(self):
-        '''Unit test for dom_operation.get_create_time.'''
+    def test_parse_article(self):
+        '''Unit test for dom_operation.parse_article.'''
         for index, dom in enumerate(self.article_dom.values()):
-            self.get_create_time(dom, self.article_expects[index]['create_time'])
+            self.parse_article(
+                dom,
+                self.article_expects[index]['article']
+            )
 
-    def get_create_time(self, dom, expect):
+    def parse_article(self, dom, expect):
         '''A helper function for test_get_create_time.'''
-        self.assertEqual(dom_operation.get_create_time(dom), expect)
+        content = dom_operation.parse_article(dom)['content']
+        self.assertEqual(len(content), len(expect))
 
     def compare_meta(self, act, expect):
         '''Compare meta data between actual and expected.'''

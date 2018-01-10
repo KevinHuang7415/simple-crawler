@@ -1,15 +1,18 @@
 '''
 Helper functions for date-time.
 '''
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime, time
 import logging
 
 LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
+FORMAT_FULL = '%a %b %d %H:%M:%S %Y'
+FORMAT_ALT = '%m/%d/%Y %H:%M:%S'
+FORMAT_PTT = '%m/%d'
 
 
 def to_ptt_date_format(date_obj=date.today()):
     '''Date time object to PTT format string.'''
-    return date_obj.strftime("%m/%d").lstrip('0')
+    return date_obj.strftime(FORMAT_PTT).lstrip('0')
 
 
 def _gen_date(ptt_date):
@@ -64,3 +67,16 @@ def check_expired(ptt_date, term_date=15):
         days = date(date_obj.year - 1, 3, 1) - date(date_obj.year, 3, 1)
         date_obj += days
         return _check_date_earlier(date_obj, term_date)[0]
+
+
+def alt_to_full(datetime_str):
+    '''Transform datetime string in format alter to full'''
+    return datetime.strptime(datetime_str, FORMAT_ALT).strftime(FORMAT_FULL)
+
+
+def to_full_datetime(ptt_date):
+    '''Transform date in Ptt format to the full format.'''
+    date_obj = _gen_date(ptt_date)
+    if date_obj:
+        return datetime.combine(date_obj, time(hour=12)).strftime(FORMAT_FULL)
+    return None

@@ -135,17 +135,6 @@ class Board(AbstractPage):
         return articles_meta
 
 
-_AUTHOR = '作者'
-_BOARD = '看板'
-_TITLE = '標題'
-_TIME = '時間'
-
-
-def _combine(key, value):
-    '''A helper function to combine key-value pair'''
-    return '  '.join([key, value])
-
-
 class Article(AbstractPage):
     """description of class"""
 
@@ -174,19 +163,12 @@ class Article(AbstractPage):
             LOGGER.error('No content for parsing article.')
             raise ValueError
 
-        _, sep, after = dom.text.partition('\n')
-        create_time = dom_operation.get_create_time(dom)
-        LOGGER.debug(
-            'Article [%s](%s) created at [%s]',
-            self.meta['title'],
-            self.url,
-            create_time)
+        result = dom_operation.parse_article(dom)
 
-        contents = []
-        contents.append(_combine(_AUTHOR, self.meta['author']))
-        contents.append(_combine(_BOARD, self.board_name))
-        contents.append(_combine(_TITLE, self.meta['title']))
-        contents.append(_combine(_TIME, create_time) + '\n\n')
-        contents.append(after)
+        # both create_time and last_edit_time will not be None at same time
+        if not result['last_edit_time']:
+            result['last_edit_time'] = result['create_time']
+        elif not result['create_time']:
+            result['create_time'] = datetime_helper.to_full_datetime(self.meta['date'])
 
-        return sep.join(contents)
+        return result['content']

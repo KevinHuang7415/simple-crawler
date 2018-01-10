@@ -164,14 +164,17 @@ class ArticleTestCase(unittest.TestCase):
         cls.pages = {}
         cls.pages[0] = read_file('testdata_input_article_1.html')
         cls.pages[1] = read_file('testdata_input_article_2.html')
+        cls.pages[2] = read_file('testdata_input_article_3.html')
 
         cls.meta = {}
         cls.meta[0] = load_json('article_meta_1.json')
         cls.meta[1] = load_json('article_meta_2.json')
+        cls.meta[2] = load_json('article_meta_3.json')
 
         cls.expects = {}
         cls.expects[0] = load_json('expect_article_1.json')
         cls.expects[1] = load_json('expect_article_2.json')
+        cls.expects[2] = load_json('expect_article_3.json')
 
         cls.articles = {}
         for index, article_meta in enumerate(cls.meta.values()):
