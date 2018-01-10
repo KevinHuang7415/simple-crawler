@@ -17,7 +17,6 @@ class AbstractPage:
 
     def __init__(self):
         self.url = None
-        self.set_url()
 
     def __repr__(self):
         return f'{self.__class__.__name__}('')'
@@ -61,7 +60,6 @@ class Board(AbstractPage):
     def __init__(self, board_name, term_date=10):
         super().__init__()
         self.board_name = board_name
-        self.url = None
         self.set_url(board_name)
         self.term_date = term_date
         self.latest_page = True
@@ -141,7 +139,6 @@ class Article(AbstractPage):
     def __init__(self, board_name, **meta):
         super().__init__()
         self.board_name = board_name
-        self.url = None
         self.set_url(meta['href'])
         self.meta = meta
         self.dom = None
