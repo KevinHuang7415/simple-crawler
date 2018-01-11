@@ -104,16 +104,9 @@ class Board(AbstractPage):
             LOGGER.error('No content for parsing article blocks.')
             raise ValueError
 
-        article_blocks = dom_operation.get_article_blocks(dom, self.latest_page)
+        article_blocks = dom_operation.get_articles_meta(dom, self.latest_page)
         self.latest_page = False
-
-        # not to retrieve delete article which looks like
-        # <div class="title"> (本文已被刪除) [author] </div>
-        return [
-            dom_operation.get_article_meta(article_block)
-            for article_block in article_blocks
-            if article_block.find('a')
-        ]
+        return article_blocks
 
     def remove_expired(self, articles_meta):
         '''Remove data in dates which is expired.'''

@@ -29,34 +29,41 @@ def find_prev_page_url(board_dom):
     return btn_prev_page['href']
 
 
-def get_article_blocks(board_dom, latest_page):
+def get_articles_meta(board_dom, latest_page):
     '''Get all blocks that contain article meta.'''
+
+    def get_article_meta(article_block):
+        '''Get article meta.'''
+        prop_a = article_block.find('a')
+        return {
+            'title': prop_a.text,
+            'href': prop_a['href'],
+            # date format mm/dd and prefix for m is space instead of 0
+            'date': article_block.find('div', 'date').text.lstrip(),
+            'author': article_block.find('div', 'author').text
+        }
+
     # articles under separation (aka pinned posts) should be ignored
     list_sep = board_dom.find('div', 'r-list-sep')
 
-    if latest_page:
-        if list_sep:
-            article_blocks = list_sep.find_all_previous('div', 'r-ent')
-            # reserve to the original order
-            article_blocks = article_blocks[::-1]
-    else:
-        article_blocks = board_dom.find_all('div', 'r-ent')
+    # not to retrieve delete article which looks like
+    # <div class="title"> (本文已被刪除) [author] </div>
+    find_r_ent_with_child_a = lambda tag: __find_tag(tag, 'div', 'r-ent')\
+        and tag.find('a')
 
-    return article_blocks
+    if latest_page and list_sep:
+        # reserve to the original order
+        return [
+            get_article_meta(article_block)
+            for article_block in list_sep.find_all_previous(
+                find_r_ent_with_child_a
+            )[::-1]
+        ]
 
-
-def get_article_meta(article_block):
-    '''Get article meta.'''
-    prop_a = article_block.find('a')
-    article_meta = {}
-
-    article_meta['title'] = prop_a.text
-    article_meta['href'] = prop_a['href']
-    # date format mm/dd and prefix for m is space instead of 0
-    article_meta['date'] = article_block.find('div', 'date').text.lstrip()
-    article_meta['author'] = article_block.find('div', 'author').text
-
-    return article_meta
+    return [
+        get_article_meta(article_block)
+        for article_block in board_dom.find_all(find_r_ent_with_child_a)
+    ]
 
 
 def parse_article(dom):

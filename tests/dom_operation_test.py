@@ -78,42 +78,22 @@ class DomOperationTestCase(unittest.TestCase):
 
         self.assertEqual(url, expect['prev_page_url'])
 
-    def test_get_article_blocks(self):
-        '''Unit test for dom_operation.get_article_blocks.'''
+    def test_get_articles_meta(self):
+        '''Unit test for dom_operation.get_articles_meta.'''
         for index, dom in enumerate(self.board_dom):
-            self.get_article_blocks(
+            self.get_articles_meta(
                 dom,
                 self.board_last_page[index],
-                len(self.board_expects[index]['articles_meta'])
+                self.board_expects[index]['articles_meta']
             )
 
-    def get_article_blocks(self, dom, last_page, expect):
+    def get_articles_meta(self, dom, last_page, expects):
         '''A helper function for test_get_article_blocks.'''
-        article_blocks = [
-            article_block
-            for article_block in dom_operation.get_article_blocks(dom, last_page)
-            if article_block.find('a')
-        ]
-        self.assertEqual(len(article_blocks), expect)
+        articles_meta = dom_operation.get_articles_meta(dom, last_page)
+        self.assertEqual(len(articles_meta), len(expects))
 
-    def test_get_article_meta(self):
-        '''Unit test for dom_operation.get_article_meta.'''
-        for index, dom in enumerate(self.board_dom):
-            self.get_article_meta(
-                dom,
-                self.board_last_page[index],
-                self.board_expects[index]['articles_meta'][0]
-            )
-
-    def get_article_meta(self, dom, last_page, expect):
-        '''A helper function for test_get_article_meta.'''
-        article_meta = next(
-            dom_operation.get_article_meta(article_block)
-            for article_block in dom_operation.get_article_blocks(dom, last_page)
-            if article_block.find('a')
-        )
-
-        self.compare_meta(article_meta, expect)
+        for index, expect in enumerate(expects):
+            self.compare_meta(articles_meta[index], expect)
 
     def test_parse_article(self):
         '''Unit test for dom_operation.parse_article.'''
