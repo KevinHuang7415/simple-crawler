@@ -86,15 +86,10 @@ def parse_article(dom):
 
         return has_metaline, None
 
-    def find_tag(tag, name, *classnames):
-        '''Helper for find series functions.'''
-        # It's fine to use set operation here
-        return tag.name == name and set(classnames).issubset(tag['class'])
-
     def find_in_article_meta_tag(dom):
         '''Find article-meta-tag in page content'''
         tag = dom.find(
-            lambda tag: find_tag(tag, 'span', 'article-meta-tag') and
+            lambda tag: __find_tag(tag, 'span', 'article-meta-tag') and
             PATTERN_TIME.search(tag.text)
         )
         if tag:
@@ -104,7 +99,7 @@ def parse_article(dom):
     def find_in_modified_metalines(dom):
         '''Find modified metalines in page content'''
         tag = dom.find(
-            lambda tag: find_tag(tag, 'span', 'f4', 'b7') and
+            lambda tag: __find_tag(tag, 'span', 'f4', 'b7') and
             PATTERN_TIME.search(tag.text)
         )
         if tag:
@@ -114,7 +109,7 @@ def parse_article(dom):
     def find_last_in_f2(dom, start_str):
         '''Find last f2 tag in page content'''
         f2_startswith = lambda tag:\
-            find_tag(tag, 'span', 'f2') and tag.text.startswith(start_str)
+            __find_tag(tag, 'span', 'f2') and tag.text.startswith(start_str)
 
         return next((f2.text for f2 in dom.find_all(f2_startswith)[::-1]), None)
 
@@ -164,3 +159,9 @@ def parse_article(dom):
         'create_time': create_time,
         'last_edit_time': last_edit_time
     }
+
+
+def __find_tag(tag, name, *classnames):
+    '''Helper for find series functions.'''
+    # It's fine to use set operation here
+    return tag.name == name and set(classnames).issubset(tag['class'])
