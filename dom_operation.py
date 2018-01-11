@@ -164,4 +164,5 @@ def parse_article(dom):
 def __find_tag(tag, name, *classnames):
     '''Helper for find series functions.'''
     # It's fine to use set operation here
-    return tag.name == name and set(classnames).issubset(tag['class'])
+    return tag.name == name and tag.attrs and 'class' in tag.attrs and\
+        set(classnames).issubset(tag['class'])
