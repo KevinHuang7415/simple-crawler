@@ -115,10 +115,13 @@ def parse_article(dom):
 
     def find_last_in_f2(dom, start_str):
         '''Find last f2 tag in page content'''
-        f2_startswith = lambda tag:\
-            __find_tag(tag, 'span', 'f2') and tag.text.startswith(start_str)
-
-        return next((f2.text for f2 in dom.find_all(f2_startswith)[::-1]), None)
+        return next(
+            (f2.text for f2 in dom.find_all(
+                lambda tag: __find_tag(tag, 'span', 'f2') and
+                tag.text.startswith(start_str)
+            )[::-1]),
+            None
+        )
 
     def get_last_edit_time(dom):
         '''Find last edit time in page content'''
