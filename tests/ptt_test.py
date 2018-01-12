@@ -128,18 +128,6 @@ class BoardTestCase(unittest.TestCase):
         for index, expect in enumerate(expects):
             self.compare_meta(articles_meta[index], expect)
 
-    def test_remove_expired(self):
-        '''Unit test for ptt.Board.remove_expired.'''
-        for index, board in enumerate(self.boards):
-            self.remove_expired(board, self.expects[index]['remove_expired'])
-
-    def remove_expired(self, board, expects):
-        '''A helper function for test_remove_expired.'''
-        after_remove = board.remove_expired(board.get_articles_meta())
-
-        for index, expect in enumerate(expects):
-            self.compare_meta(after_remove[index], expect)
-
     def compare_meta(self, act, expect):
         '''Compare meta data between actual and expected.'''
         self.assertEqual(act['title'], expect['title'])

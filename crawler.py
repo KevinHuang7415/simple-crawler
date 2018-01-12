@@ -59,8 +59,7 @@ def parse_board(board):
         return None
 
     board.find_prev_page_url()
-    articles_meta = board.get_articles_meta()
-    return board.remove_expired(articles_meta)
+    return board.get_articles_meta()
 
 
 def retrieve_article(**article_meta):

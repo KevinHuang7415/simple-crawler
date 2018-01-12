@@ -106,10 +106,7 @@ class Board(AbstractPage):
 
         articles_meta = op.get_articles_meta(dom, self.latest_page)
         self.latest_page = False
-        return articles_meta
 
-    def remove_expired(self, articles_meta):
-        '''Remove data in dates which is expired.'''
         before_remove = len(articles_meta)
 
         while articles_meta:
