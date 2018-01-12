@@ -4,8 +4,8 @@ Main functions for crawler.
 import logging
 import logging.config
 import config
-import datetime_helper
-import file_helper
+import datetime_helper as dh
+import file_helper as fh
 import log_config
 import ptt
 
@@ -23,7 +23,7 @@ def setup():
 
     logging.config.dictConfig(log_config.LOGGING)
 
-    file_helper.create_dir_if_not_exist(CONFIG.get(SECTION, 'data_path'))
+    fh.create_dir_if_not_exist(CONFIG.get(SECTION, 'data_path'))
 
 
 def shutdown():
@@ -34,7 +34,7 @@ def shutdown():
 def crawler():
     '''Grab all articles in recent days.'''
     term_date = CONFIG.getint(SECTION, 'term_date')
-    LOGGER.info('Start date:[%s]', datetime_helper.to_ptt_date_format())
+    LOGGER.info('Start date:[%s]', dh.to_ptt_date_format())
     LOGGER.info('Term date as [%d] days.', term_date)
 
     board_name = CONFIG.get(SECTION, 'board')
@@ -81,11 +81,12 @@ def save_article(article, **meta):
         # format: PTT_URL/..../M.number.A.RND.html
         # take the number part
         article_id = meta['href'].rpartition('/')[-1].split('.')[1]
+
         # date - title - title_id
         file_title = ' - '.join([meta['date'], meta['title'], article_id])
 
         data_path = CONFIG.get(SECTION, 'data_path')
-        file_helper.write_article(article, file_title, data_path)
+        fh.write_article(article, file_title, data_path)
 
 
 def main():

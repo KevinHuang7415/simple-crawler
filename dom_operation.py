@@ -3,7 +3,7 @@ Operations on DOM which parsed by BeautifulSoup.
 '''
 import re
 from bs4 import BeautifulSoup
-import datetime_helper
+import datetime_helper as dh
 
 EDIT = '※ 編輯'
 PATTERN_TIME = re.compile('時間')
@@ -48,8 +48,8 @@ def get_articles_meta(board_dom, latest_page):
 
     # not to retrieve delete article which looks like
     # <div class="title"> (本文已被刪除) [author] </div>
-    find_r_ent_with_child_a = lambda tag: __find_tag(tag, 'div', 'r-ent')\
-        and tag.find('a')
+    find_r_ent_with_child_a = lambda tag:\
+        __find_tag(tag, 'div', 'r-ent') and tag.find('a')
 
     if latest_page and list_sep:
         # reserve to the original order
@@ -89,7 +89,7 @@ def parse_article(dom):
         create_time = find_last_in_f2(dom, '※ 轉錄者')
         if create_time:
             create_time = create_time.partition(', ')[2].strip()
-            return has_metaline, datetime_helper.alt_to_full(create_time)
+            return has_metaline, dh.alt_to_full(create_time)
 
         return has_metaline, None
 
@@ -99,6 +99,7 @@ def parse_article(dom):
             lambda tag: __find_tag(tag, 'span', 'article-meta-tag') and
             PATTERN_TIME.search(tag.text)
         )
+
         if tag:
             return tag.next_sibling.text.strip()
         return None
@@ -109,6 +110,7 @@ def parse_article(dom):
             lambda tag: __find_tag(tag, 'span', 'f4', 'b7') and
             PATTERN_TIME.search(tag.text)
         )
+
         if tag:
             return tag.next_sibling.text.strip()
         return None
@@ -146,7 +148,7 @@ def parse_article(dom):
     # 09/03/2017 00:39:26
     last_edit_time = get_last_edit_time(dom)
     if last_edit_time:
-        last_edit_time = datetime_helper.alt_to_full(last_edit_time)
+        last_edit_time = dh.alt_to_full(last_edit_time)
 
     if has_metaline:
         metalines = []

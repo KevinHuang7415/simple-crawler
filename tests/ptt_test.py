@@ -112,7 +112,10 @@ class BoardTestCase(unittest.TestCase):
     def test_get_articles_meta(self):
         '''Unit test for ptt.Board.get_articles_meta.'''
         for index, board in enumerate(self.boards):
-            self.get_articles_meta(board, self.expects[index]['articles_meta'])
+            self.get_articles_meta(
+                board,
+                self.expects[index]['remove_expired']
+            )
 
         board = self.build_test_board()
         with self.assertRaises(ValueError):

@@ -4,7 +4,7 @@ Unit tests for datetime_helper module.
 import logging
 import unittest
 from datetime import date, timedelta, datetime, time
-import datetime_helper
+import datetime_helper as dh
 
 logging.disable(logging.CRITICAL)
 
@@ -55,9 +55,9 @@ class DatetimeHelperTestCase(unittest.TestCase):
     def to_ptt_date_format(self, this_day, expect):
         '''A helper function for test_to_ptt_date_format.'''
         if this_day:
-            ptt_date = datetime_helper.to_ptt_date_format(this_day)
+            ptt_date = dh.to_ptt_date_format(this_day)
         else:
-            ptt_date = datetime_helper.to_ptt_date_format()
+            ptt_date = dh.to_ptt_date_format()
 
         self.assertEqual(ptt_date, expect)
 
@@ -69,9 +69,9 @@ class DatetimeHelperTestCase(unittest.TestCase):
 
     def check_expired(self, test_case, term_date):
         '''A helper function for test_check_expired.'''
-        ptt_date = datetime_helper.to_ptt_date_format(test_case[0])
+        ptt_date = dh.to_ptt_date_format(test_case[0])
         self.assertEqual(
-            datetime_helper.check_expired(ptt_date, term_date),
+            dh.check_expired(ptt_date, term_date),
             test_case[1],
             'term date={}, date={}, today={}'.format(
                 term_date, test_case[0], self.today)
@@ -81,20 +81,20 @@ class DatetimeHelperTestCase(unittest.TestCase):
         '''Unit test for datetime_helper.alt_to_full.'''
         datetime_str = '12/26/2017 15:56:57'
         expect = 'Tue Dec 26 15:56:57 2017'
-        self.assertEqual(datetime_helper.alt_to_full(datetime_str), expect)
+        self.assertEqual(dh.alt_to_full(datetime_str), expect)
 
     def test_to_full_datetime(self):
         '''Unit test for datetime_helper.to_full_datetime.'''
         ptt_date = '12/26'
-        full_date = datetime_helper.to_full_datetime(ptt_date)
+        full_date = dh.to_full_datetime(ptt_date)
 
-        datetime_obj = datetime.strptime(full_date, datetime_helper.FORMAT_FULL)
+        datetime_obj = datetime.strptime(full_date, dh.FORMAT_FULL)
         self.assertEqual(datetime_obj.month, 12)
         self.assertEqual(datetime_obj.day, 26)
         self.assertEqual(datetime_obj.time(), time(hour=12))
 
         ptt_date = '2/30'
-        self.assertEqual(datetime_helper.to_full_datetime(ptt_date), None)
+        self.assertEqual(dh.to_full_datetime(ptt_date), None)
 
 
 if __name__ == '__main__':

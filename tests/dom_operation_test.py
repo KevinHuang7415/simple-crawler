@@ -5,7 +5,7 @@ import logging
 import unittest
 import tests.board_helper
 import tests.article_helper
-import dom_operation
+import dom_operation as op
 
 logging.disable(logging.CRITICAL)
 
@@ -27,7 +27,7 @@ class DomOperationTestCase(unittest.TestCase):
         cls.board_pages, cls.board_expects = tests.board_helper.setup()
 
         cls.board_dom = [
-            dom_operation.get_board_content(board_page)
+            op.get_board_content(board_page)
             for board_page in cls.board_pages
         ]
 
@@ -37,22 +37,22 @@ class DomOperationTestCase(unittest.TestCase):
         ]
 
         # article part
-        cls.article_pages, cls.article_meta, cls.article_expects = tests.article_helper.setup()
+        cls.article_pages, cls.article_meta, cls.article_expects =\
+            tests.article_helper.setup()
 
         cls.article_dom = [
-            dom_operation.get_article_content(article_page)
+            op.get_article_content(article_page)
             for article_page in cls.article_pages
         ]
 
     def setUp(self):
         '''The test case level setup.'''
         for index, article_page in enumerate(self.article_pages):
-            self.article_dom[index] =\
-                dom_operation.get_article_content(article_page)
+            self.article_dom[index] = op.get_article_content(article_page)
 
     def test_get_board_content(self):
         '''Unit test for dom_operation.get_board_content.'''
-        dom = dom_operation.get_board_content(self.board_pages[0])
+        dom = op.get_board_content(self.board_pages[0])
         self.assertEqual(
             dom.find('title').text,
             self.board_expects[0]['html_title']
@@ -60,7 +60,7 @@ class DomOperationTestCase(unittest.TestCase):
 
     def test_get_article_content(self):
         '''Unit test for dom_operation.get_article_content.'''
-        dom = dom_operation.get_article_content(self.article_pages[0])
+        dom = op.get_article_content(self.article_pages[0])
         self.assertNotEqual(dom, None)
 
     def test_find_prev_page_url(self):
@@ -72,7 +72,7 @@ class DomOperationTestCase(unittest.TestCase):
         '''A helper function for test_find_prev_page_url.'''
         # this condition is decided outside being tested function
         if _should_choose_atcual(expect):
-            url = dom_operation.find_prev_page_url(dom)
+            url = op.find_prev_page_url(dom)
         else:
             url = None
 
@@ -89,7 +89,7 @@ class DomOperationTestCase(unittest.TestCase):
 
     def get_articles_meta(self, dom, last_page, expects):
         '''A helper function for test_get_article_blocks.'''
-        articles_meta = dom_operation.get_articles_meta(dom, last_page)
+        articles_meta = op.get_articles_meta(dom, last_page)
         self.assertEqual(len(articles_meta), len(expects))
 
         for index, expect in enumerate(expects):
@@ -98,14 +98,11 @@ class DomOperationTestCase(unittest.TestCase):
     def test_parse_article(self):
         '''Unit test for dom_operation.parse_article.'''
         for index, dom in enumerate(self.article_dom):
-            self.parse_article(
-                dom,
-                self.article_expects[index]['article']
-            )
+            self.parse_article(dom, self.article_expects[index]['article'])
 
     def parse_article(self, dom, expect):
         '''A helper function for test_get_create_time.'''
-        content = dom_operation.parse_article(dom)['content']
+        content = op.parse_article(dom)['content']
         self.assertEqual(len(content), len(expect))
 
     def compare_meta(self, act, expect):
