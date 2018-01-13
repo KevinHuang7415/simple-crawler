@@ -32,6 +32,12 @@ def find_prev_page_url(board_dom):
 def get_articles_meta(board_dom, latest_page):
     '''Get all blocks that contain article meta.'''
 
+    # not to retrieve delete article which looks like
+    # <div class="title"> (本文已被刪除) [author] </div>
+    def find_r_ent_with_child_a(tag):
+        '''Filter function to find blocks which contain article meta.'''
+        return __find_tag(tag, 'div', 'r-ent') and tag.find('a')
+
     def get_article_meta(article_block):
         '''Get article meta.'''
         prop_a = article_block.find('a')
@@ -45,11 +51,6 @@ def get_articles_meta(board_dom, latest_page):
 
     # articles under separation (aka pinned posts) should be ignored
     list_sep = board_dom.find('div', 'r-list-sep')
-
-    # not to retrieve delete article which looks like
-    # <div class="title"> (本文已被刪除) [author] </div>
-    find_r_ent_with_child_a = lambda tag:\
-        __find_tag(tag, 'div', 'r-ent') and tag.find('a')
 
     if latest_page and list_sep:
         # reserve to the original order
