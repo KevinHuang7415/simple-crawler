@@ -5,7 +5,7 @@ import logging
 import unittest
 import tests.board_helper
 import tests.article_helper
-from domparser import DOMParser
+import domparser as dp
 
 logging.disable(logging.CRITICAL)
 
@@ -27,7 +27,7 @@ class DomOperationTestCase(unittest.TestCase):
         cls.board_pages, cls.board_expects = tests.board_helper.setup()
 
         cls.board_parsers = [
-            DOMParser(DOMParser.get_board_content(board_page))
+            dp.DOMParser.builder(dp.PageType.board, board_page)
             for board_page in cls.board_pages
         ]
 
@@ -41,7 +41,7 @@ class DomOperationTestCase(unittest.TestCase):
             tests.article_helper.setup()
 
         cls.article_parsers = [
-            DOMParser(DOMParser.get_article_content(article_page))
+            dp.DOMParser.builder(dp.PageType.article, article_page)
             for article_page in cls.article_pages
         ]
 
@@ -49,11 +49,11 @@ class DomOperationTestCase(unittest.TestCase):
         '''The test case level setup.'''
         for index, article_page in enumerate(self.article_pages):
             self.article_parsers[index].dom =\
-                DOMParser.get_article_content(article_page)
+                dp.DOMParser.get_article_content(article_page)
 
     def test_get_board_content(self):
         '''Unit test for domparser.get_board_content.'''
-        dom = DOMParser.get_board_content(self.board_pages[0])
+        dom = dp.DOMParser.get_board_content(self.board_pages[0])
         self.assertEqual(
             dom.find('title').text,
             self.board_expects[0]['html_title']
@@ -61,7 +61,7 @@ class DomOperationTestCase(unittest.TestCase):
 
     def test_get_article_content(self):
         '''Unit test for domparser.get_article_content.'''
-        dom = DOMParser.get_article_content(self.article_pages[0])
+        dom = dp.DOMParser.get_article_content(self.article_pages[0])
         self.assertNotEqual(dom, None)
 
     def test_find_prev_page_url(self):

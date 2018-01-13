@@ -7,7 +7,7 @@ import unittest
 import tests.board_helper
 import tests.article_helper
 import ptt
-from domparser import DOMParser
+import domparser as dp
 
 logging.disable(logging.CRITICAL)
 
@@ -43,12 +43,12 @@ def _should_choose_atcual(data):
     return len(data['articles_meta']) == len(data['remove_expired'])
 
 
-def retrieve_dom(self, page, get_content):
+def retrieve_dom(self, pagetype, page):
     '''A monkey patch for AbstractPage.retrieve_dom.'''
     if not page:
         raise ValueError
 
-    self.parser = DOMParser(get_content(page))
+    self.parser = dp.DOMParser.builder(pagetype, page)
 
 
 class BoardTestCase(unittest.TestCase):
@@ -80,7 +80,7 @@ class BoardTestCase(unittest.TestCase):
         for index, board in enumerate(self.boards):
             board.set_url(self.BOARD_NAME)
             board.parser =\
-                DOMParser(DOMParser.get_board_content(self.pages[index]))
+                dp.DOMParser.builder(dp.PageType.board, self.pages[index])
             board.latest_page = self.expects[index]['latest_page']
 
     def test_set_url(self):
@@ -97,7 +97,10 @@ class BoardTestCase(unittest.TestCase):
     def test_retrieve_dom(self):
         '''Unit test for ptt.Board.retrieve_dom.'''
         for index, board in enumerate(self.boards):
-            board.retrieve_dom(self.pages[index], DOMParser.get_board_content)
+            board.retrieve_dom(
+                dp.PageType.board,
+                self.pages[index]
+            )
             self.assertNotEqual(board.parser, None)
 
         board = self.boards[0]
@@ -184,14 +187,12 @@ class ArticleTestCase(unittest.TestCase):
         for index, article in enumerate(self.articles):
             article.set_url(self.meta[index]['article_meta']['href'])
             article.parser =\
-                DOMParser(DomParser.get_article_content(self.pages[index]))
+                dp.DOMParser.builder(dp.PageType.article, self.pages[index])
 
     def test_retrieve_dom(self):
         '''Unit test for ptt.Article.retrieve_dom.'''
         for index, article in enumerate(self.articles):
-            article.retrieve_dom(
-                self.pages[index], DOMParser.get_article_content
-            )
+            article.retrieve_dom(dp.PageType.article, self.pages[index])
             self.assertNotEqual(article.parser, None)
 
         article = self.articles[0]

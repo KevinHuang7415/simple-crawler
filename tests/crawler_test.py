@@ -8,7 +8,7 @@ from tests.helper import load_jsons
 import tests.article_helper
 import crawler
 import ptt
-from domparser import DOMParser
+import domparser as dp
 
 logging.disable(logging.CRITICAL)
 
@@ -32,7 +32,7 @@ class CrawlerTestCase(unittest.TestCase):
 
             cls.articles[index] = ptt.Article(board_name, **article_meta)
             cls.articles[index].parser =\
-                DOMParser(DOMParser.get_article_content(cls.pages[index]))
+                dp.DOMParser.builder(dp.PageType.article, cls.pages[index])
 
             cls.contents[index] = cls.articles[index].format_article()
 

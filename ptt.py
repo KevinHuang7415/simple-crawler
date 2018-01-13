@@ -5,7 +5,7 @@ import logging
 import time
 import requests
 import datetimehelper as dh
-import domparser as op
+import domparser as dp
 
 LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
 
@@ -79,7 +79,7 @@ class Board(AbstractPage):
     def _get_content(self, page):
         '''Transfer HTML content to BeautifulSoup object'''
         if page:
-            self.parser = op.DOMParser(op.DOMParser.get_board_content(page))
+            self.parser = dp.DOMParser.builder(dp.PageType.board, page)
 
     def find_prev_page_url(self):
         '''Find URL of previous page.'''
@@ -134,7 +134,7 @@ class Article(AbstractPage):
     def _get_content(self, page):
         '''Get complete article content.'''
         if page:
-            self.parser = op.DOMParser(op.DOMParser.get_article_content(page))
+            self.parser = dp.DOMParser.builder(dp.PageType.article, page)
 
     def format_article(self):
         '''Get complete article content.'''

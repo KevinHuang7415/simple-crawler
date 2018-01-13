@@ -1,9 +1,16 @@
 ﻿'''
 DOM parser which using BeautifulSoup.
 '''
+from enum import Enum
 import re
 from bs4 import BeautifulSoup
 import datetimehelper as dh
+
+
+class PageType(Enum):
+    '''Enum page type for building DOMParser.'''
+    board = 1
+    article = 2
 
 
 class DOMParser:
@@ -34,6 +41,15 @@ class DOMParser:
         '''Get complete article content.'''
         soup = BeautifulSoup(page, 'html.parser')
         return soup.find(id='main-content')
+
+    @staticmethod
+    def builder(pagetype, page):
+        '''Object builder.'''
+        functions = {
+            PageType.board: DOMParser.get_board_content,
+            PageType.article: DOMParser.get_article_content
+        }
+        return DOMParser(functions[pagetype](page))
 
     def find_prev_page_url(self):
         '''Find URL of previous page.'''
