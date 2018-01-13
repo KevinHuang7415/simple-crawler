@@ -1,4 +1,4 @@
-'''
+﻿'''
 Unit tests for crawler module.
 '''
 import logging
@@ -8,7 +8,7 @@ from tests.helper import load_jsons
 import tests.article_helper
 import crawler
 import ptt
-import domparser as op
+from domparser import DOMParser
 
 logging.disable(logging.CRITICAL)
 
@@ -31,7 +31,8 @@ class CrawlerTestCase(unittest.TestCase):
             article_meta = article_meta['article_meta']
 
             cls.articles[index] = ptt.Article(board_name, **article_meta)
-            cls.articles[index].dom = op.get_article_content(cls.pages[index])
+            cls.articles[index].parser =\
+                DOMParser(DOMParser.get_article_content(cls.pages[index]))
 
             cls.contents[index] = cls.articles[index].format_article()
 

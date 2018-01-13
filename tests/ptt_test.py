@@ -1,4 +1,4 @@
-'''
+﻿'''
 Unit tests for ptt module.
 '''
 from datetime import date
@@ -7,7 +7,7 @@ import unittest
 import tests.board_helper
 import tests.article_helper
 import ptt
-import domparser as op
+from domparser import DOMParser
 
 logging.disable(logging.CRITICAL)
 
@@ -48,7 +48,7 @@ def retrieve_dom(self, page, get_content):
     if not page:
         raise ValueError
 
-    self.dom = get_content(page)
+    self.parser = DOMParser(get_content(page))
 
 
 class BoardTestCase(unittest.TestCase):
@@ -79,7 +79,8 @@ class BoardTestCase(unittest.TestCase):
         '''The test case level setup.'''
         for index, board in enumerate(self.boards):
             board.set_url(self.BOARD_NAME)
-            board.dom = op.get_board_content(self.pages[index])
+            board.parser =\
+                DOMParser(DOMParser.get_board_content(self.pages[index]))
             board.latest_page = self.expects[index]['latest_page']
 
     def test_set_url(self):
@@ -96,8 +97,8 @@ class BoardTestCase(unittest.TestCase):
     def test_retrieve_dom(self):
         '''Unit test for ptt.Board.retrieve_dom.'''
         for index, board in enumerate(self.boards):
-            board.retrieve_dom(self.pages[index], op.get_board_content)
-            self.assertNotEqual(board.dom, None)
+            board.retrieve_dom(self.pages[index], DOMParser.get_board_content)
+            self.assertNotEqual(board.parser, None)
 
         board = self.boards[0]
         board.set_url()
@@ -152,7 +153,6 @@ class BoardTestCase(unittest.TestCase):
     def build_test_board(self):
         '''Build a temporary board object.'''
         board = ptt.Board(self.BOARD_NAME, 0)
-        board.dom = None
         return board
 
 
@@ -183,13 +183,16 @@ class ArticleTestCase(unittest.TestCase):
         '''The test case level setup.'''
         for index, article in enumerate(self.articles):
             article.set_url(self.meta[index]['article_meta']['href'])
-            article.dom = op.get_article_content(self.pages[index])
+            article.parser =\
+                DOMParser(DomParser.get_article_content(self.pages[index]))
 
     def test_retrieve_dom(self):
         '''Unit test for ptt.Article.retrieve_dom.'''
         for index, article in enumerate(self.articles):
-            article.retrieve_dom(self.pages[index], op.get_article_content)
-            self.assertNotEqual(article.dom, None)
+            article.retrieve_dom(
+                self.pages[index], DOMParser.get_article_content
+            )
+            self.assertNotEqual(article.parser, None)
 
         article = self.articles[0]
         article.set_url()
@@ -205,7 +208,7 @@ class ArticleTestCase(unittest.TestCase):
             self.meta[0]['board_name'],
             **self.meta[0]['article_meta']
         )
-        article.dom = None
+        article.parser = None
         with self.assertRaises(ValueError):
             article.format_article()
 

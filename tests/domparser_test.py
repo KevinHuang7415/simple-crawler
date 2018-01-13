@@ -1,11 +1,11 @@
-'''
+﻿'''
 Unit tests for config module.
 '''
 import logging
 import unittest
 import tests.board_helper
 import tests.article_helper
-import domparser as op
+from domparser import DOMParser
 
 logging.disable(logging.CRITICAL)
 
@@ -26,8 +26,8 @@ class DomOperationTestCase(unittest.TestCase):
         # board part
         cls.board_pages, cls.board_expects = tests.board_helper.setup()
 
-        cls.board_dom = [
-            op.get_board_content(board_page)
+        cls.board_parsers = [
+            DOMParser(DOMParser.get_board_content(board_page))
             for board_page in cls.board_pages
         ]
 
@@ -40,19 +40,20 @@ class DomOperationTestCase(unittest.TestCase):
         cls.article_pages, cls.article_meta, cls.article_expects =\
             tests.article_helper.setup()
 
-        cls.article_dom = [
-            op.get_article_content(article_page)
+        cls.article_parsers = [
+            DOMParser(DOMParser.get_article_content(article_page))
             for article_page in cls.article_pages
         ]
 
     def setUp(self):
         '''The test case level setup.'''
         for index, article_page in enumerate(self.article_pages):
-            self.article_dom[index] = op.get_article_content(article_page)
+            self.article_parsers[index].dom =\
+                DOMParser.get_article_content(article_page)
 
     def test_get_board_content(self):
         '''Unit test for domparser.get_board_content.'''
-        dom = op.get_board_content(self.board_pages[0])
+        dom = DOMParser.get_board_content(self.board_pages[0])
         self.assertEqual(
             dom.find('title').text,
             self.board_expects[0]['html_title']
@@ -60,19 +61,19 @@ class DomOperationTestCase(unittest.TestCase):
 
     def test_get_article_content(self):
         '''Unit test for domparser.get_article_content.'''
-        dom = op.get_article_content(self.article_pages[0])
+        dom = DOMParser.get_article_content(self.article_pages[0])
         self.assertNotEqual(dom, None)
 
     def test_find_prev_page_url(self):
         '''Unit test for domparser.find_prev_page_url.'''
-        for index, dom in enumerate(self.board_dom):
-            self.find_prev_page_url(dom, self.board_expects[index])
+        for index, parser in enumerate(self.board_parsers):
+            self.find_prev_page_url(parser, self.board_expects[index])
 
-    def find_prev_page_url(self, dom, expect):
+    def find_prev_page_url(self, parser, expect):
         '''A helper function for test_find_prev_page_url.'''
         # this condition is decided outside being tested function
         if _should_choose_atcual(expect):
-            url = op.find_prev_page_url(dom)
+            url = parser.find_prev_page_url()
         else:
             url = None
 
@@ -80,16 +81,16 @@ class DomOperationTestCase(unittest.TestCase):
 
     def test_get_articles_meta(self):
         '''Unit test for domparser.get_articles_meta.'''
-        for index, dom in enumerate(self.board_dom):
+        for index, parser in enumerate(self.board_parsers):
             self.get_articles_meta(
-                dom,
+                parser,
                 self.board_last_page[index],
                 self.board_expects[index]['articles_meta']
             )
 
-    def get_articles_meta(self, dom, last_page, expects):
+    def get_articles_meta(self, parser, last_page, expects):
         '''A helper function for test_get_article_blocks.'''
-        articles_meta = op.get_articles_meta(dom, last_page)
+        articles_meta = parser.get_articles_meta(last_page)
         self.assertEqual(len(articles_meta), len(expects))
 
         for index, expect in enumerate(expects):
@@ -97,12 +98,12 @@ class DomOperationTestCase(unittest.TestCase):
 
     def test_parse_article(self):
         '''Unit test for domparser.parse_article.'''
-        for index, dom in enumerate(self.article_dom):
-            self.parse_article(dom, self.article_expects[index]['article'])
+        for index, parser in enumerate(self.article_parsers):
+            self.parse_article(parser, self.article_expects[index]['article'])
 
-    def parse_article(self, dom, expect):
+    def parse_article(self, parser, expect):
         '''A helper function for test_get_create_time.'''
-        content = op.parse_article(dom)['content']
+        content = parser.parse_article()['content']
         self.assertEqual(len(content), len(expect))
 
     def compare_meta(self, act, expect):

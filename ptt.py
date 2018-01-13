@@ -1,4 +1,4 @@
-'''
+﻿'''
 Definitions about HTML BBS elements.
 '''
 import logging
@@ -63,14 +63,11 @@ class Board(AbstractPage):
         self.set_url(board_name)
         self.term_date = term_date
         self.latest_page = True
-        self.dom = None
+        self.parser = None
 
     def __repr__(self):
-        return (
-            f'{self.__class__.__name__}('
-            f'{self.board_name!r}, \
+        return f'{self.__class__.__name__}('f'{self.board_name!r}, \
 {self.term_date!r}, {self.url!r}, {self.latest_page!r})'
-        )
 
     def set_url(self, uri=None):
         '''Setup the URL with board name.'''
@@ -82,29 +79,27 @@ class Board(AbstractPage):
     def _get_content(self, page):
         '''Transfer HTML content to BeautifulSoup object'''
         if page:
-            self.dom = op.get_board_content(page)
-        else:
-            self.dom = None
+            self.parser = op.DOMParser(op.DOMParser.get_board_content(page))
 
     def find_prev_page_url(self):
         '''Find URL of previous page.'''
-        dom = self.dom
-        if not dom:
+        parser = self.parser
+        if not parser:
             LOGGER.error('No content for parsing previous page link.')
             raise ValueError
 
-        self.url = op.find_prev_page_url(dom)
+        self.url = parser.find_prev_page_url()
         if not self.url:
             LOGGER.info('No previous page link found.')
 
     def get_articles_meta(self):
         '''Retrieve meta for all articles in current page.'''
-        dom = self.dom
-        if not dom:
+        parser = self.parser
+        if not parser:
             LOGGER.error('No content for parsing article blocks.')
             raise ValueError
 
-        articles_meta = op.get_articles_meta(dom, self.latest_page)
+        articles_meta = parser.get_articles_meta(self.latest_page)
         self.latest_page = False
 
         before_remove = len(articles_meta)
@@ -131,7 +126,7 @@ class Article(AbstractPage):
         self.board_name = board_name
         self.set_url(meta['href'])
         self.meta = meta
-        self.dom = None
+        self.parser = None
 
     def __repr__(self):
         return f'{self.__class__.__name__}('f'{self.meta!r})'
@@ -139,18 +134,16 @@ class Article(AbstractPage):
     def _get_content(self, page):
         '''Get complete article content.'''
         if page:
-            self.dom = op.get_article_content(page)
-        else:
-            self.dom = None
+            self.parser = op.DOMParser(op.DOMParser.get_article_content(page))
 
     def format_article(self):
         '''Get complete article content.'''
-        dom = self.dom
-        if not dom:
+        parser = self.parser
+        if not parser:
             LOGGER.error('No content for parsing article.')
             raise ValueError
 
-        result = op.parse_article(dom)
+        result = parser.parse_article()
 
         # both create_time and last_edit_time will not be None at same time
         if not result['last_edit_time']:
