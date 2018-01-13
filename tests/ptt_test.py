@@ -43,6 +43,14 @@ def _should_choose_atcual(data):
     return len(data['articles_meta']) == len(data['remove_expired'])
 
 
+def retrieve_dom(self, page, get_content):
+    '''A monkey patch for AbstractPage.retrieve_dom.'''
+    if not page:
+        raise ValueError
+
+    self.dom = get_content(page)
+
+
 class BoardTestCase(unittest.TestCase):
     '''Test cases for ptt.Board.'''
 
@@ -59,6 +67,13 @@ class BoardTestCase(unittest.TestCase):
             ptt.Board(cls.BOARD_NAME, date_diff)
             for index in range(len(cls.pages))
         ]
+
+        cls.retrieve_dom = ptt.Board.retrieve_dom
+        ptt.Board.retrieve_dom = retrieve_dom
+
+    @classmethod
+    def tearDownClass(cls):
+        ptt.Board.retrieve_dom = cls.retrieve_dom
 
     def setUp(self):
         '''The test case level setup.'''
@@ -78,17 +93,16 @@ class BoardTestCase(unittest.TestCase):
         board.set_url(board_name)
         self.assertEqual(board.url, '/bbs/{0}/index.html'.format(board_name))
 
-    # TODO use mock to avoid real internet access
     def test_retrieve_dom(self):
         '''Unit test for ptt.Board.retrieve_dom.'''
+        for index, board in enumerate(self.boards):
+            board.retrieve_dom(self.pages[index], op.get_board_content)
+            self.assertNotEqual(board.dom, None)
+
         board = self.boards[0]
-
-        board.retrieve_dom()
-        self.assertNotEqual(board.dom, None)
-
         board.set_url()
         with self.assertRaises(ValueError):
-            board.retrieve_dom()
+            board.retrieve_dom(None, None)
 
     def test_find_prev_page_url(self):
         '''Unit test for ptt.Board.find_prev_page_url.'''
@@ -158,23 +172,29 @@ class ArticleTestCase(unittest.TestCase):
             for article_meta in cls.meta
         ]
 
+        cls.retrieve_dom = ptt.Article.retrieve_dom
+        ptt.Article.retrieve_dom = retrieve_dom
+
+    @classmethod
+    def tearDownClass(cls):
+        ptt.Article.retrieve_dom = cls.retrieve_dom
+
     def setUp(self):
         '''The test case level setup.'''
         for index, article in enumerate(self.articles):
             article.set_url(self.meta[index]['article_meta']['href'])
             article.dom = op.get_article_content(self.pages[index])
 
-    # TODO use mock to avoid real internet access
     def test_retrieve_dom(self):
         '''Unit test for ptt.Article.retrieve_dom.'''
+        for index, article in enumerate(self.articles):
+            article.retrieve_dom(self.pages[index], op.get_article_content)
+            self.assertNotEqual(article.dom, None)
+
         article = self.articles[0]
-
-        article.retrieve_dom()
-        self.assertNotEqual(article.dom, None)
-
         article.set_url()
         with self.assertRaises(ValueError):
-            article.retrieve_dom()
+            article.retrieve_dom(None, None)
 
     def test_format_article(self):
         '''Unit test for ptt.Article.format_article.'''
