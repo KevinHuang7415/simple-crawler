@@ -7,6 +7,7 @@ import unittest
 import tests.board_helper
 import tests.article_helper
 import ptt
+import dom_operation as op
 
 logging.disable(logging.CRITICAL)
 
@@ -30,7 +31,6 @@ class AbstractPageTestCase(unittest.TestCase):
         page.set_url(uri)
         self.assertEqual(page.url, uri)
 
-    # TODO use mock to avoid real internet access
     def test_retrieve_dom(self):
         '''Unit test for ptt.Page.retrieve_dom.'''
         self.page.set_url()
@@ -64,7 +64,7 @@ class BoardTestCase(unittest.TestCase):
         '''The test case level setup.'''
         for index, board in enumerate(self.boards):
             board.set_url(self.BOARD_NAME)
-            board._get_content(self.pages[index])
+            board.dom = op.get_board_content(self.pages[index])
             board.latest_page = self.expects[index]['latest_page']
 
     def test_set_url(self):
@@ -138,7 +138,7 @@ class BoardTestCase(unittest.TestCase):
     def build_test_board(self):
         '''Build a temporary board object.'''
         board = ptt.Board(self.BOARD_NAME, 0)
-        board._get_content(None)
+        board.dom = None
         return board
 
 
@@ -162,7 +162,7 @@ class ArticleTestCase(unittest.TestCase):
         '''The test case level setup.'''
         for index, article in enumerate(self.articles):
             article.set_url(self.meta[index]['article_meta']['href'])
-            article._get_content(self.pages[index])
+            article.dom = op.get_article_content(self.pages[index])
 
     # TODO use mock to avoid real internet access
     def test_retrieve_dom(self):
@@ -185,7 +185,7 @@ class ArticleTestCase(unittest.TestCase):
             self.meta[0]['board_name'],
             **self.meta[0]['article_meta']
         )
-        article._get_content(None)
+        article.dom = None
         with self.assertRaises(ValueError):
             article.format_article()
 

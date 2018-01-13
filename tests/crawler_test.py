@@ -8,6 +8,7 @@ from tests.helper import load_jsons
 import tests.article_helper
 import crawler
 import ptt
+import dom_operation as op
 
 logging.disable(logging.CRITICAL)
 
@@ -30,7 +31,7 @@ class CrawlerTestCase(unittest.TestCase):
             article_meta = article_meta['article_meta']
 
             cls.articles[index] = ptt.Article(board_name, **article_meta)
-            cls.articles[index]._get_content(cls.pages[index])
+            cls.articles[index].dom = op.get_article_content(cls.pages[index])
 
             cls.contents[index] = cls.articles[index].format_article()
 
