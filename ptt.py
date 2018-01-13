@@ -4,8 +4,8 @@ Definitions about HTML BBS elements.
 import logging
 import time
 import requests
-import datetime_helper as dh
-import dom_operation as op
+import datetimehelper as dh
+import domparser as op
 
 LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
 

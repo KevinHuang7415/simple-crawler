@@ -5,7 +5,7 @@ import logging
 import unittest
 import tests.board_helper
 import tests.article_helper
-import dom_operation as op
+import domparser as op
 
 logging.disable(logging.CRITICAL)
 
@@ -16,7 +16,7 @@ def _should_choose_atcual(data):
 
 
 class DomOperationTestCase(unittest.TestCase):
-    '''Test cases for dom_operation.'''
+    '''Test cases for domparser.'''
 
     BOARD_NAME = 'Soft_Job'
 
@@ -51,7 +51,7 @@ class DomOperationTestCase(unittest.TestCase):
             self.article_dom[index] = op.get_article_content(article_page)
 
     def test_get_board_content(self):
-        '''Unit test for dom_operation.get_board_content.'''
+        '''Unit test for domparser.get_board_content.'''
         dom = op.get_board_content(self.board_pages[0])
         self.assertEqual(
             dom.find('title').text,
@@ -59,12 +59,12 @@ class DomOperationTestCase(unittest.TestCase):
         )
 
     def test_get_article_content(self):
-        '''Unit test for dom_operation.get_article_content.'''
+        '''Unit test for domparser.get_article_content.'''
         dom = op.get_article_content(self.article_pages[0])
         self.assertNotEqual(dom, None)
 
     def test_find_prev_page_url(self):
-        '''Unit test for dom_operation.find_prev_page_url.'''
+        '''Unit test for domparser.find_prev_page_url.'''
         for index, dom in enumerate(self.board_dom):
             self.find_prev_page_url(dom, self.board_expects[index])
 
@@ -79,7 +79,7 @@ class DomOperationTestCase(unittest.TestCase):
         self.assertEqual(url, expect['prev_page_url'])
 
     def test_get_articles_meta(self):
-        '''Unit test for dom_operation.get_articles_meta.'''
+        '''Unit test for domparser.get_articles_meta.'''
         for index, dom in enumerate(self.board_dom):
             self.get_articles_meta(
                 dom,
@@ -96,7 +96,7 @@ class DomOperationTestCase(unittest.TestCase):
             self.compare_meta(articles_meta[index], expect)
 
     def test_parse_article(self):
-        '''Unit test for dom_operation.parse_article.'''
+        '''Unit test for domparser.parse_article.'''
         for index, dom in enumerate(self.article_dom):
             self.parse_article(dom, self.article_expects[index]['article'])
 

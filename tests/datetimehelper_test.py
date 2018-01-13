@@ -1,16 +1,16 @@
 '''
-Unit tests for datetime_helper module.
+Unit tests for datetimehelper module.
 '''
 import logging
 import unittest
 from datetime import date, timedelta, datetime, time
-import datetime_helper as dh
+import datetimehelper as dh
 
 logging.disable(logging.CRITICAL)
 
 
 class DatetimeHelperTestCase(unittest.TestCase):
-    '''Test cases for datetime_helper.'''
+    '''Test cases for datetimehelper.'''
 
     @classmethod
     def setUpClass(cls):
@@ -43,7 +43,7 @@ class DatetimeHelperTestCase(unittest.TestCase):
             cls.test_cases[term_date] = zip(dates, term_dates[term_date])
 
     def test_to_ptt_date_format(self):
-        '''Unit test for datetime_helper.to_ptt_date_format.'''
+        '''Unit test for datetimehelper.to_ptt_date_format.'''
         expect = date.today().strftime("%m/%d").lstrip('0')
         self.to_ptt_date_format(None, expect)
 
@@ -62,7 +62,7 @@ class DatetimeHelperTestCase(unittest.TestCase):
         self.assertEqual(ptt_date, expect)
 
     def test_check_expired(self):
-        '''Unit test for datetime_helper.check_expired.'''
+        '''Unit test for datetimehelper.check_expired.'''
         for term_date, test_cases in self.test_cases.items():
             for test_case in test_cases:
                 self.check_expired(test_case, term_date)
@@ -78,13 +78,13 @@ class DatetimeHelperTestCase(unittest.TestCase):
         )
 
     def test_alt_to_full(self):
-        '''Unit test for datetime_helper.alt_to_full.'''
+        '''Unit test for datetimehelper.alt_to_full.'''
         datetime_str = '12/26/2017 15:56:57'
         expect = 'Tue Dec 26 15:56:57 2017'
         self.assertEqual(dh.alt_to_full(datetime_str), expect)
 
     def test_to_full_datetime(self):
-        '''Unit test for datetime_helper.to_full_datetime.'''
+        '''Unit test for datetimehelper.to_full_datetime.'''
         ptt_date = '12/26'
         full_date = dh.to_full_datetime(ptt_date)
 

@@ -3,7 +3,7 @@ Operations on DOM which parsed by BeautifulSoup.
 '''
 import re
 from bs4 import BeautifulSoup
-import datetime_helper as dh
+import datetimehelper as dh
 
 EDIT = '※ 編輯'
 PATTERN_TIME = re.compile('時間')

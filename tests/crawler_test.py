@@ -8,7 +8,7 @@ from tests.helper import load_jsons
 import tests.article_helper
 import crawler
 import ptt
-import dom_operation as op
+import domparser as op
 
 logging.disable(logging.CRITICAL)
 

@@ -7,7 +7,7 @@ import unittest
 import tests.board_helper
 import tests.article_helper
 import ptt
-import dom_operation as op
+import domparser as op
 
 logging.disable(logging.CRITICAL)
 
