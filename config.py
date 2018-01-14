@@ -44,19 +44,23 @@ class Config(singleton.Singleton):
         self.config = new_config
         self.path = new_path
 
-    def __get_value(self, method, section, option):
+    @staticmethod
+    def __get_value(method, section, option):
         '''Fetch a value from configuration.'''
         try:
             return method(section, option)
         except configparser.NoSectionError:
             LOGGER.error('Section [%s] not exists.', section)
-            return None
+            raise
         except configparser.NoOptionError:
             LOGGER.error(
                 'Option [%s] not exists in section [%s].',
                 option, section
             )
-            return None
+            raise
+        except ValueError:
+            LOGGER.error('Inconsistent type between method and option value.')
+            raise
 
     def get(self, section, option):
         '''Fetch a string value from configuration.'''
