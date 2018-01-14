@@ -10,9 +10,9 @@ FORMAT_ALT = '%m/%d/%Y %H:%M:%S'
 FORMAT_PTT = '%m/%d'
 
 
-def to_ptt_date_format(date_obj=date.today()):
+def to_ptt_date_format(date_=date.today()):
     '''Date time object to PTT format string.'''
-    return date_obj.strftime(FORMAT_PTT).lstrip('0')
+    return date_.strftime(FORMAT_PTT).lstrip('0')
 
 
 def _gen_date(ptt_date):
@@ -49,24 +49,24 @@ def check_expired(ptt_date, term_date=15):
         return True
 
     LOGGER.debug('Input date: [%s]', ptt_date)
-    date_obj = _gen_date(ptt_date)
-    if not date_obj:
+    date_ = _gen_date(ptt_date)
+    if not date_:
         return True
 
-    earlier, days_diff = _check_date_earlier(date_obj, 0)
+    earlier, days_diff = _check_date_earlier(date_, 0)
     if earlier:
         return days_diff >= term_date
 
     # no article date can be later in reality
     # set year to last year can fit current scenario
     try:
-        date_obj = date_obj.replace(year=date_obj.year - 1)
-        return _check_date_earlier(date_obj, term_date)[0]
+        date_ = date_.replace(year=date_.year - 1)
+        return _check_date_earlier(date_, term_date)[0]
     # case for 2/29
     except ValueError:
-        days = date(date_obj.year - 1, 3, 1) - date(date_obj.year, 3, 1)
-        date_obj += days
-        return _check_date_earlier(date_obj, term_date)[0]
+        days = date(date_.year - 1, 3, 1) - date(date_.year, 3, 1)
+        date_ += days
+        return _check_date_earlier(date_, term_date)[0]
 
 
 def alt_to_full(datetime_str):
@@ -76,7 +76,7 @@ def alt_to_full(datetime_str):
 
 def to_full_datetime(ptt_date):
     '''Transform date in Ptt format to the full format.'''
-    date_obj = _gen_date(ptt_date)
-    if date_obj:
-        return datetime.combine(date_obj, time(hour=12)).strftime(FORMAT_FULL)
+    date_ = _gen_date(ptt_date)
+    if date_:
+        return datetime.combine(date_, time(hour=12)).strftime(FORMAT_FULL)
     return None

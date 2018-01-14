@@ -205,10 +205,8 @@ class ArticleTestCase(unittest.TestCase):
         for index, article in enumerate(self.articles):
             self.format_article(article, self.expects[index]['article'])
 
-        article = ptt.Article(
-            self.meta[0]['board_name'],
-            **self.meta[0]['article_meta']
-        )
+        meta = self.meta[0]
+        article = ptt.Article(meta['board_name'], **meta['article_meta'])
         article.parser = None
         with self.assertRaises(ValueError):
             article.format_article()
