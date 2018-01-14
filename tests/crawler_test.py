@@ -49,17 +49,26 @@ class CrawlerTestCase(unittest.TestCase):
         data_path = crawler.CONFIG.get('Crawler', 'data_path')
         self.assertTrue(os.path.isdir(data_path))
 
-    @unittest.skip("just skipping")
+    @unittest.skip('Nothing can really be tested.')
+    def test_shutdown(self):
+        '''Unit test for crawler.shutdown.'''
+        crawler.shutdown()
+        self.fail("Not implemented")
+
+    @unittest.skip(
+        'Not a unit since this is the main function of this program.')
     def test_crawler(self):
         '''Unit test for crawler.crawler.'''
         crawler.crawler()
         self.fail("Not implemented")
 
+    @unittest.skip('Enough to test ptt.Board only.')
     def test_parse_board(self):
         '''Unit test for crawler.parse_board.'''
         articles_meta = crawler.parse_board(None)
         self.assertEqual(articles_meta, None)
 
+    @unittest.skip('Enough to test ptt.Article only.')
     def test_retrieve_article(self):
         '''Unit test for crawler.retrieve_article.'''
         articles = crawler.retrieve_article()
