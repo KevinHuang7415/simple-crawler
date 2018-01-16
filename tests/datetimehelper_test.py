@@ -42,22 +42,22 @@ class DatetimeHelperTestCase(unittest.TestCase):
             ]
             cls.test_cases[term_date] = zip(dates, term_dates[term_date])
 
-    def test_to_ptt_date_format(self):
-        '''Unit test for datetimehelper.to_ptt_date_format.'''
+    def test_to_ptt_date(self):
+        '''Unit test for datetimehelper.to_ptt_date.'''
         expect = date.today().strftime("%m/%d").lstrip('0')
-        self.to_ptt_date_format(None, expect)
+        self.to_ptt_date(None, expect)
 
         year = self.year
-        self.to_ptt_date_format(date(year=year, month=2, day=28), '2/28')
-        self.to_ptt_date_format(date(year=year, month=12, day=28), '12/28')
-        self.to_ptt_date_format(date(year=year, month=2, day=8), '2/08')
+        self.to_ptt_date(date(year=year, month=2, day=28), '2/28')
+        self.to_ptt_date(date(year=year, month=12, day=28), '12/28')
+        self.to_ptt_date(date(year=year, month=2, day=8), '2/08')
 
-    def to_ptt_date_format(self, this_day, expect):
-        '''A helper function for test_to_ptt_date_format.'''
+    def to_ptt_date(self, this_day, expect):
+        '''A helper function for test_to_ptt_date.'''
         if this_day:
-            ptt_date = dh.to_ptt_date_format(this_day)
+            ptt_date = dh.to_ptt_date(this_day)
         else:
-            ptt_date = dh.to_ptt_date_format()
+            ptt_date = dh.to_ptt_date()
 
         self.assertEqual(ptt_date, expect)
 
@@ -69,7 +69,7 @@ class DatetimeHelperTestCase(unittest.TestCase):
 
     def check_expired(self, test_case, term_date):
         '''A helper function for test_check_expired.'''
-        ptt_date = dh.to_ptt_date_format(test_case[0])
+        ptt_date = dh.to_ptt_date(test_case[0])
         self.assertEqual(
             dh.check_expired(ptt_date, term_date),
             test_case[1],

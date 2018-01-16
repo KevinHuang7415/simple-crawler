@@ -34,7 +34,7 @@ def shutdown():
 def crawler():
     '''Grab all articles in recent days.'''
     term_date = CONFIG.getint(SECTION, 'term_date')
-    LOGGER.info('Start date:[%s]', dh.to_ptt_date_format())
+    LOGGER.info('Start date:[%s]', dh.to_ptt_date())
     LOGGER.info('Term date as [%d] days.', term_date)
 
     board_name = CONFIG.get(SECTION, 'board')

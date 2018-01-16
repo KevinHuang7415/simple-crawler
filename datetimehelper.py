@@ -10,7 +10,7 @@ FORMAT_ALT = '%m/%d/%Y %H:%M:%S'
 FORMAT_PTT = '%m/%d'
 
 
-def to_ptt_date_format(date_=date.today()):
+def to_ptt_date(date_=date.today()):
     '''Date time object to PTT format string.'''
     return date_.strftime(FORMAT_PTT).lstrip('0')
 
