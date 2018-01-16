@@ -69,6 +69,11 @@ class Board(AbstractPage):
         return f'{self.__class__.__name__}('f'{self.board_name!r}, \
 {self.term_date!r}, {self.url!r}, {self.latest_page!r})'
 
+    @property
+    def has_prev_page(self):
+        '''A interface to check whether url exist.'''
+        return self.url is not None
+
     def set_url(self, uri=None):
         '''Setup the URL with board name.'''
         if uri:

@@ -41,7 +41,7 @@ def crawler():
     board = ptt.Board(board_name, term_date)
     LOGGER.info('Retrive articles from board [%s].', board_name)
 
-    while board.url:
+    while board.has_prev_page:
         board.retrieve_dom(0)
         articles_meta = parse_board(board)
         LOGGER.info('[%d] articles\' meta retrieved.', len(articles_meta))
