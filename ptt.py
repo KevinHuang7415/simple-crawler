@@ -38,7 +38,11 @@ class AbstractPage:
 
         # to avoid being detected as DDOS
         time.sleep(sleep_time)
-        resp = requests.get(self.PTT_URL + self.url)
+        try:
+            resp = requests.get(self.PTT_URL + self.url)
+        except requests.ConnectionError:
+            LOGGER.error('Connection error.', exc_info=True)
+            raise
 
         if resp.status_code == 200:
             return resp.text
