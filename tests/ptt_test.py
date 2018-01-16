@@ -38,7 +38,7 @@ class AbstractPageTestCase(unittest.TestCase):
             self.page.retrieve_dom()
 
 
-def _should_choose_atcual(data):
+def _should_choose_actual(data):
     '''A helper function to combine key-value pair'''
     return len(data['articles_meta']) == len(data['remove_expired'])
 
@@ -120,7 +120,7 @@ class BoardTestCase(unittest.TestCase):
     def find_prev_page_url(self, board, expect):
         '''A helper function for test_find_prev_page_url.'''
         # this condition is decided outside being tested function
-        if _should_choose_atcual(expect):
+        if _should_choose_actual(expect):
             board.find_prev_page_url()
         else:
             board.url = None

@@ -10,7 +10,7 @@ import domparser as dp
 logging.disable(logging.CRITICAL)
 
 
-def _should_choose_atcual(data):
+def _should_choose_actual(data):
     '''A helper function to combine key-value pair'''
     return len(data['articles_meta']) == len(data['remove_expired'])
 
@@ -41,7 +41,7 @@ class BoardParserTestCase(unittest.TestCase):
     def find_prev_page_url(self, parser, expect):
         '''A helper function for test_find_prev_page_url.'''
         # this condition is decided outside being tested function
-        if _should_choose_atcual(expect):
+        if _should_choose_actual(expect):
             url = parser.find_prev_page_url()
         else:
             url = None

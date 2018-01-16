@@ -106,7 +106,7 @@ class ArticleParser(DOMParser):
         return f'{self.__class__.__name__}('f'{self.dom!r})'
 
     def parse_article(self):
-        '''Retreive formatted content and time information of article.'''
+        '''Retrieve formatted content and time information of article.'''
         dom = self.dom
         has_metaline, create_time = self.__get_create_time()
         # 09/03/2017 00:39:26
