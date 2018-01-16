@@ -32,7 +32,7 @@ class CrawlerTestCase(unittest.TestCase):
 
             cls.articles[index] = ptt.Article(board_name, **article_meta)
             cls.articles[index].parser =\
-                dp.DOMParser.builder(dp.PageType.article, cls.pages[index])
+                dp.build_parser(dp.PageType.article, cls.pages[index])
 
             cls.contents[index] = cls.articles[index].format_article()
 

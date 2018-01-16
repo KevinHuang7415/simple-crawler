@@ -88,7 +88,7 @@ class Board(AbstractPage):
     def _get_content(self, page):
         '''Transfer HTML content to BeautifulSoup object'''
         if page:
-            self.parser = dp.DOMParser.builder(dp.PageType.board, page)
+            self.parser = dp.build_parser(dp.PageType.board, page)
 
     def find_prev_page_url(self):
         '''Find URL of previous page.'''
@@ -143,7 +143,7 @@ class Article(AbstractPage):
     def _get_content(self, page):
         '''Get complete article content.'''
         if page:
-            self.parser = dp.DOMParser.builder(dp.PageType.article, page)
+            self.parser = dp.build_parser(dp.PageType.article, page)
 
     def format_article(self):
         '''Get complete article content.'''

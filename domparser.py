@@ -15,41 +15,32 @@ class PageType(Enum):
 
 class DOMParser:
     '''DOM parser to support ptt module.'''
-
-    EDIT = '※ 編輯'
-    PATTERN_TIME = re.compile('時間')
-    PATTERN_EDIT = re.compile(EDIT)
-
-    def __new__(cls, dom):
-        if dom:
+    def __new__(cls, page):
+        if page:
             return object.__new__(cls)
         return None
 
-    def __init__(self, dom):
-        self.dom = dom
+    def __repr__(self):
+        return f'{self.__class__.__name__}()'
+
+    @staticmethod
+    def _find_tag(tag, name, *classnames):
+        '''Helper for find series functions.'''
+        # It's fine to use set operation here
+        return tag.name == name and tag.attrs and 'class' in tag.attrs and\
+            set(classnames).issubset(tag['class'])
+
+
+class BoardParser(DOMParser):
+    '''DOM parser to support ptt.Board module.'''
+    def __new__(cls, page):
+        return super().__new__(cls, page)
+
+    def __init__(self, page):
+        self.dom = BeautifulSoup(page, 'html.parser')
 
     def __repr__(self):
         return f'{self.__class__.__name__}('f'{self.dom!r})'
-
-    @staticmethod
-    def get_board_content(page):
-        '''Get complete article content'''
-        return BeautifulSoup(page, 'html.parser')
-
-    @staticmethod
-    def get_article_content(page):
-        '''Get complete article content.'''
-        soup = BeautifulSoup(page, 'html.parser')
-        return soup.find(id='main-content')
-
-    @staticmethod
-    def builder(pagetype, page):
-        '''Object builder.'''
-        functions = {
-            PageType.board: DOMParser.get_board_content,
-            PageType.article: DOMParser.get_article_content
-        }
-        return DOMParser(functions[pagetype](page))
 
     def find_prev_page_url(self):
         '''Find URL of previous page.'''
@@ -65,7 +56,7 @@ class DOMParser:
         # <div class="title"> (本文已被刪除) [author] </div>
         def find_r_ent_with_child_a(tag):
             '''Filter function to find blocks which contain article meta.'''
-            return self.__find_tag(tag, 'div', 'r-ent') and tag.find('a')
+            return self._find_tag(tag, 'div', 'r-ent') and tag.find('a')
 
         def get_article_meta(article_block):
             '''Get article meta.'''
@@ -95,6 +86,24 @@ class DOMParser:
             get_article_meta(article_block)
             for article_block in dom.find_all(find_r_ent_with_child_a)
         ]
+
+
+class ArticleParser(DOMParser):
+    '''DOM parser to support ptt.Board module.'''
+
+    EDIT = '※ 編輯'
+    PATTERN_TIME = re.compile('時間')
+    PATTERN_EDIT = re.compile(EDIT)
+
+    def __new__(cls, page):
+        return super().__new__(cls, page)
+
+    def __init__(self, page):
+        soup = BeautifulSoup(page, 'html.parser')
+        self.dom = soup.find(id='main-content')
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}('f'{self.dom!r})'
 
     def parse_article(self):
         '''Retreive formatted content and time information of article.'''
@@ -127,13 +136,6 @@ class DOMParser:
             'last_edit_time': last_edit_time
         }
 
-    @staticmethod
-    def __find_tag(tag, name, *classnames):
-        '''Helper for find series functions.'''
-        # It's fine to use set operation here
-        return tag.name == name and tag.attrs and 'class' in tag.attrs and\
-            set(classnames).issubset(tag['class'])
-
     def __get_create_time(self):
         '''Find create time of article.'''
         has_metaline = False
@@ -161,7 +163,7 @@ class DOMParser:
     def __find_in_article_meta_tag(self):
         '''Find article-meta-tag in page content'''
         tag = self.dom.find(
-            lambda tag: self.__find_tag(tag, 'span', 'article-meta-tag') and
+            lambda tag: self._find_tag(tag, 'span', 'article-meta-tag') and
             self.PATTERN_TIME.search(tag.text)
         )
 
@@ -172,7 +174,7 @@ class DOMParser:
     def __find_in_modified_metalines(self):
         '''Find modified metalines in page content'''
         tag = self.dom.find(
-            lambda tag: self.__find_tag(tag, 'span', 'f4', 'b7') and
+            lambda tag: self._find_tag(tag, 'span', 'f4', 'b7') and
             self.PATTERN_TIME.search(tag.text)
         )
 
@@ -184,7 +186,7 @@ class DOMParser:
         '''Find last f2 tag in page content'''
         return next(
             (f2.text for f2 in self.dom.find_all(
-                lambda tag: self.__find_tag(tag, 'span', 'f2') and
+                lambda tag: self._find_tag(tag, 'span', 'f2') and
                 tag.text.startswith(start_str)
             )[::-1]),
             None
@@ -210,3 +212,12 @@ class DOMParser:
         # very rare condition
         element = element.next_element
         return element.text.partition(', ')[2].strip()
+
+
+def build_parser(pagetype, page):
+    '''Build corresponding parser to page type.'''
+    parser_types = {
+        PageType.board: BoardParser,
+        PageType.article: ArticleParser
+    }
+    return parser_types[pagetype](page)

@@ -48,7 +48,7 @@ def retrieve_dom(self, pagetype, page):
     if not page:
         raise ValueError
 
-    self.parser = dp.DOMParser.builder(pagetype, page)
+    self.parser = dp.build_parser(pagetype, page)
 
 
 class BoardTestCase(unittest.TestCase):
@@ -80,7 +80,7 @@ class BoardTestCase(unittest.TestCase):
         for index, board in enumerate(self.boards):
             board.set_url(self.BOARD_NAME)
             board.parser =\
-                dp.DOMParser.builder(dp.PageType.board, self.pages[index])
+                dp.build_parser(dp.PageType.board, self.pages[index])
             board.latest_page = self.expects[index]['latest_page']
 
     def test_set_url(self):
@@ -187,7 +187,7 @@ class ArticleTestCase(unittest.TestCase):
         for index, article in enumerate(self.articles):
             article.set_url(self.meta[index]['article_meta']['href'])
             article.parser =\
-                dp.DOMParser.builder(dp.PageType.article, self.pages[index])
+                dp.build_parser(dp.PageType.article, self.pages[index])
 
     def test_retrieve_dom(self):
         '''Unit test for ptt.Article.retrieve_dom.'''
