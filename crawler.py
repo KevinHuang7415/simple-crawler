@@ -76,16 +76,15 @@ def retrieve_article(**article_meta):
 def save_article(article, **meta):
     '''Save cached article to file.'''
     if article:
-        # to avoid the titles collision
-        # format: PTT_URL/..../M.number.A.RND.html
-        # take the number part
-        article_id = meta['href'].rpartition('/')[-1].split('.')[1]
-
-        # date - title - title_id
-        file_title = ' - '.join([meta['date'], meta['title'], article_id])
-
-        data_path = CONFIG.get(SECTION, 'data_path')
-        fh.write_article(article, file_title, data_path)
+        data.models.save_article(
+            meta['date'],
+            meta['author'],
+            meta['title'],
+            meta['href'],
+            article['content'],
+            dh.to_datetime(article['create_time']),
+            dh.to_datetime(article['last_edit_time'])
+        )
 
 
 def main():
@@ -100,4 +99,12 @@ def main():
 
 
 if __name__ == '__main__':
+    import os
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
+
+    # Setup Django manually is required when using some modules standalone
+    import django
+    django.setup()
+
+    import data.models
     main()

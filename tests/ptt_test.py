@@ -203,7 +203,7 @@ class ArticleTestCase(unittest.TestCase):
     def test_format_article(self):
         '''Unit test for ptt.Article.format_article.'''
         for index, article in enumerate(self.articles):
-            self.format_article(article, self.expects[index]['article'])
+            self.format_article(article, self.expects[index])
 
         meta = self.meta[0]
         article = ptt.Article(meta['board_name'], **meta['article_meta'])
@@ -214,8 +214,9 @@ class ArticleTestCase(unittest.TestCase):
     def format_article(self, article, expect):
         '''A helper function for test_format_article.'''
         content = article.format_article()
-        self.assertEqual(len(content), len(expect))
-        # self.assertEqual(article.format_article(), expect)
+        self.assertEqual(len(content['content']), len(expect['article']))
+        self.assertEqual(content['create_time'], expect['create_time'])
+        self.assertEqual(content['last_edit_time'], expect['last_modify_time'])
 
 
 if __name__ == '__main__':

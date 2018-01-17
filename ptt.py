@@ -36,7 +36,7 @@ class AbstractPage:
             LOGGER.error('URL is not set.')
             raise ValueError
 
-        # to avoid being detected as DDOS
+        # to avoid being detected as DDoS
         time.sleep(sleep_time)
         try:
             resp = requests.get(self.PTT_URL + self.url)
@@ -160,4 +160,4 @@ class Article(AbstractPage):
         elif not result['create_time']:
             result['create_time'] = dh.to_full_datetime(self.meta['date'])
 
-        return result['content']
+        return result
