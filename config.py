@@ -6,8 +6,13 @@ import logging
 import os
 import singleton
 
+if __package__:
+    LOGGER = logging.getLogger('.'.join(['crawler', __package__, __name__]))
+else:
+    LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
+
 DEFAULT_FILE = r'config\ptt_crawler.conf'
-LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
+
 DEFAULT_CONFIGS = {
     'Crawler': {
         'term_date': 10,

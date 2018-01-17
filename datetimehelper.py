@@ -4,7 +4,11 @@ Helper functions for date-time.
 from datetime import date, timedelta, datetime, time
 import logging
 
-LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
+if __package__:
+    LOGGER = logging.getLogger('.'.join(['crawler', __package__, __name__]))
+else:
+    LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
+
 FORMAT_MODEL = '%Y-%m-%d %H:%M:%S'
 FORMAT_FULL = '%a %b %d %H:%M:%S %Y'
 FORMAT_ALT = '%m/%d/%Y %H:%M:%S'

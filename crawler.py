@@ -11,7 +11,10 @@ import data.services
 
 CONFIG = config.Config()
 SECTION = 'Crawler'
-LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
+if __package__:
+    LOGGER = logging.getLogger('.'.join(['crawler', __package__, __name__]))
+else:
+    LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
 
 
 def setup():
