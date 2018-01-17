@@ -96,6 +96,14 @@ class DatetimeHelperTestCase(unittest.TestCase):
         ptt_date = '2/30'
         self.assertEqual(dh.to_full_datetime(ptt_date), None)
 
+    def test_to_datetime(self):
+        '''Unit test for datetimehelper.to_datetime.'''
+        datetime_obj = dh.to_datetime('Tue Dec 26 15:56:57 2017')
+        self.assertEqual(datetime_obj.year, 2017)
+        self.assertEqual(datetime_obj.month, 12)
+        self.assertEqual(datetime_obj.day, 26)
+        self.assertEqual(datetime_obj.hour, 15)
+
 
 if __name__ == '__main__':
     unittest.main()

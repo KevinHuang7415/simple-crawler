@@ -5,6 +5,7 @@ from datetime import date, timedelta, datetime, time
 import logging
 
 LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
+FORMAT_MODEL = '%Y-%m-%d %H:%M:%S'
 FORMAT_FULL = '%a %b %d %H:%M:%S %Y'
 FORMAT_ALT = '%m/%d/%Y %H:%M:%S'
 FORMAT_PTT = '%m/%d'
@@ -80,3 +81,8 @@ def to_full_datetime(ptt_date):
     if date_:
         return datetime.combine(date_, time(hour=12)).strftime(FORMAT_FULL)
     return None
+
+
+def to_datetime(datetime_str):
+    '''Transform date in Ptt format to the full format.'''
+    return datetime.strptime(datetime_str, FORMAT_FULL)
