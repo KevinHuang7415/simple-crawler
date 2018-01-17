@@ -5,9 +5,9 @@ import logging
 import logging.config
 import config
 import datetimehelper as dh
-import filehelper as fh
 import log_config
 import ptt
+import data.services
 
 CONFIG = config.Config()
 SECTION = 'Crawler'
@@ -23,11 +23,12 @@ def setup():
 
     logging.config.dictConfig(log_config.LOGGING)
 
-    fh.create_dir_if_not_exist(CONFIG.get(SECTION, 'data_path'))
+    data.services.start()
 
 
 def shutdown():
     '''Prepare for shutdown.'''
+    data.services.stop()
     logging.shutdown()
 
 

@@ -12,7 +12,7 @@ DEFAULT_CONFIGS = {
     'Crawler': {
         'term_date': 10,
         'board': 'Soft_Job',
-        'data_path': 'data',
+        'data_path': 'data_txt',
     }
 }
 
