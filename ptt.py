@@ -1,16 +1,13 @@
 ﻿'''
 Definitions about HTML BBS elements.
 '''
-import logging
 import time
 import requests
 import datetimehelper as dh
 import domparser as dp
+import logger
 
-if __package__:
-    LOGGER = logging.getLogger('.'.join(['crawler', __package__, __name__]))
-else:
-    LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
+LOGGER = logger.get_logger(__package__, __name__)
 
 
 class AbstractPage:

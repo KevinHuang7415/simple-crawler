@@ -2,14 +2,11 @@
 Configuration utility module.
 '''
 import configparser
-import logging
 import os
 import singleton
+import logger
 
-if __package__:
-    LOGGER = logging.getLogger('.'.join(['crawler', __package__, __name__]))
-else:
-    LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
+LOGGER = logger.get_logger(__package__, __name__)
 
 DEFAULT_FILE = r'config\ptt_crawler.conf'
 

@@ -2,15 +2,12 @@
 Helper functions for file operations.
 '''
 import errno
-import logging
 import os
 from os import path
 import re
+import logger
 
-if __package__:
-    LOGGER = logging.getLogger('.'.join(['crawler', __package__, __name__]))
-else:
-    LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
+LOGGER = logger.get_logger(__package__, __name__)
 
 _PATTERN = re.compile(r'[.\\/:*?"<>|\r\n]')
 

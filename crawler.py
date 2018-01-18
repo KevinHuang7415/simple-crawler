@@ -5,16 +5,13 @@ import logging
 import logging.config
 import config
 import datetimehelper as dh
-import log_config
+import logger
 import ptt
 import data.services
 
 CONFIG = config.Config()
 SECTION = 'Crawler'
-if __package__:
-    LOGGER = logging.getLogger('.'.join(['crawler', __package__, __name__]))
-else:
-    LOGGER = logging.getLogger('.'.join(['crawler', __name__]))
+LOGGER = logger.get_logger(__package__, __name__)
 
 
 def setup():
@@ -24,7 +21,7 @@ def setup():
     except ValueError:
         CONFIG.load_default()
 
-    logging.config.dictConfig(log_config.LOGGING)
+    logger.load_config()
 
     data.services.start()
 
