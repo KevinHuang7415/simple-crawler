@@ -200,20 +200,20 @@ class ArticleTestCase(unittest.TestCase):
         with self.assertRaises(ValueError):
             article.retrieve_dom(None, None)
 
-    def test_format_article(self):
-        '''Unit test for ptt.Article.format_article.'''
+    def test_parse_content(self):
+        '''Unit test for ptt.Article.parse_content.'''
         for index, article in enumerate(self.articles):
-            self.format_article(article, self.expects[index])
+            self.parse_content(article, self.expects[index])
 
         meta = self.meta[0]
         article = ptt.Article(meta['board_name'], **meta['article_meta'])
         article.parser = None
         with self.assertRaises(ValueError):
-            article.format_article()
+            article.parse_content()
 
-    def format_article(self, article, expect):
+    def parse_content(self, article, expect):
         '''A helper function for test_format_article.'''
-        content = article.format_article()
+        content = article.parse_content()
         self.assertEqual(len(content['content']), len(expect['article']))
         self.assertEqual(content['create_time'], expect['create_time'])
         self.assertEqual(content['last_edit_time'], expect['last_modify_time'])

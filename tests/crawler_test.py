@@ -34,7 +34,7 @@ class CrawlerTestCase(unittest.TestCase):
             cls.articles[index].parser =\
                 dp.build_parser(dp.PageType.article, cls.pages[index])
 
-            cls.contents[index] = cls.articles[index].format_article()
+            cls.contents[index] = cls.articles[index].parse_content()
 
     def setUp(self):
         '''The test case level setup.'''

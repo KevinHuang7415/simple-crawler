@@ -74,7 +74,7 @@ def retrieve_article(**article_meta):
     board_name = CONFIG.get(SECTION, 'board')
     article = ptt.Article(board_name, **article_meta)
     article.retrieve_dom()
-    return article.format_article()
+    return article.parse_content()
 
 
 def save_article(article, **meta):

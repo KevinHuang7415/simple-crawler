@@ -148,7 +148,7 @@ class Article(AbstractPage):
         if page:
             self.parser = dp.build_parser(dp.PageType.article, page)
 
-    def format_article(self):
+    def parse_content(self):
         '''Get complete article content.'''
         parser = self.parser
         if not parser:
