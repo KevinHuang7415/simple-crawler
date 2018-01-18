@@ -47,13 +47,11 @@ def crawler():
 
     while board.has_prev_page:
         board.retrieve_dom(0)
+
         articles_meta = parse_board(board)
         LOGGER.info('[%d] articles\' meta retrieved.', len(articles_meta))
 
-        for article_meta in articles_meta:
-            content, create_time, last_edit_time =\
-                retrieve_article(**article_meta)
-            save_article(content, create_time, last_edit_time, **article_meta)
+        retrieve_articles(*articles_meta)
 
     LOGGER.info('Job finished.')
 
@@ -67,29 +65,34 @@ def parse_board(board):
     return board.get_articles_meta()
 
 
-def retrieve_article(**article_meta):
-    '''Retrieve article content.'''
-    if not article_meta:
-        return None
-
+def retrieve_articles(*articles_meta):
+    '''Retrieve articles content.'''
+    new_article = False
     board_name = CONFIG.get(SECTION, 'board')
-    article = ptt.Article(board_name, **article_meta)
-    article.retrieve_dom()
-    return article.parse_content()
 
+    for article_meta in articles_meta:
+        article = ptt.Article(board_name, **article_meta)
 
-def save_article(content, create_time, last_edit_time, **meta):
-    '''Save cached article to file.'''
-    if article:
-        data.models.save_article(
-            meta['date'],
-            meta['author'],
-            meta['title'],
-            meta['href'],
-            content,
-            create_time,
-            last_edit_time
-        )
+        article.retrieve_dom()
+        content, create_time, last_edit_time = article.parse_content()
+
+        row_article = data.models.find_article(article_meta['href'])
+        # the follow-up to new article can only be new too
+        if not new_article and not row_article:
+            new_article = True
+
+        if new_article:
+            data.models.save_article(
+                article_meta['date'],
+                article_meta['author'],
+                article_meta['title'],
+                article_meta['href'],
+                content,
+                create_time,
+                last_edit_time
+            )
+        elif row_article.edit_time != last_edit_time:
+            data.models.update_article(row_article, content, last_edit_time)
 
 
 def main():

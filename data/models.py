@@ -3,7 +3,6 @@ Model definition for ptt articles.
 '''
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
-import datetimehelper as dh
 
 
 class Article(models.Model):
@@ -44,9 +43,9 @@ def find_article(url):
         return None
 
 
-def update_article(row, article):
+def update_article(row, article_content, last_edit_time):
     '''Update query result row.'''
-    row.content = article['content']
-    row.length = len(article['content'])
-    row.edit_time = dh.to_datetime(article['last_edit_time'])
+    row.content = article_content
+    row.length = len(article_content)
+    row.edit_time = last_edit_time
     row.save()

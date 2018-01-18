@@ -68,34 +68,10 @@ class CrawlerTestCase(unittest.TestCase):
         articles_meta = crawler.parse_board(None)
         self.assertEqual(articles_meta, None)
 
-    @unittest.skip('Enough to test ptt.Article only.')
-    def test_retrieve_article(self):
-        '''Unit test for crawler.retrieve_article.'''
-        articles = crawler.retrieve_article()
-        self.assertEqual(articles, None)
-
-        for index, meta in enumerate(self.meta):
-            self.retrieve_article(meta['article_meta'], self.contents[index])
-
-    def retrieve_article(self, meta, expect):
-        '''A helper function for test_retrieve_article.'''
-        article_content = crawler.retrieve_article(**meta)
-        self.assertEqual(article_content, expect)
-
     @unittest.skip('Not implemented.')
-    def test_save_article(self):
-        '''Unit test for crawler.save_article.'''
-        for index, content in enumerate(self.contents.values()):
-            article_meta = self.meta[index]['article_meta']
-            expect = self.expects[index]['filename']
-            self.save_article(content, article_meta, expect)
-
-    def save_article(self, content, meta, expect):
-        '''A helper function for test_save_article.'''
-        crawler.save_article(content, **meta)
-
-        path = os.path.join(crawler.CONFIG.get('Crawler', 'data_path'), expect)
-        self.assertEqual(os.path.isfile(path), True)
+    def test_retrieve_articles(self):
+        '''Unit test for crawler.retrieve_articles.'''
+        raise NotImplementedError
 
 
 if __name__ == '__main__':
