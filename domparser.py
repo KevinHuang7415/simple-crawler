@@ -124,17 +124,9 @@ class ArticleParser(DOMParser):
                 meta_tag.previous_element.extract()
 
             metalines.append(dom.text)
-            return {
-                'content': '\n'.join(metalines),
-                'create_time': create_time,
-                'last_edit_time': last_edit_time
-            }
+            return '\n'.join(metalines), create_time, last_edit_time
 
-        return {
-            'content': dom.text,
-            'create_time': create_time,
-            'last_edit_time': last_edit_time
-        }
+        return dom.text, create_time, last_edit_time
 
     def __get_create_time(self):
         '''Find create time of article.'''

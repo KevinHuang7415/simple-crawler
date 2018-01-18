@@ -95,7 +95,7 @@ class ArticleParserTestCase(unittest.TestCase):
 
     def parse_article(self, parser, expect):
         '''A helper function for test_parse_article.'''
-        content = parser.parse_article()['content']
+        content = parser.parse_article()[0]
         self.assertEqual(len(content), len(expect))
 
 

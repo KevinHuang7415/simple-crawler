@@ -8,6 +8,7 @@ import tests.board_helper
 import tests.article_helper
 import ptt
 import domparser as dp
+import datetimehelper as dh
 
 logging.disable(logging.CRITICAL)
 
@@ -213,10 +214,11 @@ class ArticleTestCase(unittest.TestCase):
 
     def parse_content(self, article, expect):
         '''A helper function for test_format_article.'''
-        content = article.parse_content()
-        self.assertEqual(len(content['content']), len(expect['article']))
-        self.assertEqual(content['create_time'], expect['create_time'])
-        self.assertEqual(content['last_edit_time'], expect['last_modify_time'])
+        content, create_time, last_edit_time = article.parse_content()
+        self.assertEqual(len(content), len(expect['article']))
+        self.assertEqual(create_time, dh.to_datetime(expect['create_time']))
+        self.assertEqual(last_edit_time,
+                         dh.to_datetime(expect['last_modify_time']))
 
 
 if __name__ == '__main__':

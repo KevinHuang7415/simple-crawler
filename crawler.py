@@ -51,8 +51,9 @@ def crawler():
         LOGGER.info('[%d] articles\' meta retrieved.', len(articles_meta))
 
         for article_meta in articles_meta:
-            article = retrieve_article(**article_meta)
-            save_article(article, **article_meta)
+            content, create_time, last_edit_time =\
+                retrieve_article(**article_meta)
+            save_article(content, create_time, last_edit_time, **article_meta)
 
     LOGGER.info('Job finished.')
 
@@ -77,7 +78,7 @@ def retrieve_article(**article_meta):
     return article.parse_content()
 
 
-def save_article(article, **meta):
+def save_article(content, create_time, last_edit_time, **meta):
     '''Save cached article to file.'''
     if article:
         data.models.save_article(
@@ -85,9 +86,9 @@ def save_article(article, **meta):
             meta['author'],
             meta['title'],
             meta['href'],
-            article['content'],
-            dh.to_datetime(article['create_time']),
-            dh.to_datetime(article['last_edit_time'])
+            content,
+            create_time,
+            last_edit_time
         )
 
 

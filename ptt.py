@@ -155,12 +155,13 @@ class Article(AbstractPage):
             LOGGER.error('No content for parsing article.')
             raise ValueError
 
-        result = parser.parse_article()
+        content, create_time, last_edit_time = parser.parse_article()
 
         # both create_time and last_edit_time will not be None at same time
-        if not result['last_edit_time']:
-            result['last_edit_time'] = result['create_time']
-        elif not result['create_time']:
-            result['create_time'] = dh.to_full_datetime(self.meta['date'])
+        if not last_edit_time:
+            last_edit_time = create_time
+        elif not create_time:
+            create_time = dh.to_full_datetime(self.meta['date'])
 
-        return result
+        return content, dh.to_datetime(create_time),\
+            dh.to_datetime(last_edit_time)
