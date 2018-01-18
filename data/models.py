@@ -1,7 +1,9 @@
-'''
+﻿'''
 Model definition for ptt articles.
 '''
 from django.db import models
+from django.core.exceptions import ObjectDoesNotExist
+import datetimehelper as dh
 
 
 class Article(models.Model):
@@ -22,7 +24,6 @@ class Article(models.Model):
 
 def save_article(date, author, title, url, content, create_time, edit_time):
     '''Helper to do create.'''
-
     Article.objects.create(
         date=date,
         author=author,
@@ -33,3 +34,19 @@ def save_article(date, author, title, url, content, create_time, edit_time):
         create_time=create_time,
         edit_time=edit_time
     )
+
+
+def find_article(url):
+    '''Find article at URL in database.'''
+    try:
+        return Article.objects.get(url=url)
+    except ObjectDoesNotExist:
+        return None
+
+
+def update_article(row, article):
+    '''Update query result row.'''
+    row.content = article['content']
+    row.length = len(article['content'])
+    row.edit_time = dh.to_datetime(article['last_edit_time'])
+    row.save()
