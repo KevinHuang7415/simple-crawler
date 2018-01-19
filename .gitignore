@@ -125,7 +125,7 @@ log/
 config/
 
 # test data
-tests/data
+tests/test_data
 
 # text files
 *.txt
