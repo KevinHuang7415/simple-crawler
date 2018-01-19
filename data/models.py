@@ -17,7 +17,6 @@ class AbstractArticle(models.Model):
     title = models.CharField(max_length=100)
     url = models.URLField(max_length=65, unique=True)
     content = models.TextField()
-    length = models.IntegerField()
     create_time = models.DateTimeField()
     edit_time = models.DateTimeField()
 
@@ -43,7 +42,6 @@ def save_article(date, author, title, url, content, create_time, edit_time):
         title=title,
         url=url,
         content=content,
-        length=len(content),
         create_time=create_time,
         edit_time=edit_time
     )
@@ -61,6 +59,5 @@ def update_article(row, title, article_content, last_edit_time):
     '''Update query result row.'''
     row.title = title
     row.content = article_content
-    row.length = len(article_content)
     row.edit_time = last_edit_time
     row.save()
