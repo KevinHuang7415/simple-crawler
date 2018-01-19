@@ -89,7 +89,12 @@ def retrieve_articles(*articles_meta):
                 last_edit_time
             )
         elif row_article.edit_time != last_edit_time:
-            data.models.update_article(row_article, content, last_edit_time)
+            data.models.update_article(
+                row_article,
+                article_meta['title'],
+                content,
+                last_edit_time
+            )
 
 
 def main():

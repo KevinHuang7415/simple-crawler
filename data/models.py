@@ -43,8 +43,9 @@ def find_article(url):
         return None
 
 
-def update_article(row, article_content, last_edit_time):
+def update_article(row, title, article_content, last_edit_time):
     '''Update query result row.'''
+    row.title = title
     row.content = article_content
     row.length = len(article_content)
     row.edit_time = last_edit_time
