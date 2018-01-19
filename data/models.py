@@ -5,8 +5,12 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 
 
-class Article(models.Model):
-    '''Article model.'''
+class AbstractArticle(models.Model):
+    '''Abstract article model.'''
+
+    class Meta:
+        '''Model meta.'''
+        abstract = True
 
     date = models.CharField(max_length=5)
     author = models.CharField(max_length=35)
@@ -21,9 +25,19 @@ class Article(models.Model):
         return f'{self.__class__.__name__}('f'{self.date!r}, {self.url!r})'
 
 
+class SoftJob(AbstractArticle):
+    '''SoftJob model.'''
+
+    class Meta:
+        '''Model meta.'''
+        db_table = 'SoftJob'
+        ordering = ["create_time"]
+        get_latest_by = "create_time"
+
+
 def save_article(date, author, title, url, content, create_time, edit_time):
     '''Helper to do create.'''
-    Article.objects.create(
+    SoftJob.objects.create(
         date=date,
         author=author,
         title=title,
@@ -38,7 +52,7 @@ def save_article(date, author, title, url, content, create_time, edit_time):
 def find_article(url):
     '''Find article at URL in database.'''
     try:
-        return Article.objects.get(url=url)
+        return SoftJob.objects.get(url=url)
     except ObjectDoesNotExist:
         return None
 
