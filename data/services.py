@@ -27,18 +27,22 @@ POSTGRESQL = [
 
 SERVICES = [*POSTGRESQL]
 
+START = 'start'
+STOP = 'stop'
+RESTART = 'restart'
+
 COMMANDS = {
-    "st": {
+    START: {
         'api': win32serviceutil.StartService,
         'errno': 1056,  # already running
         'status': StatusCode.SERVICE_RUNNING
     },
-    "sp": {
+    STOP: {
         'api': win32serviceutil.StopService,
         'errno': 1062,  # not running
         'status': StatusCode.SERVICE_STOPPED
     },
-    "re": {
+    RESTART: {
         'api': win32serviceutil.RestartService,
         'errno': None,  # dont care
         'status': StatusCode.SERVICE_RUNNING
@@ -67,11 +71,11 @@ def service_operation(arg):
 
 def start():
     '''Start services.'''
-    service_operation('re')
+    service_operation(RESTART)
     time.sleep(1)
 
 
 def stop():
     '''Stop services.'''
-    service_operation('sp')
+    service_operation(STOP)
     time.sleep(0.3)
