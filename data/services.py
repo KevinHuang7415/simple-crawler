@@ -55,6 +55,7 @@ def service_operation(service, cmd):
     command = COMMANDS[cmd]
     api = command['api']
     errno = command['errno']
+    status = command['status']
 
     try:
         api(service)
@@ -63,9 +64,24 @@ def service_operation(service, cmd):
             pass
         else:
             LOGGER.error(
-                'Operation [%s] to database service failed :{1}', cmd,
+                'Operation [%s] to database service failed.',
+                cmd,
                 exc_info=True
             )
+            raise OSError
+
+    for _ in range(6):
+        now_status = query_status(service)
+        if now_status == status:
+            break
+        time.sleep(0.25)
+    else:
+        LOGGER.warning(
+            'Failed to change service [%s] to status [%s]',
+            service,
+            cmd
+        )
+        raise OSError
 
 
 def launch_database():
@@ -74,16 +90,12 @@ def launch_database():
     for service in SERVICES:
         service_operation(service, START)
 
-    time.sleep(1)
-
 
 def terminate_database():
     '''Stop services.'''
     LOGGER.info('Terminate database services.')
     for service in SERVICES:
         service_operation(service, STOP)
-
-    time.sleep(0.3)
 
 
 def query_status(service_name):
