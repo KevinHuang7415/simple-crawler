@@ -4,7 +4,7 @@ Helper functions for date-time.
 from datetime import date, timedelta, datetime, time
 import logger
 
-LOGGER = logger.get_logger(__package__, __name__)
+LOGGER = logger.get_logger(__name__)
 
 FORMAT_MODEL = '%Y-%m-%d %H:%M:%S'
 FORMAT_FULL = '%a %b %d %H:%M:%S %Y'

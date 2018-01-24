@@ -7,7 +7,7 @@ import datetimehelper as dh
 import domparser as dp
 import logger
 
-LOGGER = logger.get_logger(__package__, __name__)
+LOGGER = logger.get_logger(__name__)
 
 
 class AbstractPage:

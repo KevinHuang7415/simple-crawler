@@ -6,7 +6,7 @@ import os
 import singleton
 import logger
 
-LOGGER = logger.get_logger(__package__, __name__)
+LOGGER = logger.get_logger(__name__)
 
 DEFAULT_FILE = r'config\ptt_crawler.conf'
 

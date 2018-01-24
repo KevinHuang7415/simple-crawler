@@ -11,7 +11,7 @@ import data.services
 
 CONFIG = config.Config()
 SECTION = 'Crawler'
-LOGGER = logger.get_logger(__package__, __name__)
+LOGGER = logger.get_logger(__name__)
 
 
 def setup():
