@@ -32,11 +32,15 @@ class ServicesTestCase(unittest.TestCase):
 
     def test_query_status(self):
         '''Unit test for data.services.query_status'''
-        status = srv.query_status('AudioSrv')
-        self.assertEqual(status, srv.StatusCode.SERVICE_RUNNING)
+        self.query_status('AudioSrv', srv.StatusCode.SERVICE_RUNNING)
 
         with self.assertRaises(OSError):
             srv.query_status('NoThisService')
+
+    def query_status(self, service_name, expect):
+        '''A helper function for test_query_status.'''
+        status = srv.query_status(service_name)
+        self.assertEqual(status, expect)
 
 
 if __name__ == '__main__':
