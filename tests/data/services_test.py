@@ -12,18 +12,18 @@ logging.disable(logging.CRITICAL)
 class ServicesTestCase(unittest.TestCase):
     '''Test cases for data.services.'''
 
-    def test_start(self):
-        '''Unit test for data.services.start.'''
-        srv.start()
+    def test_launch_database(self):
+        '''Unit test for data.services.launch_database.'''
+        srv.launch_database()
         for service in srv.SERVICES:
             self.assertEqual(
                 win32serviceutil.QueryServiceStatus(service)[1],
                 srv.StatusCode.SERVICE_RUNNING.value
             )
 
-    def test_stop(self):
-        '''Unit test for data.services.stop.'''
-        srv.stop()
+    def test_terminate_database(self):
+        '''Unit test for data.services.terminate_database.'''
+        srv.terminate_database()
         for service in srv.SERVICES:
             self.assertEqual(
                 win32serviceutil.QueryServiceStatus(service)[1],

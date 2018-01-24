@@ -23,12 +23,12 @@ def setup():
 
     logger.load_config()
 
-    data.services.start()
+    data.services.launch_database()
 
 
 def shutdown():
     '''Prepare for shutdown.'''
-    data.services.stop()
+    data.services.terminate_database()
     logging.shutdown()
 
 

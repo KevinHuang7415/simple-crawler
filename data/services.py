@@ -50,9 +50,9 @@ COMMANDS = {
 }
 
 
-def service_operation(arg):
+def service_operation(cmd):
     '''Operations for services.'''
-    command = COMMANDS[arg]
+    command = COMMANDS[cmd]
     api = command['api']
     errno = command['errno']
 
@@ -64,19 +64,21 @@ def service_operation(arg):
                 pass
             else:
                 LOGGER.error(
-                    'Operation [%s] to database service failed :{1}', arg,
+                    'Operation [%s] to database service failed :{1}', cmd,
                     exc_info=True
                 )
 
 
-def start():
+def launch_database():
     '''Start services.'''
+    LOGGER.info('Launch database services.')
     service_operation(RESTART)
     time.sleep(1)
 
 
-def stop():
+def terminate_database():
     '''Stop services.'''
+    LOGGER.info('Terminate database services.')
     service_operation(STOP)
     time.sleep(0.3)
 
