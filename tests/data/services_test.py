@@ -13,6 +13,13 @@ logging.disable(logging.CRITICAL)
 class ServicesTestCase(unittest.TestCase):
     '''Test cases for data.services.'''
 
+    @classmethod
+    def setUpClass(cls):
+        srv.terminate_database()
+
+    def tearDown(self):
+        srv.terminate_database()
+
     def test_service_operation(self):
         '''Unit test for data.services.service_operation.'''
         service_name = srv.SERVICES[0]
