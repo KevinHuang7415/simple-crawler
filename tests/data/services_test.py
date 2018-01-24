@@ -30,6 +30,14 @@ class ServicesTestCase(unittest.TestCase):
                 data.services.StatusCode.SERVICE_STOPPED.value
             )
 
+    def test_query_status(self):
+        '''Unit test for data.services.query_status'''
+        status = data.services.query_status('AudioSrv')
+        self.assertEqual(status, data.services.StatusCode.SERVICE_RUNNING)
+
+        with self.assertRaises(OSError):
+            data.services.query_status('NoThisService')
+
 
 if __name__ == '__main__':
     unittest.main()

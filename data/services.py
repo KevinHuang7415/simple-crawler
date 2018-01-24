@@ -79,3 +79,13 @@ def stop():
     '''Stop services.'''
     service_operation(STOP)
     time.sleep(0.3)
+
+
+def query_status(service_name):
+    '''Query service status.'''
+    try:
+        raw_status = win32serviceutil.QueryServiceStatus(service_name)[1]
+        return StatusCode(raw_status)
+    except pywintypes.error:
+        LOGGER.warning('Failed to query status of service [%s]')
+        raise OSError
