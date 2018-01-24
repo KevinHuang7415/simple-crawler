@@ -1,12 +1,23 @@
 '''
 Controller for database services.
 '''
+from enum import Enum
 import time
 import win32serviceutil
 import pywintypes
 import logger
 
 LOGGER = logger.get_logger(__package__, __name__)
+
+class StatusCode(Enum):
+    ''''Enumeration of service status code.'''
+    SERVICE_STOPPED = 0x00000001
+    SERVICE_START_PENDING = 0x00000002
+    SERVICE_STOP_PENDING = 0x00000003
+    SERVICE_RUNNING = 0x00000004
+    SERVICE_CONTINUE_PENDING = 0x00000005
+    SERVICE_PAUSE_PENDING = 0x00000006
+    SERVICE_PAUSED = 0x00000007
 
 POSTGRESQL = [
     'postgresql-x64-10',
@@ -18,13 +29,19 @@ SERVICES = [*POSTGRESQL]
 
 COMMANDS = {
     "st": {
-        'api': win32serviceutil.StartService, 'errno': 1056  # already running
+        'api': win32serviceutil.StartService,
+        'errno': 1056,  # already running
+        'status': StatusCode.SERVICE_RUNNING
     },
     "sp": {
-        'api': win32serviceutil.StopService, 'errno': 1062  # not running
+        'api': win32serviceutil.StopService,
+        'errno': 1062,  # not running
+        'status': StatusCode.SERVICE_STOPPED
     },
     "re": {
-        'api': win32serviceutil.RestartService, 'errno': None  # dont care
+        'api': win32serviceutil.RestartService,
+        'errno': None,  # dont care
+        'status': StatusCode.SERVICE_RUNNING
     }
 }
 
@@ -39,7 +56,7 @@ def service_operation(arg):
         try:
             api(service)
         except pywintypes.error as err:
-            if err.winerror == errno:
+            if errno and errno == err.winerror:
                 pass
             else:
                 LOGGER.error(

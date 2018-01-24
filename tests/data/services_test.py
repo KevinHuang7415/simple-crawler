@@ -18,7 +18,7 @@ class ServicesTestCase(unittest.TestCase):
         for service in data.services.SERVICES:
             self.assertEqual(
                 win32serviceutil.QueryServiceStatus(service)[1],
-                4  # running
+                data.services.StatusCode.SERVICE_RUNNING.value
             )
 
     def test_stop(self):
@@ -27,7 +27,7 @@ class ServicesTestCase(unittest.TestCase):
         for service in data.services.SERVICES:
             self.assertEqual(
                 win32serviceutil.QueryServiceStatus(service)[1],
-                1  # stopped
+                data.services.StatusCode.SERVICE_STOPPED.value
             )
 
 
