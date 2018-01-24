@@ -4,7 +4,7 @@ Unit tests for ptt module.
 import logging
 import unittest
 import win32serviceutil
-import data.services
+import data.services as srv
 
 logging.disable(logging.CRITICAL)
 
@@ -14,29 +14,29 @@ class ServicesTestCase(unittest.TestCase):
 
     def test_start(self):
         '''Unit test for data.services.start.'''
-        data.services.start()
-        for service in data.services.SERVICES:
+        srv.start()
+        for service in srv.SERVICES:
             self.assertEqual(
                 win32serviceutil.QueryServiceStatus(service)[1],
-                data.services.StatusCode.SERVICE_RUNNING.value
+                srv.StatusCode.SERVICE_RUNNING.value
             )
 
     def test_stop(self):
         '''Unit test for data.services.stop.'''
-        data.services.stop()
-        for service in data.services.SERVICES:
+        srv.stop()
+        for service in srv.SERVICES:
             self.assertEqual(
                 win32serviceutil.QueryServiceStatus(service)[1],
-                data.services.StatusCode.SERVICE_STOPPED.value
+                srv.StatusCode.SERVICE_STOPPED.value
             )
 
     def test_query_status(self):
         '''Unit test for data.services.query_status'''
-        status = data.services.query_status('AudioSrv')
-        self.assertEqual(status, data.services.StatusCode.SERVICE_RUNNING)
+        status = srv.query_status('AudioSrv')
+        self.assertEqual(status, srv.StatusCode.SERVICE_RUNNING)
 
         with self.assertRaises(OSError):
-            data.services.query_status('NoThisService')
+            srv.query_status('NoThisService')
 
 
 if __name__ == '__main__':
