@@ -42,14 +42,18 @@ def crawler():
     board = ptt.Board(board_name, term_date)
     LOGGER.info('Retrive articles from board [%s].', board_name)
 
+    total = 0
     while board.has_prev_page:
         board.retrieve_dom(0)
 
         articles_meta = parse_board(board)
-        LOGGER.info('[%d] articles\' meta retrieved.', len(articles_meta))
+        count = len(articles_meta)
+        LOGGER.info('[%d] articles\' meta retrieved.', count)
+        total += count
 
         retrieve_articles(*articles_meta)
 
+    LOGGER.info('%d articles handled.', total)
     LOGGER.info('Job finished.')
 
 
