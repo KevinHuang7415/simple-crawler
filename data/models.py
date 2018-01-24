@@ -3,6 +3,9 @@ Model definition for ptt articles.
 '''
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
+import logger
+
+LOGGER = logger.get_logger(__name__)
 
 
 class AbstractArticle(models.Model):
@@ -36,6 +39,9 @@ class SoftJob(AbstractArticle):
 
 def save_article(date, author, title, url, content, create_time, edit_time):
     '''Helper to do create.'''
+    LOGGER.debug(
+        'Create article at [%s] with create time [%s]', url, create_time
+    )
     SoftJob.objects.create(
         date=date,
         author=author,
@@ -57,6 +63,10 @@ def find_article(url):
 
 def update_article(row, title, article_content, last_edit_time):
     '''Update query result row.'''
+    LOGGER.debug(
+        'Update article at [%s] with edit time [%s] -> [%s]',
+        row.url, row.edit_time, last_edit_time
+    )
     row.title = title
     row.content = article_content
     row.edit_time = last_edit_time
