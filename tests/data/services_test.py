@@ -2,6 +2,7 @@
 Unit tests for ptt module.
 '''
 import logging
+import time
 import unittest
 import win32serviceutil
 import data.services as srv
@@ -11,6 +12,18 @@ logging.disable(logging.CRITICAL)
 
 class ServicesTestCase(unittest.TestCase):
     '''Test cases for data.services.'''
+
+    def test_service_operation(self):
+        '''Unit test for data.services.service_operation.'''
+        service_name = srv.SERVICES[0]
+
+        srv.service_operation(service_name, srv.START)
+        time.sleep(1)
+        self.query_status(service_name, srv.StatusCode.SERVICE_RUNNING)
+
+        srv.service_operation(service_name, srv.STOP)
+        time.sleep(0.3)
+        self.query_status(service_name, srv.StatusCode.SERVICE_STOPPED)
 
     def test_launch_database(self):
         '''Unit test for data.services.launch_database.'''

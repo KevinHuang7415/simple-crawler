@@ -50,36 +50,39 @@ COMMANDS = {
 }
 
 
-def service_operation(cmd):
+def service_operation(service, cmd):
     '''Operations for services.'''
     command = COMMANDS[cmd]
     api = command['api']
     errno = command['errno']
 
-    for service in SERVICES:
-        try:
-            api(service)
-        except pywintypes.error as err:
-            if errno and errno == err.winerror:
-                pass
-            else:
-                LOGGER.error(
-                    'Operation [%s] to database service failed :{1}', cmd,
-                    exc_info=True
-                )
+    try:
+        api(service)
+    except pywintypes.error as err:
+        if errno and errno == err.winerror:
+            pass
+        else:
+            LOGGER.error(
+                'Operation [%s] to database service failed :{1}', cmd,
+                exc_info=True
+            )
 
 
 def launch_database():
     '''Start services.'''
     LOGGER.info('Launch database services.')
-    service_operation(RESTART)
+    for service in SERVICES:
+        service_operation(service, START)
+
     time.sleep(1)
 
 
 def terminate_database():
     '''Stop services.'''
     LOGGER.info('Terminate database services.')
-    service_operation(STOP)
+    for service in SERVICES:
+        service_operation(service, STOP)
+
     time.sleep(0.3)
 
 
