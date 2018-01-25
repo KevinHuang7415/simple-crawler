@@ -92,13 +92,27 @@ def retrieve_articles(*articles_meta):
                 create_time,
                 last_edit_time
             )
-        elif row_article.edit_time != last_edit_time:
-            data.models.update_article(
+        else:
+            update_article(
                 row_article,
                 article_meta['title'],
                 content,
                 last_edit_time
             )
+
+
+def update_article(article, title, content, last_edit_time):
+    '''Check which column to update then do update.'''
+    if article.title == title:
+        title = None
+
+    if len(article.content) == len(content) and article.content == content:
+        content = None
+
+    if article.edit_time == last_edit_time:
+        last_edit_time = None
+
+    data.models.update_article(article, title, content, last_edit_time)
 
 
 def main():

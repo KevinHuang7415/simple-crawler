@@ -61,13 +61,17 @@ def find_article(url):
         return None
 
 
-def update_article(row, title, article_content, last_edit_time):
+def update_article(row, title=None, content=None, last_edit_time=None):
     '''Update query result row.'''
-    LOGGER.debug(
-        'Update article at [%s] with edit time [%s] -> [%s]',
-        row.url, row.edit_time, last_edit_time
-    )
-    row.title = title
-    row.content = article_content
-    row.edit_time = last_edit_time
+    if not title and not content and not last_edit_time:
+        return
+
+    if title:
+        row.title = title
+    if content:
+        row.content = content
+    if last_edit_time:
+        row.edit_time = last_edit_time
+
+    LOGGER.debug('Update article at [%s]', row.url)
     row.save()
