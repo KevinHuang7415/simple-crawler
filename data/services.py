@@ -44,7 +44,7 @@ COMMANDS = {
     },
     RESTART: {
         'api': win32serviceutil.RestartService,
-        'errno': None,  # dont care
+        'errno': 1056,  # already running
         'status': StatusCode.SERVICE_RUNNING
     }
 }
