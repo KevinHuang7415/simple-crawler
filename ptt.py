@@ -8,7 +8,7 @@ import domparser as dp
 import logger
 
 LOGGER = logger.get_logger(__name__)
-logging.getLogger(requests.packages.urllib3.__package__).setLevel(logging.CRITICAL)
+logger.stop_log(requests.urllib3.__name__)
 
 
 class AbstractPage:
