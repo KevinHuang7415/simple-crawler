@@ -37,7 +37,7 @@ class SoftJob(AbstractArticle):
         get_latest_by = "create_time"
 
 
-def save_article(date, author, title, url, content, create_time, edit_time):
+def create_article(date, author, title, url, content, create_time, edit_time):
     '''Helper to do create.'''
     LOGGER.debug(
         'Create article at [%s] with create time [%s]', url, create_time

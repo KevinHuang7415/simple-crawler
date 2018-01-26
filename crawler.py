@@ -83,7 +83,7 @@ def retrieve_articles(*articles_meta):
             new_article = True
 
         if new_article:
-            data.models.save_article(
+            data.models.create_article(
                 article_meta['date'],
                 article_meta['author'],
                 article_meta['title'],
