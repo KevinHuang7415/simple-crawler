@@ -2,7 +2,6 @@
 Main functions for crawler.
 '''
 import logging
-import logging.config
 import config
 import datetimehelper as dh
 import logger
