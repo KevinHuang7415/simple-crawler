@@ -27,10 +27,9 @@ class CrawlerTestCase(unittest.TestCase):
         cls.contents = {}
         cls.articles = {}
         for index, article_meta in enumerate(cls.meta):
-            board_name = article_meta['board_name']
             article_meta = article_meta['article_meta']
 
-            cls.articles[index] = ptt.Article(board_name, **article_meta)
+            cls.articles[index] = ptt.Article(**article_meta)
             cls.articles[index].parser =\
                 dp.build_parser(dp.PageType.article, cls.pages[index])
 

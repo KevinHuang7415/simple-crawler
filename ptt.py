@@ -131,9 +131,8 @@ class Board(AbstractPage):
 class Article(AbstractPage):
     """description of class"""
 
-    def __init__(self, board_name, **meta):
+    def __init__(self, **meta):
         super().__init__()
-        self.board_name = board_name
         self.set_url(meta['href'])
         self.meta = meta
         self.parser = None

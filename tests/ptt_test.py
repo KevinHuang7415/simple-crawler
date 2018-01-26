@@ -169,10 +169,7 @@ class ArticleTestCase(unittest.TestCase):
         cls.pages, cls.meta, cls.expects = tests.article_helper.setup()
 
         cls.articles = [
-            ptt.Article(
-                article_meta['board_name'],
-                **article_meta['article_meta']
-            )
+            ptt.Article(**article_meta['article_meta'])
             for article_meta in cls.meta
         ]
 
@@ -207,7 +204,7 @@ class ArticleTestCase(unittest.TestCase):
             self.parse_content(article, self.expects[index])
 
         meta = self.meta[0]
-        article = ptt.Article(meta['board_name'], **meta['article_meta'])
+        article = ptt.Article(**meta['article_meta'])
         article.parser = None
         with self.assertRaises(ValueError):
             article.parse_content()

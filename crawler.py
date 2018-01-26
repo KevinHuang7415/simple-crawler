@@ -69,10 +69,9 @@ def parse_board(board):
 def retrieve_articles(*articles_meta):
     '''Retrieve articles content.'''
     new_article = False
-    board_name = CONFIG.get(SECTION, 'board')
 
     for article_meta in articles_meta:
-        article = ptt.Article(board_name, **article_meta)
+        article = ptt.Article(**article_meta)
 
         article.retrieve_dom()
         content, create_time, last_edit_time = article.parse_content()
