@@ -72,6 +72,16 @@ class CrawlerTestCase(unittest.TestCase):
         '''Unit test for crawler.retrieve_articles.'''
         raise NotImplementedError
 
+    @unittest.skip('Not implemented.')
+    def test_save_article(self):
+        '''Unit test for crawler.save_article.'''
+        raise NotImplementedError
+
+    @unittest.skip('Not implemented.')
+    def test_update_article(self):
+        '''Unit test for crawler.update_article.'''
+        raise NotImplementedError
+
 
 if __name__ == '__main__':
     unittest.main()

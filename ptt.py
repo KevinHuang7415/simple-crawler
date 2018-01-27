@@ -1,14 +1,17 @@
 ﻿'''
 Definitions about HTML BBS elements.
 '''
-import time
+import asyncio
 import requests
+import aiohttp
 import datetimehelper as dh
 import domparser as dp
 import logger
 
 LOGGER = logger.get_logger(__name__)
 logger.stop_log(requests.urllib3.__name__)
+LOOP = asyncio.get_event_loop()
+CLIENT = aiohttp.ClientSession(loop=LOOP)
 
 
 class AbstractPage:
@@ -28,25 +31,26 @@ class AbstractPage:
 
     def retrieve_dom(self, sleep_time=0.4):
         '''Retrieve DOM from URL.'''
-        page = self._get_web_page(sleep_time)
+        task = asyncio.ensure_future(self._get_web_page(sleep_time))
+        page = LOOP.run_until_complete(task)
         self._get_content(page)
 
-    def _get_web_page(self, sleep_time=0.4):
+    async def _get_web_page(self, sleep_time=0.4):
         '''Get web page content.'''
         if not self.url:
             LOGGER.error('URL is not set.')
             raise ValueError
 
         # to avoid being detected as DDoS
-        time.sleep(sleep_time)
+        asyncio.sleep(sleep_time)
         try:
-            resp = requests.get(self.PTT_URL + self.url)
+            resp = await CLIENT.get(self.PTT_URL + self.url)
         except requests.ConnectionError:
             LOGGER.error('Connection error.', exc_info=True)
             raise
 
-        if resp.status_code == 200:
-            return resp.text
+        if resp.status == 200:
+            return await resp.text()
 
         LOGGER.warning(
             'Invalid URL:[%s] , status code [%d]',

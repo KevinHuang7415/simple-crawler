@@ -1,6 +1,7 @@
 '''
 Main functions for crawler.
 '''
+import asyncio
 import logging
 import config
 import datetimehelper as dh
@@ -11,6 +12,7 @@ import data.services
 CONFIG = config.Config()
 SECTION = 'Crawler'
 LOGGER = logger.get_logger(__name__)
+LOOP = asyncio.get_event_loop()
 
 
 def setup():
@@ -27,6 +29,7 @@ def setup():
 
 def shutdown():
     '''Prepare for shutdown.'''
+    ptt.CLIENT.close()
     data.services.terminate_database()
     logging.shutdown()
 
@@ -44,13 +47,16 @@ def crawler():
     total = 0
     while board.has_prev_page:
         board.retrieve_dom(0)
-
         articles_meta = parse_board(board)
+
         count = len(articles_meta)
         LOGGER.info('[%d] articles\' meta retrieved.', count)
         total += count
 
         retrieve_articles(*articles_meta)
+
+    pending = asyncio.Task.all_tasks()
+    LOOP.run_until_complete(asyncio.gather(*pending))
 
     LOGGER.info('%d articles handled.', total)
     LOGGER.info('Job finished.')
@@ -67,36 +73,39 @@ def parse_board(board):
 
 def retrieve_articles(*articles_meta):
     '''Retrieve articles content.'''
-    new_article = False
-
     for article_meta in articles_meta:
         article = ptt.Article(**article_meta)
 
         article.retrieve_dom()
+        asyncio.ensure_future(save_article(article))
+
+
+async def save_article(article):
+    '''Save article with newly retrieved data.'''
+    try:
         content, create_time, last_edit_time = article.parse_content()
+    except ValueError:
+        LOGGER.warning('Failed to parse for article [%s]', article)
+        return
 
-        row_article = data.models.find_article(article_meta['href'])
-        # the follow-up to new article can only be new too
-        if not new_article and not row_article:
-            new_article = True
-
-        if new_article:
-            data.models.create_article(
-                article_meta['date'],
-                article_meta['author'],
-                article_meta['title'],
-                article_meta['href'],
-                content,
-                create_time,
-                last_edit_time
-            )
-        else:
-            update_article(
-                row_article,
-                article_meta['title'],
-                content,
-                last_edit_time
-            )
+    row_article = data.models.find_article(article.meta['href'])
+    if not row_article:
+        data.models.create_article(
+            article.meta['date'],
+            article.meta['author'],
+            article.meta['title'],
+            article.meta['href'],
+            content,
+            create_time,
+            last_edit_time
+        )
+    else:
+        update_article(
+            row_article,
+            article.meta['title'],
+            content,
+            last_edit_time
+        )
 
 
 def update_article(article, title, content, last_edit_time):
