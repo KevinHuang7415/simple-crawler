@@ -70,7 +70,7 @@ def service_operation(service, cmd):
             )
             raise OSError
 
-    for _ in range(6):
+    for _ in range(16):
         now_status = query_status(service)
         if now_status == status:
             break
