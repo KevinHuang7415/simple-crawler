@@ -4,6 +4,7 @@ Helper functions for built-in logging module.
 import logging
 import log_config
 
+
 def load_config():
     '''Load configuration for logging.'''
     logging.config.dictConfig(log_config.LOGGING)

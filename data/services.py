@@ -9,6 +9,7 @@ import logger
 
 LOGGER = logger.get_logger(__name__)
 
+
 class StatusCode(Enum):
     ''''Enumeration of service status code.'''
     SERVICE_STOPPED = 0x00000001
@@ -18,6 +19,7 @@ class StatusCode(Enum):
     SERVICE_CONTINUE_PENDING = 0x00000005
     SERVICE_PAUSE_PENDING = 0x00000006
     SERVICE_PAUSED = 0x00000007
+
 
 POSTGRESQL = [
     'postgresql-x64-10',
