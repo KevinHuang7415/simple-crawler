@@ -21,6 +21,12 @@ class StatusCode(Enum):
     SERVICE_PAUSED = 0x00000007
 
 
+class ErrorCode(Enum):
+    '''Enumeration of service error code.'''
+    ERROR_SERVICE_ALREADY_RUNNING = 0x420
+    ERROR_SERVICE_NOT_ACTIVE = 0x426
+
+
 POSTGRESQL = [
     'postgresql-x64-10',
     'pgAgent',
@@ -36,17 +42,17 @@ RESTART = 'restart'
 COMMANDS = {
     START: {
         'api': win32serviceutil.StartService,
-        'errno': 1056,  # already running
+        'errno': ErrorCode.ERROR_SERVICE_ALREADY_RUNNING,
         'status': StatusCode.SERVICE_RUNNING
     },
     STOP: {
         'api': win32serviceutil.StopService,
-        'errno': 1062,  # not running
+        'errno': ErrorCode.ERROR_SERVICE_NOT_ACTIVE,
         'status': StatusCode.SERVICE_STOPPED
     },
     RESTART: {
         'api': win32serviceutil.RestartService,
-        'errno': 1056,  # already running
+        'errno': ErrorCode.ERROR_SERVICE_ALREADY_RUNNING,
         'status': StatusCode.SERVICE_RUNNING
     }
 }
@@ -62,7 +68,7 @@ def service_operation(service, cmd):
     try:
         api(service)
     except pywintypes.error as err:
-        if errno and errno == err.winerror:
+        if errno.value == err.winerror:
             pass
         else:
             LOGGER.error(
