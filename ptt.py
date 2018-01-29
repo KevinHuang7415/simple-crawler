@@ -41,7 +41,6 @@ class AbstractPage:
             LOGGER.error('URL is not set.')
             raise ValueError
 
-        # to avoid being detected as DDoS
         asyncio.sleep(sleep_time)
         try:
             resp = await CLIENT.get(self.PTT_URL + self.url)

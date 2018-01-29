@@ -27,8 +27,6 @@ def _gen_date(ptt_date):
     try:
         return date(year, month, day)
     except ValueError:
-        # no 2/29 this year, means the year must be earlier
-        # set 2/28 to last year can fit current scenario
         if month == 2 and day == 29:
             return date(year - 1, 2, 28)
         LOGGER.error('Error exists on date [%d/%d/%d]', year, month, day)
@@ -59,8 +57,6 @@ def check_expired(ptt_date, term_date=15):
     if earlier:
         return days_diff >= term_date
 
-    # no article date can be later in reality
-    # set year to last year can fit current scenario
     try:
         date_ = date_.replace(year=date_.year - 1)
         return _check_date_earlier(date_, term_date)[0]

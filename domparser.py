@@ -26,7 +26,6 @@ class DOMParser:
     @staticmethod
     def _find_tag(tag, name, *classnames):
         '''Helper for find series functions.'''
-        # It's fine to use set operation here
         return tag.name == name and tag.attrs and 'class' in tag.attrs and\
             set(classnames).issubset(tag['class'])
 
@@ -52,8 +51,6 @@ class BoardParser(DOMParser):
     def get_articles_meta(self, latest_page):
         '''Get all blocks that contain article meta.'''
 
-        # not to retrieve delete article which looks like
-        # <div class="title"> (本文已被刪除) [author] </div>
         def find_r_ent_with_child_a(tag):
             '''Filter function to find blocks which contain article meta.'''
             return self._find_tag(tag, 'div', 'r-ent') and tag.find('a')
@@ -74,7 +71,6 @@ class BoardParser(DOMParser):
         list_sep = dom.find('div', 'r-list-sep')
 
         if latest_page and list_sep:
-            # reserve to the original order
             return [
                 get_article_meta(article_block)
                 for article_block in list_sep.find_all_previous(
@@ -109,15 +105,13 @@ class ArticleParser(DOMParser):
         '''Retrieve formatted content and time information of article.'''
         dom = self.dom
         has_metaline, create_time = self.__get_create_time()
-        # 09/03/2017 00:39:26
+
         last_edit_time = self.__get_last_edit_time()
         if last_edit_time:
             last_edit_time = dh.alt_to_full(last_edit_time)
 
         if has_metaline:
             metalines = []
-            # all metalines contain in one line in original text,
-            # separate them manually
             for meta_tag in dom.find_all('span', 'article-meta-tag'):
                 line = '  '.join([meta_tag.text, meta_tag.next_sibling.text])
                 metalines.append(line)
@@ -134,17 +128,14 @@ class ArticleParser(DOMParser):
         if self.dom.find('div', 'article-metaline'):
             has_metaline = True
 
-            # Sun Sep  3 00:39:06 2017
             create_time = self.__find_in_article_meta_tag()
             if create_time:
                 return True, create_time
 
-        # Sun Nov 12 23:54:16 2017
         create_time = self.__find_in_modified_metalines()
         if create_time:
             return has_metaline, create_time
 
-        # 12/26/2017 15:56:57
         create_time = self.__find_last_in_f2('※ 轉錄者')
         if create_time:
             create_time = create_time.partition(', ')[2].strip()
