@@ -39,11 +39,6 @@ class AbstractPageTestCase(unittest.TestCase):
             self.page.retrieve_dom()
 
 
-def _should_choose_actual(data):
-    '''A helper function to combine key-value pair'''
-    return len(data['articles_meta']) == len(data['remove_expired'])
-
-
 def retrieve_dom(self, pagetype, page):
     '''A monkey patch for AbstractPage.retrieve_dom.'''
     if not page:
@@ -120,8 +115,7 @@ class BoardTestCase(unittest.TestCase):
 
     def find_prev_page_url(self, board, expect):
         '''A helper function for test_find_prev_page_url.'''
-        # this condition is decided outside being tested function
-        if _should_choose_actual(expect):
+        if len(expect['articles_meta']) == len(expect['remove_expired']):
             board.find_prev_page_url()
         else:
             board.url = None
