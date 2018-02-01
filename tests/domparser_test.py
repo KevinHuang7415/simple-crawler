@@ -1,5 +1,5 @@
-﻿'''
-Unit tests for config module.
+'''
+Unit tests for domparser module.
 '''
 import logging
 import unittest

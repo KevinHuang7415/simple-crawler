@@ -1,5 +1,5 @@
 '''
-Unit tests for Singleton module.
+Unit tests for singleton module.
 '''
 import unittest
 from singleton import Singleton

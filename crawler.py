@@ -7,7 +7,7 @@ import config
 import datetimehelper as dh
 import logger
 import ptt
-import data.services
+import data.services as services
 
 CONFIG = config.Config()
 SECTION = 'Crawler'
@@ -24,13 +24,13 @@ def setup():
 
     logger.load_config()
 
-    data.services.launch_database()
+    services.launch_database()
 
 
 def shutdown():
     '''Prepare for shutdown.'''
     ptt.CLIENT.close()
-    data.services.terminate_database()
+    services.terminate_database()
     logging.shutdown()
 
 
