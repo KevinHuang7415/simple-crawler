@@ -65,9 +65,6 @@ instance/
 # Sphinx documentation
 docs/_build/
 
-# Django settings
-settings.py
-
 # PyBuilder
 target/
 
