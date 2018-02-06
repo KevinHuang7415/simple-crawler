@@ -1,0 +1,7 @@
+pip>=8.0.0
+setuptools>=20.0.0
+requests>=2.0.0
+beautifulsoup4>=4.0.0
+Django>=2.0.0
+pywin32>=2.2.0
+aiohttp>=2.3.0
