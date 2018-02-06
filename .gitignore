@@ -68,9 +68,6 @@ docs/_build/
 # Django settings
 settings.py
 
-# Django database migration file
-data/migrations
-
 # PyBuilder
 target/
 
