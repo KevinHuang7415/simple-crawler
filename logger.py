@@ -22,3 +22,8 @@ def stop_log(module_name):
     logger.setLevel(logging.CRITICAL)
     logger.addFilter(logging.NullHandler())
     logger.propagate = False
+
+
+def shutdown():
+    '''Terminate logging action.'''
+    logging.shutdown()

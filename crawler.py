@@ -2,7 +2,6 @@
 Main functions for crawler.
 '''
 import asyncio
-import logging
 import config
 import datetimehelper as dh
 import logger
@@ -31,7 +30,7 @@ def shutdown():
     '''Prepare for shutdown.'''
     ptt.CLIENT.close()
     services.terminate_database()
-    logging.shutdown()
+    logger.shutdown()
 
 
 def crawler():
