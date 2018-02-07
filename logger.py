@@ -2,12 +2,13 @@
 Helper functions for built-in logging module.
 '''
 import logging
+import logging.config as loggingconfig
 import log_config
 
 
 def load_config():
     '''Load configuration for logging.'''
-    logging.config.dictConfig(log_config.LOGGING)
+    loggingconfig.dictConfig(log_config.LOGGING)
 
 
 def get_logger(module_name):

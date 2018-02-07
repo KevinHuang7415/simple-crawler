@@ -1,8 +1,7 @@
-﻿'''
+'''
 Unit tests for crawler module.
 '''
 import logging
-import os
 import unittest
 from tests.helper import load_jsons
 import tests.article_helper
@@ -45,8 +44,7 @@ class CrawlerTestCase(unittest.TestCase):
 
     def test_setup(self):
         '''Unit test for crawler.setup.'''
-        data_path = crawler.CONFIG.get('Crawler', 'data_path')
-        self.assertTrue(os.path.isdir(data_path))
+        self.assertIsNotNone(crawler.CONFIG.path)
 
     @unittest.skip('Nothing can really be tested.')
     def test_shutdown(self):
@@ -65,7 +63,7 @@ class CrawlerTestCase(unittest.TestCase):
     def test_parse_board(self):
         '''Unit test for crawler.parse_board.'''
         articles_meta = crawler.parse_board(None)
-        self.assertEqual(articles_meta, None)
+        self.assertIsNone(articles_meta)
 
     @unittest.skip('Not implemented.')
     def test_retrieve_articles(self):

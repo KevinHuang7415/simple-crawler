@@ -26,7 +26,7 @@ class AbstractPageTestCase(unittest.TestCase):
         page = self.page
 
         page.set_url()
-        self.assertEqual(page.url, None)
+        self.assertIsNone(page.url)
 
         uri = 'board/index.html'
         page.set_url(uri)
@@ -85,7 +85,7 @@ class BoardTestCase(unittest.TestCase):
         board = ptt.Board(board_name, 11)
 
         board.set_url()
-        self.assertEqual(board.url, None)
+        self.assertIsNone(board.url)
 
         board.set_url(board_name)
         self.assertEqual(board.url, '/bbs/{0}/index.html'.format(board_name))

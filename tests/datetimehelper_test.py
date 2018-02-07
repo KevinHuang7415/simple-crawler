@@ -94,7 +94,7 @@ class DatetimeHelperTestCase(unittest.TestCase):
         self.assertEqual(datetime_obj.time(), time(hour=12))
 
         ptt_date = '2/30'
-        self.assertEqual(dh.to_full_datetime(ptt_date), None)
+        self.assertIsNone(dh.to_full_datetime(ptt_date))
 
     def test_to_datetime(self):
         '''Unit test for datetimehelper.to_datetime.'''
