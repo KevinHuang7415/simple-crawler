@@ -1,0 +1,7 @@
+from tests.config_test import ConfigTestCase
+from tests.crawler_test import CrawlerTestCase
+from tests.datetimehelper_test import DatetimeHelperTestCase
+from tests.domparser_test import BoardParserTestCase, ArticleParserTestCase
+from tests.filehelper_test import FileHelperTestCase
+from tests.ptt_test import AbstractPageTestCase, BoardTestCase, ArticleTestCase
+from tests.singleton_test import SingletonTestCase
