@@ -25,30 +25,22 @@ class ServicesTestCase(unittest.TestCase):
         service_name = services.SERVICES[0]
 
         services.service_operation(service_name, services.START)
-        time.sleep(1)
         self.query_status(service_name, services.StatusCode.SERVICE_RUNNING)
 
         services.service_operation(service_name, services.STOP)
-        time.sleep(0.3)
         self.query_status(service_name, services.StatusCode.SERVICE_STOPPED)
 
     def test_launch_database(self):
         '''Unit test for data.services.launch_database.'''
         services.launch_database()
         for service in services.SERVICES:
-            self.assertEqual(
-                win32serviceutil.QueryServiceStatus(service)[1],
-                services.StatusCode.SERVICE_RUNNING.value
-            )
+            self.query_status(service, services.StatusCode.SERVICE_RUNNING)
 
     def test_terminate_database(self):
         '''Unit test for data.services.terminate_database.'''
         services.terminate_database()
         for service in services.SERVICES:
-            self.assertEqual(
-                win32serviceutil.QueryServiceStatus(service)[1],
-                services.StatusCode.SERVICE_STOPPED.value
-            )
+            self.query_status(service, services.StatusCode.SERVICE_STOPPED)
 
     def test_query_status(self):
         '''Unit test for data.services.query_status'''
