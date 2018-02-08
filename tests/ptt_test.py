@@ -55,6 +55,7 @@ class BoardTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         '''The class level setup.'''
+        # Date that test data created at 2017/12/25
         date_diff = (date.today() - date(year=2017, month=12, day=25)).days
 
         cls.pages, cls.expects = tests.board_helper.setup()

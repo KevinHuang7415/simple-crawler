@@ -1,4 +1,4 @@
-'''
+﻿'''
 Unit tests for crawler module.
 '''
 import logging
@@ -6,8 +6,8 @@ import unittest
 from tests.helper import load_jsons
 import tests.article_helper
 import crawler
-import ptt
 import domparser as dp
+import ptt
 
 logging.disable(logging.CRITICAL)
 
@@ -52,8 +52,7 @@ class CrawlerTestCase(unittest.TestCase):
         crawler.shutdown()
         self.fail("Not implemented")
 
-    @unittest.skip(
-        'Not a unit since this is the main function of this program.')
+    @unittest.skip('Not a unit for unit test. Integration testing required.')
     def test_crawler(self):
         '''Unit test for crawler.crawler.'''
         crawler.crawler()
@@ -65,17 +64,17 @@ class CrawlerTestCase(unittest.TestCase):
         articles_meta = crawler.parse_board(None)
         self.assertIsNone(articles_meta)
 
-    @unittest.skip('Not implemented.')
+    @unittest.skip('Enough to test ptt.Article only.')
     def test_retrieve_articles(self):
         '''Unit test for crawler.retrieve_articles.'''
         raise NotImplementedError
 
-    @unittest.skip('Not implemented.')
+    @unittest.skip('Tests for database required.')
     def test_save_article(self):
         '''Unit test for crawler.save_article.'''
         raise NotImplementedError
 
-    @unittest.skip('Not implemented.')
+    @unittest.skip('Tests for database required.')
     def test_update_article(self):
         '''Unit test for crawler.update_article.'''
         raise NotImplementedError
