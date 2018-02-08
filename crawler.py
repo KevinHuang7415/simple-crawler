@@ -6,7 +6,7 @@ import config
 import datetimehelper as dh
 import logger
 import ptt
-import data.services as services
+from data import services
 
 CONFIG = config.Config()
 SECTION = 'Crawler'
@@ -87,9 +87,9 @@ async def save_article(article):
         LOGGER.warning('Failed to parse for article [%s]', article)
         return
 
-    row_article = data.models.find_article(article.meta['href'])
+    row_article = models.find_article(article.meta['href'])
     if not row_article:
-        data.models.create_article(
+        models.create_article(
             article.meta['date'],
             article.meta['author'],
             article.meta['title'],
@@ -118,7 +118,7 @@ def update_article(article, title, content, last_edit_time):
     if article.edit_time == last_edit_time:
         last_edit_time = None
 
-    data.models.update_article(article, title, content, last_edit_time)
+    models.update_article(article, title, content, last_edit_time)
 
 
 def main():
@@ -140,5 +140,5 @@ if __name__ == '__main__':
     import django
     django.setup()
 
-    import data.models
+    from data import models
     main()

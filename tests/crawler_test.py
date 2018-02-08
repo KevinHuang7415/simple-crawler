@@ -8,7 +8,7 @@ import tests.article_helper
 import crawler
 import domparser as dp
 import ptt
-import data.services as services
+from data import services
 
 logging.disable(logging.CRITICAL)
 
