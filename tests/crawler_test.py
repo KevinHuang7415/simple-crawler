@@ -8,6 +8,7 @@ import tests.article_helper
 import crawler
 import domparser as dp
 import ptt
+import data.services as services
 
 logging.disable(logging.CRITICAL)
 
@@ -46,11 +47,19 @@ class CrawlerTestCase(unittest.TestCase):
         '''Unit test for crawler.setup.'''
         self.assertIsNotNone(crawler.CONFIG.path)
 
-    @unittest.skip('Nothing can really be tested.')
+        for service in services.SERVICES:
+            self.assertEqual(services.query_status(service),
+                services.StatusCode.SERVICE_RUNNING)
+
     def test_shutdown(self):
         '''Unit test for crawler.shutdown.'''
         crawler.shutdown()
-        self.fail("Not implemented")
+
+        self.assertTrue(ptt.CLIENT.closed)
+
+        for service in services.SERVICES:
+            self.assertEqual(services.query_status(service),
+                services.StatusCode.SERVICE_STOPPED)
 
     @unittest.skip('Not a unit for unit test. Integration testing required.')
     def test_crawler(self):
