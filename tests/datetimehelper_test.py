@@ -17,31 +17,6 @@ class DatetimeHelperTestCase(unittest.TestCase):
         '''The class level setup.'''
         cls.today = date.today()
 
-        cls.test_case_list = {}
-
-        # see the detail for date_list
-        term_date_expect_list = {
-            0: [True, True, True, True],
-            1: [True, True, True, True],
-            5: [False, True, True, False],
-            40: [False, True, True, False],
-            -5: [True, True, True, True],
-        }
-
-        for term_date in term_date_expect_list:
-            date_list = [
-                # 2 days before today
-                cls.today - timedelta(days=2),
-                # 2 days after today
-                cls.today - timedelta(days=-2),
-                # 2 days earlier than term date
-                cls.today - timedelta(days=term_date + 2),
-                # 2 days later than term date
-                cls.today - timedelta(days=term_date - 2),
-            ]
-            cls.test_case_list[term_date] =\
-                zip(date_list, term_date_expect_list[term_date])
-
     def test_to_ptt_date(self):
         '''Unit test for datetimehelper.to_ptt_date.'''
         expect = date.today().strftime("%m/%d").lstrip('0')
@@ -63,7 +38,32 @@ class DatetimeHelperTestCase(unittest.TestCase):
 
     def test_check_expired(self):
         '''Unit test for datetimehelper.check_expired.'''
-        for term_date, test_cases in self.test_case_list.items():
+        test_case_list = {}
+
+        # see the detail for date_list
+        term_date_expect_list = {
+            0: [True, True, True, True],
+            1: [True, True, True, True],
+            5: [False, True, True, False],
+            40: [False, True, True, False],
+            -5: [True, True, True, True],
+        }
+
+        for term_date in term_date_expect_list:
+            date_list = [
+                # 2 days before today
+                self.today - timedelta(days=2),
+                # 2 days after today
+                self.today - timedelta(days=-2),
+                # 2 days earlier than term date
+                self.today - timedelta(days=term_date + 2),
+                # 2 days later than term date
+                self.today - timedelta(days=term_date - 2),
+            ]
+            test_case_list[term_date] =\
+                zip(date_list, term_date_expect_list[term_date])
+
+        for term_date, test_cases in test_case_list.items():
             for test_case in test_cases:
                 self.check_expired(test_case, term_date)
 
