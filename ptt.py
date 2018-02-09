@@ -46,7 +46,7 @@ class AbstractPage:
             resp = await CLIENT.get(self.PTT_URL + self.url)
         except requests.ConnectionError:
             LOGGER.error('Connection error.', exc_info=True)
-            raise
+            return None
 
         if resp.status == 200:
             return await resp.text()

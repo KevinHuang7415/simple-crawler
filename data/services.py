@@ -1,5 +1,5 @@
 '''
-Controller for database services.
+Controller for database services which run on Windows platform.
 '''
 from enum import Enum
 import time
@@ -12,6 +12,7 @@ LOGGER = logger.get_logger(__name__)
 
 class StatusCode(Enum):
     ''''Enumeration of service status code.'''
+    SERVICE_UNKNOWN = 0x00000000
     SERVICE_STOPPED = 0x00000001
     SERVICE_START_PENDING = 0x00000002
     SERVICE_STOP_PENDING = 0x00000003
@@ -113,4 +114,4 @@ def query_status(service_name):
         return StatusCode(raw_status)
     except pywintypes.error:
         LOGGER.warning('Failed to query status of service [%s]')
-        raise OSError
+        return StatusCode.SERVICE_UNKNOWN

@@ -46,8 +46,7 @@ class ServicesTestCase(unittest.TestCase):
         '''Unit test for data.services.query_status'''
         self.query_status('AudioSrv', services.StatusCode.SERVICE_RUNNING)
 
-        with self.assertRaises(OSError):
-            services.query_status('NoThisService')
+        self.query_status('NoThisService', services.StatusCode.SERVICE_UNKNOWN)
 
     def query_status(self, service_name, expect):
         '''A helper function for test_query_status.'''

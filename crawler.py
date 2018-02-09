@@ -66,8 +66,11 @@ def parse_board(board):
     if not board:
         return None
 
-    board.find_prev_page_url()
-    return board.all_articles_meta()
+    try:
+        board.find_prev_page_url()
+        return board.all_articles_meta()
+    except ValueError:
+        return list()
 
 
 def retrieve_articles(*article_meta_list):
