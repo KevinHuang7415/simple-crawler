@@ -76,7 +76,7 @@ def retrieve_articles(*articles_meta):
         article = ptt.Article(**article_meta)
 
         article.retrieve_dom()
-        asyncio.ensure_future(save_article(article))
+        LOOP.create_task(save_article(article))
 
 
 async def save_article(article):
