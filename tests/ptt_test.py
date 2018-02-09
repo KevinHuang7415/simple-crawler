@@ -58,11 +58,11 @@ class BoardTestCase(unittest.TestCase):
         # Date that test data created at 2017/12/25
         date_diff = (date.today() - date(year=2017, month=12, day=25)).days
 
-        cls.pages, cls.expects = tests.board_helper.setup()
+        cls.page_list, cls.expect_list = tests.board_helper.setup()
 
-        cls.boards = [
+        cls.board_list = [
             ptt.Board(cls.BOARD_NAME, date_diff)
-            for index in range(len(cls.pages))
+            for index in range(len(cls.page_list))
         ]
 
         cls.retrieve_dom = ptt.Board.retrieve_dom
@@ -74,11 +74,11 @@ class BoardTestCase(unittest.TestCase):
 
     def setUp(self):
         '''The test case level setup.'''
-        for index, board in enumerate(self.boards):
+        for index, board in enumerate(self.board_list):
             board.set_url(self.BOARD_NAME)
             board.parser =\
-                dp.build_parser(dp.PageType.board, self.pages[index])
-            board.latest_page = self.expects[index]['latest_page']
+                dp.build_parser(dp.PageType.board, self.page_list[index])
+            board.latest_page = self.expect_list[index]['latest_page']
 
     def test_set_url(self):
         '''Unit test for ptt.Board.set_url.'''
@@ -93,22 +93,22 @@ class BoardTestCase(unittest.TestCase):
 
     def test_retrieve_dom(self):
         '''Unit test for ptt.Board.retrieve_dom.'''
-        for index, board in enumerate(self.boards):
+        for index, board in enumerate(self.board_list):
             board.retrieve_dom(
                 dp.PageType.board,
-                self.pages[index]
+                self.page_list[index]
             )
             self.assertNotEqual(board.parser, None)
 
-        board = self.boards[0]
+        board = self.board_list[0]
         board.set_url()
         with self.assertRaises(ValueError):
             board.retrieve_dom(None, None)
 
     def test_find_prev_page_url(self):
         '''Unit test for ptt.Board.find_prev_page_url.'''
-        for index, board in enumerate(self.boards):
-            self.find_prev_page_url(board, self.expects[index])
+        for index, board in enumerate(self.board_list):
+            self.find_prev_page_url(board, self.expect_list[index])
 
         board = self.build_test_board()
         with self.assertRaises(ValueError):
@@ -123,24 +123,24 @@ class BoardTestCase(unittest.TestCase):
 
         self.assertEqual(board.url, expect['prev_page_url'])
 
-    def test_get_articles_meta(self):
-        '''Unit test for ptt.Board.get_articles_meta.'''
-        for index, board in enumerate(self.boards):
-            self.get_articles_meta(
+    def test_all_articles_meta(self):
+        '''Unit test for ptt.Board.all_articles_meta.'''
+        for index, board in enumerate(self.board_list):
+            self.all_articles_meta(
                 board,
-                self.expects[index]['remove_expired']
+                self.expect_list[index]['remove_expired']
             )
 
         board = self.build_test_board()
         with self.assertRaises(ValueError):
-            board.get_articles_meta()
+            board.all_articles_meta()
 
-    def get_articles_meta(self, board, expects):
-        '''A helper function for test_get_articles_meta.'''
-        articles_meta = board.get_articles_meta()
+    def all_articles_meta(self, board, expect_list):
+        '''A helper function for test_all_articles_meta.'''
+        article_meta_list = board.all_articles_meta()
 
-        for index, expect in enumerate(expects):
-            self.compare_meta(articles_meta[index], expect)
+        for index, expect in enumerate(expect_list):
+            self.compare_meta(article_meta_list[index], expect)
 
     def compare_meta(self, act, expect):
         '''Compare meta data between actual and expected.'''
@@ -161,11 +161,11 @@ class ArticleTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         '''The class level setup.'''
-        cls.pages, cls.meta, cls.expects = tests.article_helper.setup()
+        cls.page_list, cls.meta_list, cls.expect_list = tests.article_helper.setup()
 
-        cls.articles = [
+        cls.article_list = [
             ptt.Article(**article_meta['article_meta'])
-            for article_meta in cls.meta
+            for article_meta in cls.meta_list
         ]
 
         cls.retrieve_dom = ptt.Article.retrieve_dom
@@ -177,28 +177,28 @@ class ArticleTestCase(unittest.TestCase):
 
     def setUp(self):
         '''The test case level setup.'''
-        for index, article in enumerate(self.articles):
-            article.set_url(self.meta[index]['article_meta']['href'])
+        for index, article in enumerate(self.article_list):
+            article.set_url(self.meta_list[index]['article_meta']['href'])
             article.parser =\
-                dp.build_parser(dp.PageType.article, self.pages[index])
+                dp.build_parser(dp.PageType.article, self.page_list[index])
 
     def test_retrieve_dom(self):
         '''Unit test for ptt.Article.retrieve_dom.'''
-        for index, article in enumerate(self.articles):
-            article.retrieve_dom(dp.PageType.article, self.pages[index])
+        for index, article in enumerate(self.article_list):
+            article.retrieve_dom(dp.PageType.article, self.page_list[index])
             self.assertNotEqual(article.parser, None)
 
-        article = self.articles[0]
+        article = self.article_list[0]
         article.set_url()
         with self.assertRaises(ValueError):
             article.retrieve_dom(None, None)
 
     def test_parse_content(self):
         '''Unit test for ptt.Article.parse_content.'''
-        for index, article in enumerate(self.articles):
-            self.parse_content(article, self.expects[index])
+        for index, article in enumerate(self.article_list):
+            self.parse_content(article, self.expect_list[index])
 
-        meta = self.meta[0]
+        meta = self.meta_list[0]
         article = ptt.Article(**meta['article_meta'])
         article.parser = None
         with self.assertRaises(ValueError):

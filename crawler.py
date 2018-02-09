@@ -46,13 +46,13 @@ def crawler():
     total = 0
     while board.has_prev_page:
         board.retrieve_dom(0)
-        articles_meta = parse_board(board)
+        article_meta_list = parse_board(board)
 
-        count = len(articles_meta)
+        count = len(article_meta_list)
         LOGGER.info('[%d] articles\' meta retrieved.', count)
         total += count
 
-        retrieve_articles(*articles_meta)
+        retrieve_articles(*article_meta_list)
 
     pending = asyncio.Task.all_tasks()
     LOOP.run_until_complete(asyncio.gather(*pending))
@@ -67,12 +67,12 @@ def parse_board(board):
         return None
 
     board.find_prev_page_url()
-    return board.get_articles_meta()
+    return board.all_articles_meta()
 
 
-def retrieve_articles(*articles_meta):
+def retrieve_articles(*article_meta_list):
     '''Retrieve articles content.'''
-    for article_meta in articles_meta:
+    for article_meta in article_meta_list:
         article = ptt.Article(**article_meta)
 
         article.retrieve_dom()

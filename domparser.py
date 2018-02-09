@@ -48,8 +48,8 @@ class BoardParser(DOMParser):
         btn_prev_page = div_paging.find_all('a')[1]
         return btn_prev_page['href']
 
-    def get_articles_meta(self, latest_page):
-        '''Get all blocks that contain article meta.'''
+    def all_articles_meta(self, latest_page):
+        '''Find all blocks that contain article meta.'''
 
         def find_r_ent_with_child_a(tag):
             '''Filter function to find blocks which contain article meta.'''
@@ -104,9 +104,9 @@ class ArticleParser(DOMParser):
     def parse_article(self):
         '''Retrieve formatted content and time information of article.'''
         dom = self.dom
-        has_metaline, create_time = self.__get_create_time()
+        has_metaline, create_time = self.__find_create_time()
 
-        last_edit_time = self.__get_last_edit_time()
+        last_edit_time = self.__find_last_edit_time()
         if last_edit_time:
             last_edit_time = dh.alt_to_full(last_edit_time)
 
@@ -122,7 +122,7 @@ class ArticleParser(DOMParser):
 
         return dom.text, create_time, last_edit_time
 
-    def __get_create_time(self):
+    def __find_create_time(self):
         '''Find create time of article.'''
         has_metaline = False
         if self.dom.find('div', 'article-metaline'):
@@ -175,7 +175,7 @@ class ArticleParser(DOMParser):
             None
         )
 
-    def __get_last_edit_time(self):
+    def __find_last_edit_time(self):
         '''Find last edit time in page content'''
         last_edit_time = self.__find_last_in_f2(self.EDIT)
         if last_edit_time:

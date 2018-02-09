@@ -33,7 +33,7 @@ def _gen_date(ptt_date):
         return None
 
 
-def _check_date_earlier(this_day, days):
+def _days_earlier(this_day, days):
     '''Check if the day is days earlier than today.'''
     date_diff = date.today() - this_day
     return date_diff >= timedelta(days=days), date_diff.days
@@ -53,18 +53,18 @@ def check_expired(ptt_date, term_date=15):
     if not date_:
         return True
 
-    earlier, days_diff = _check_date_earlier(date_, 0)
+    earlier, days_diff = _days_earlier(date_, 0)
     if earlier:
         return days_diff >= term_date
 
     try:
         date_ = date_.replace(year=date_.year - 1)
-        return _check_date_earlier(date_, term_date)[0]
+        return _days_earlier(date_, term_date)[0]
     # case for 2/29
     except ValueError:
         days = date(date_.year - 1, 3, 1) - date(date_.year, 3, 1)
         date_ += days
-        return _check_date_earlier(date_, term_date)[0]
+        return _days_earlier(date_, term_date)[0]
 
 
 def alt_to_full(datetime_str):

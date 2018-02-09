@@ -31,11 +31,11 @@ class AbstractPage:
 
     def retrieve_dom(self, sleep_time=0.4):
         '''Retrieve DOM from URL.'''
-        task = asyncio.ensure_future(self._get_web_page(sleep_time))
+        task = asyncio.ensure_future(self._request_page(sleep_time))
         page = LOOP.run_until_complete(task)
         self._get_content(page)
 
-    async def _get_web_page(self, sleep_time=0.4):
+    async def _request_page(self, sleep_time=0.4):
         '''Get web page content.'''
         if not self.url:
             LOGGER.error('URL is not set.')
@@ -105,30 +105,30 @@ class Board(AbstractPage):
         if not self.url:
             LOGGER.info('No previous page link found.')
 
-    def get_articles_meta(self):
+    def all_articles_meta(self):
         '''Retrieve meta for all articles in current page.'''
         parser = self.parser
         if not parser:
             LOGGER.error('No content for parsing article blocks.')
             raise ValueError
 
-        articles_meta = parser.get_articles_meta(self.latest_page)
+        article_meta_list = parser.all_articles_meta(self.latest_page)
         self.latest_page = False
 
-        before_remove = len(articles_meta)
+        before_remove = len(article_meta_list)
 
-        while articles_meta:
-            article_date = articles_meta[0]['date']
+        while article_meta_list:
+            article_date = article_meta_list[0]['date']
             if dh.check_expired(article_date, self.term_date):
-                articles_meta.pop(0)
+                article_meta_list.pop(0)
             else:
                 break
 
-        if before_remove > len(articles_meta):
+        if before_remove > len(article_meta_list):
             LOGGER.info('Term date reached.')
             self.set_url()
 
-        return articles_meta
+        return article_meta_list
 
 
 class Article(AbstractPage):

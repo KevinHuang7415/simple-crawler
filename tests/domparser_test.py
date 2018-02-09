@@ -42,22 +42,22 @@ class BoardParserTestCase(unittest.TestCase):
 
         self.assertEqual(url, expect['prev_page_url'])
 
-    def test_get_articles_meta(self):
-        '''Unit test for domparser.get_articles_meta.'''
+    def test_all_articles_meta(self):
+        '''Unit test for domparser.all_articles_meta.'''
         for index, parser in enumerate(self.parsers):
-            self.get_articles_meta(
+            self.all_articles_meta(
                 parser,
                 self.last_page[index],
                 self.expects[index]['articles_meta']
             )
 
-    def get_articles_meta(self, parser, last_page, expects):
-        '''A helper function for test_get_articles_meta.'''
-        articles_meta = parser.get_articles_meta(last_page)
-        self.assertEqual(len(articles_meta), len(expects))
+    def all_articles_meta(self, parser, last_page, expects):
+        '''A helper function for test_all_articles_meta.'''
+        article_meta_list = parser.all_articles_meta(last_page)
+        self.assertEqual(len(article_meta_list), len(expects))
 
         for index, expect in enumerate(expects):
-            self.compare_meta(articles_meta[index], expect)
+            self.compare_meta(article_meta_list[index], expect)
 
     def compare_meta(self, act, expect):
         '''Compare meta data between actual and expected.'''

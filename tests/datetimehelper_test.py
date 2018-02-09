@@ -15,14 +15,12 @@ class DatetimeHelperTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         '''The class level setup.'''
-        cls.year = date.today().year
-        cls.dates = {
-            228: ('2/28', date(year=cls.year, month=2, day=28)),
-            229: ('2/29', date(year=cls.year - 1, month=2, day=28)),
-            230: ('2/30', None)
-        }
+        cls.today = date.today()
 
-        term_dates = {
+        cls.test_case_list = {}
+
+        # see the detail for date_list
+        term_date_expect_list = {
             0: [True, True, True, True],
             1: [True, True, True, True],
             5: [False, True, True, False],
@@ -30,24 +28,26 @@ class DatetimeHelperTestCase(unittest.TestCase):
             -5: [True, True, True, True],
         }
 
-        cls.today = date.today()
-        cls.test_cases = {}
-
-        for term_date in term_dates:
-            dates = [
+        for term_date in term_date_expect_list:
+            date_list = [
+                # 2 days before today
                 cls.today - timedelta(days=2),
+                # 2 days after today
                 cls.today - timedelta(days=-2),
+                # 2 days earlier than term date
                 cls.today - timedelta(days=term_date + 2),
+                # 2 days later than term date
                 cls.today - timedelta(days=term_date - 2),
             ]
-            cls.test_cases[term_date] = zip(dates, term_dates[term_date])
+            cls.test_case_list[term_date] =\
+                zip(date_list, term_date_expect_list[term_date])
 
     def test_to_ptt_date(self):
         '''Unit test for datetimehelper.to_ptt_date.'''
         expect = date.today().strftime("%m/%d").lstrip('0')
         self.to_ptt_date(None, expect)
 
-        year = self.year
+        year = date.today().year
         self.to_ptt_date(date(year=year, month=2, day=28), '2/28')
         self.to_ptt_date(date(year=year, month=12, day=28), '12/28')
         self.to_ptt_date(date(year=year, month=2, day=8), '2/08')
@@ -63,7 +63,7 @@ class DatetimeHelperTestCase(unittest.TestCase):
 
     def test_check_expired(self):
         '''Unit test for datetimehelper.check_expired.'''
-        for term_date, test_cases in self.test_cases.items():
+        for term_date, test_cases in self.test_case_list.items():
             for test_case in test_cases:
                 self.check_expired(test_case, term_date)
 

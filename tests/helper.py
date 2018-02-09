@@ -14,7 +14,7 @@ def read_file(filename):
         return file.read()
 
 
-def read_files(count, name, ext):
+def read_ranged_file(count, name, ext):
     '''A helper function to read files.'''
     return [
         read_file('{}{}.{}'.format(name, index + 1, ext))
@@ -28,7 +28,7 @@ def load_json(filename):
         return json.load(file)
 
 
-def load_jsons(count, name):
+def load_ranged_json(count, name):
     '''A helper function to read JSON-format files.'''
     return [
         load_json('{}{}.json'.format(name, index + 1))

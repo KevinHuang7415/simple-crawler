@@ -3,7 +3,7 @@ Unit tests for crawler module.
 '''
 import logging
 import unittest
-from tests.helper import load_jsons
+from tests.helper import load_ranged_json
 import tests.article_helper
 import crawler
 import domparser as dp
@@ -22,7 +22,7 @@ class CrawlerTestCase(unittest.TestCase):
         cls.path = 'test_path'
 
         cls.pages, cls.meta, _ = tests.article_helper.setup()
-        cls.expects = load_jsons(len(cls.pages), 'expect_crawler_')
+        cls.expects = load_ranged_json(len(cls.pages), 'expect_crawler_')
 
         cls.contents = {}
         cls.articles = {}
@@ -70,8 +70,8 @@ class CrawlerTestCase(unittest.TestCase):
     @unittest.skip('Enough to test ptt.Board only.')
     def test_parse_board(self):
         '''Unit test for crawler.parse_board.'''
-        articles_meta = crawler.parse_board(None)
-        self.assertIsNone(articles_meta)
+        article_meta_list = crawler.parse_board(None)
+        self.assertIsNone(article_meta_list)
 
     @unittest.skip('Enough to test ptt.Article only.')
     def test_retrieve_articles(self):
