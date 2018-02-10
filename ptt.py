@@ -3,14 +3,12 @@ Definitions about HTML BBS elements.
 '''
 from contextlib import suppress
 import asyncio
-import requests
 import aiohttp
 import datetimehelper as dh
 import domparser as dp
 import logger
 
 LOGGER = logger.get_logger(__name__)
-logger.stop_log(requests.urllib3.__name__)
 LOOP = asyncio.get_event_loop()
 CLIENT = aiohttp.ClientSession(loop=LOOP)
 
@@ -45,7 +43,7 @@ class AbstractPage(object):
         asyncio.sleep(sleep_time)
         try:
             resp = await CLIENT.get(self.PTT_URL + self.url)
-        except requests.ConnectionError:
+        except aiohttp.ClientError:
             LOGGER.error('Connection error.', exc_info=True)
             return None
 
