@@ -21,18 +21,16 @@ DEFAULT_CONFIGS = {
 
 class Config(singleton.Singleton):
     """description of class"""
-
-    def __init__(self):
-        self.config = configparser.ConfigParser()
-        self.path = None
+    CONFIG = configparser.ConfigParser()
+    PATH = None
 
     def __repr__(self):
-        return f'{self.__class__.__name__}('f'{self.path!r})'
+        return f'{self.__class__.__name__}('f'{self.PATH!r})'
 
     def load_default(self):
         '''Load configuration using default dictionary.'''
-        self.config.clear()
-        self.config.read_dict(DEFAULT_CONFIGS)
+        self.CONFIG.clear()
+        self.CONFIG.read_dict(DEFAULT_CONFIGS)
 
     def load(self, path=DEFAULT_FILE):
         '''Load the configuration file.'''
@@ -43,8 +41,9 @@ class Config(singleton.Singleton):
             msg = 'Failed to open configuration file: {0}'.format(new_path)
             raise ValueError(msg)
 
-        self.config = new_config
-        self.path = new_path
+        self.CONFIG.clear()
+        self.CONFIG = new_config
+        self.PATH = new_path
 
     @staticmethod
     def __get_value(method, section, option):
@@ -66,12 +65,22 @@ class Config(singleton.Singleton):
 
     def get(self, section, option):
         '''Fetch a string value from configuration.'''
-        return self.__get_value(self.config.get, section, option)
+        return self.__get_value(self.CONFIG.get, section, option)
 
     def getint(self, section, option):
         '''Fetch a integer value from configuration.'''
-        return self.__get_value(self.config.getint, section, option)
+        return self.__get_value(self.CONFIG.getint, section, option)
 
     def getbool(self, section, option):
         '''Fetch a boolean value from configuration.'''
-        return self.__get_value(self.config.getboolean, section, option)
+        return self.__get_value(self.CONFIG.getboolean, section, option)
+
+
+def load_config():
+    '''Load configuration.'''
+    config_ = Config()
+
+    try:
+        config_.load()
+    except ValueError:
+        config_.load_default()

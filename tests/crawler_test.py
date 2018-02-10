@@ -47,8 +47,6 @@ class CrawlerTestCase(unittest.TestCase):
 
     def test_setup(self):
         '''Unit test for crawler.setup.'''
-        self.assertIsNotNone(crawler.CONFIG.path)
-
         for service in services.SERVICES:
             self.assertEqual(services.query_status(service),
                 services.StatusCode.SERVICE_RUNNING)

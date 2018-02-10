@@ -8,16 +8,12 @@ import logger
 import ptt
 from data import services
 
-CONFIG = config.Config()
 LOGGER = logger.get_logger(__name__)
 
 
 def setup():
     '''Setup configurations.'''
-    try:
-        CONFIG.load()
-    except ValueError:
-        CONFIG.load_default()
+    config.load_config()
 
     logger.load_config()
 
@@ -33,13 +29,14 @@ def shutdown():
 
 def crawler():
     '''Grab all articles in recent days.'''
+    config_ = config.Config()
     config_section = 'Crawler'
 
-    term_date = CONFIG.getint(config_section, 'term_date')
+    term_date = config_.getint(config_section, 'term_date')
     LOGGER.info('Start date:[%s]', dh.to_ptt_date())
     LOGGER.info('Term date as [%d] days.', term_date)
 
-    board_name = CONFIG.get(config_section, 'board')
+    board_name = config_.get(config_section, 'board')
     board = ptt.Board(board_name, term_date)
     LOGGER.info('Retrive articles from board [%s].', board_name)
 
