@@ -9,9 +9,7 @@ import ptt
 from data import services
 
 CONFIG = config.Config()
-SECTION = 'Crawler'
 LOGGER = logger.get_logger(__name__)
-LOOP = asyncio.get_event_loop()
 
 
 def setup():
@@ -35,11 +33,13 @@ def shutdown():
 
 def crawler():
     '''Grab all articles in recent days.'''
-    term_date = CONFIG.getint(SECTION, 'term_date')
+    config_section = 'Crawler'
+
+    term_date = CONFIG.getint(config_section, 'term_date')
     LOGGER.info('Start date:[%s]', dh.to_ptt_date())
     LOGGER.info('Term date as [%d] days.', term_date)
 
-    board_name = CONFIG.get(SECTION, 'board')
+    board_name = CONFIG.get(config_section, 'board')
     board = ptt.Board(board_name, term_date)
     LOGGER.info('Retrive articles from board [%s].', board_name)
 
@@ -55,7 +55,8 @@ def crawler():
         retrieve_articles(*article_meta_list)
 
     pending = asyncio.Task.all_tasks()
-    LOOP.run_until_complete(asyncio.gather(*pending))
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(asyncio.gather(*pending))
 
     LOGGER.info('%d articles handled.', total)
     LOGGER.info('Job finished.')
@@ -75,11 +76,13 @@ def parse_board(board):
 
 def retrieve_articles(*article_meta_list):
     '''Retrieve articles content.'''
+    loop = asyncio.get_event_loop()
+
     for article_meta in article_meta_list:
         article = ptt.Article(**article_meta)
 
         article.retrieve_dom()
-        LOOP.create_task(save_article(article))
+        loop.create_task(save_article(article))
 
 
 async def save_article(article):
