@@ -1,7 +1,7 @@
 '''
 Controller for database services which run on Windows platform.
 '''
-from enum import Enum
+from enum import IntEnum
 import time
 import win32serviceutil
 import pywintypes
@@ -10,7 +10,7 @@ import logger
 LOGGER = logger.get_logger(__name__)
 
 
-class StatusCode(Enum):
+class StatusCode(IntEnum):
     ''''Enumeration of service status code.'''
     SERVICE_UNKNOWN = 0x00000000
     SERVICE_STOPPED = 0x00000001
@@ -22,7 +22,7 @@ class StatusCode(Enum):
     SERVICE_PAUSED = 0x00000007
 
 
-class ErrorCode(Enum):
+class ErrorCode(IntEnum):
     '''Enumeration of service error code.'''
     ERROR_SERVICE_ALREADY_RUNNING = 0x420
     ERROR_SERVICE_NOT_ACTIVE = 0x426

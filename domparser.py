@@ -188,10 +188,12 @@ class ArticleParser(DOMParser):
         return element.text.partition(', ')[2].strip()
 
 
+__PARSER_TYPE_LIST = {
+    PageType.board: BoardParser,
+    PageType.article: ArticleParser
+}
+
+
 def build_parser(pagetype, page):
     '''Build corresponding parser to page type.'''
-    parser_types = {
-        PageType.board: BoardParser,
-        PageType.article: ArticleParser
-    }
-    return parser_types[pagetype](page)
+    return __PARSER_TYPE_LIST[pagetype](page)
