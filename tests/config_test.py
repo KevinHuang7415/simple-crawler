@@ -30,17 +30,19 @@ class ConfigTestCase(unittest.TestCase):
         path = self.config.PATH
         with self.assertRaises(ValueError):
             self.config.load('no_this_config')
-            self.assertEqual(self.config.PATH, path)
+        self.assertEqual(self.config.PATH, path)
 
         path = os.path.abspath(config.DEFAULT_FILE)
-        self.config.load()
-        self.assertEqual(self.config.PATH, path)
-        self.assertTrue(self.config.CONFIG.has_option('Crawler', 'board'))
+        self.load(path, 'Crawler')
 
         path = os.path.abspath(self.config_name)
+        self.load(path, 'Test')
+
+    def load(self, path, section):
+        '''A helper function for test_load.'''
         self.config.load(path)
         self.assertEqual(self.config.PATH, path)
-        self.assertTrue(self.config.CONFIG.has_section('Test'))
+        self.assertTrue(self.config.CONFIG.has_section(section))
 
     def test_get(self):
         '''Unit test for config.get.'''
