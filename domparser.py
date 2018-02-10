@@ -13,7 +13,7 @@ class PageType(Enum):
     article = 2
 
 
-class DOMParser:
+class DOMParser(object):
     '''DOM parser to support ptt module.'''
     def __new__(cls, page):
         if page:

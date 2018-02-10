@@ -14,7 +14,7 @@ LOOP = asyncio.get_event_loop()
 CLIENT = aiohttp.ClientSession(loop=LOOP)
 
 
-class AbstractPage:
+class AbstractPage(object):
     """description of class"""
 
     PTT_URL = 'https://www.ptt.cc'

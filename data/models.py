@@ -11,7 +11,7 @@ LOGGER = logger.get_logger(__name__)
 class AbstractArticle(models.Model):
     '''Abstract article model.'''
 
-    class Meta:
+    class Meta(object):
         '''Model meta.'''
         abstract = True
 
@@ -30,7 +30,7 @@ class AbstractArticle(models.Model):
 class SoftJob(AbstractArticle):
     '''SoftJob model.'''
 
-    class Meta:
+    class Meta(object):
         '''Model meta.'''
         db_table = 'SoftJob'
         ordering = ["create_time"]
