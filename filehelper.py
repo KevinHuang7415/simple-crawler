@@ -25,7 +25,7 @@ def create_dir_if_not_exist(dir_path):
         os.makedirs(dir_path)
     except OSError as err:
         if err.errno != errno.EEXIST:
-            LOGGER.error('Failed to write file.', exc_info=True)
+            LOGGER.exception('Failed to write file.')
             raise
 
 
@@ -38,4 +38,4 @@ def write_article(article, title, dir_path):
         try:
             file.write(article)
         except Exception:
-            LOGGER.error('Failed to write file.', exc_info=True)
+            LOGGER.exception('Failed to write file.')

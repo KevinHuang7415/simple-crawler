@@ -130,7 +130,7 @@ def main():
     try:
         crawler()
     except Exception:
-        LOGGER.error('Unexpected error.', exc_info=True)
+        LOGGER.exception('Unexpected error.')
     finally:
         shutdown()
 

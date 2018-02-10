@@ -28,6 +28,7 @@ def _gen_date(ptt_date):
     except ValueError:
         if month == 2 and day == 29:
             return date(year - 1, 2, 28)
+
         LOGGER.error('Error exists on date [%d/%d/%d]', year, month, day)
         return None
 

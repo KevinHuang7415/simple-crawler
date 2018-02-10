@@ -51,11 +51,11 @@ class AbstractPage(object):
                     LOGGER.warning(
                         'Invalid URL:[%s] , status code [%d]',
                         resp.url,
-                        resp.status_code
+                        resp.status
                     )
                     return None
         except aiohttp.ClientError:
-            LOGGER.error('Connection error.', exc_info=True)
+            LOGGER.exception('Connection error.')
             return None
 
     def _get_content(self, page):

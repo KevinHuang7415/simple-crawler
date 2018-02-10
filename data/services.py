@@ -72,10 +72,9 @@ def service_operation(service, cmd):
         if errno.value == err.winerror:
             pass
         else:
-            LOGGER.error(
+            LOGGER.exception(
                 'Operation [%s] to database service failed.',
-                cmd,
-                exc_info=True
+                cmd
             )
             raise OSError
 
