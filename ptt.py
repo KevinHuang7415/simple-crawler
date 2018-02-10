@@ -9,8 +9,7 @@ import domparser as dp
 import logger
 
 LOGGER = logger.get_logger(__name__)
-LOOP = asyncio.get_event_loop()
-CLIENT = aiohttp.ClientSession(loop=LOOP)
+CLIENT = aiohttp.ClientSession()
 
 
 class AbstractPage(object):
@@ -31,7 +30,10 @@ class AbstractPage(object):
     def retrieve_dom(self, sleep_time=0.4):
         '''Retrieve DOM from URL.'''
         task = asyncio.ensure_future(self._request_page(sleep_time))
-        page = LOOP.run_until_complete(task)
+
+        loop = asyncio.get_event_loop()
+        page = loop.run_until_complete(task)
+
         self._get_content(page)
 
     async def _request_page(self, sleep_time=0.4):
@@ -42,20 +44,19 @@ class AbstractPage(object):
 
         asyncio.sleep(sleep_time)
         try:
-            resp = await CLIENT.get(self.PTT_URL + self.url)
+            async with CLIENT.get(self.PTT_URL + self.url) as resp:
+                if resp.status == 200:
+                    return await resp.text()
+                else:
+                    LOGGER.warning(
+                        'Invalid URL:[%s] , status code [%d]',
+                        resp.url,
+                        resp.status_code
+                    )
+                    return None
         except aiohttp.ClientError:
             LOGGER.error('Connection error.', exc_info=True)
             return None
-
-        if resp.status == 200:
-            return await resp.text()
-
-        LOGGER.warning(
-            'Invalid URL:[%s] , status code [%d]',
-            resp.url,
-            resp.status_code
-        )
-        return None
 
     def _get_content(self, page):
         raise NotImplementedError
