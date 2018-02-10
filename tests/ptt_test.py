@@ -76,8 +76,10 @@ class BoardTestCase(unittest.TestCase):
         '''The test case level setup.'''
         for index, board in enumerate(self.board_list):
             board.set_url(self.BOARD_NAME)
-            board.parser =\
-                dp.build_parser(dp.PageType.board, self.page_list[index])
+            board.parser = dp.build_parser(
+                dp.PageType.board,
+                self.page_list[index]
+            )
             board.latest_page = self.expect_list[index]['latest_page']
 
     def test_set_url(self):
@@ -161,7 +163,8 @@ class ArticleTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         '''The class level setup.'''
-        cls.page_list, cls.meta_list, cls.expect_list = tests.article_helper.setup()
+        cls.page_list, cls.meta_list, cls.expect_list =\
+            tests.article_helper.setup()
 
         cls.article_list = [
             ptt.Article(**article_meta['article_meta'])
@@ -179,8 +182,10 @@ class ArticleTestCase(unittest.TestCase):
         '''The test case level setup.'''
         for index, article in enumerate(self.article_list):
             article.set_url(self.meta_list[index]['article_meta']['href'])
-            article.parser =\
-                dp.build_parser(dp.PageType.article, self.page_list[index])
+            article.parser = dp.build_parser(
+                dp.PageType.article,
+                self.page_list[index]
+            )
 
     def test_retrieve_dom(self):
         '''Unit test for ptt.Article.retrieve_dom.'''
@@ -209,8 +214,10 @@ class ArticleTestCase(unittest.TestCase):
         content, create_time, last_edit_time = article.parse_content()
         self.assertEqual(len(content), len(expect['article']))
         self.assertEqual(create_time, dh.to_datetime(expect['create_time']))
-        self.assertEqual(last_edit_time,
-                         dh.to_datetime(expect['last_modify_time']))
+        self.assertEqual(
+            last_edit_time,
+            dh.to_datetime(expect['last_modify_time'])
+        )
 
 
 if __name__ == '__main__':

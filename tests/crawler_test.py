@@ -30,8 +30,10 @@ class CrawlerTestCase(unittest.TestCase):
             article_meta = article_meta['article_meta']
 
             cls.articles[index] = ptt.Article(**article_meta)
-            cls.articles[index].parser =\
-                dp.build_parser(dp.PageType.article, cls.pages[index])
+            cls.articles[index].parser = dp.build_parser(
+                dp.PageType.article,
+                cls.pages[index]
+            )
 
             cls.contents[index] = cls.articles[index].parse_content()
 
