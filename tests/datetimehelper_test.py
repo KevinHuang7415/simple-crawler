@@ -88,7 +88,7 @@ class DatetimeHelperTestCase(unittest.TestCase):
         ptt_date = '12/26'
         full_date = dh.to_full_datetime(ptt_date)
 
-        datetime_obj = datetime.strptime(full_date, dh.FORMAT_FULL)
+        datetime_obj = datetime.strptime(full_date, dh._FORMAT_FULL)
         self.assertEqual(datetime_obj.month, 12)
         self.assertEqual(datetime_obj.day, 26)
         self.assertEqual(datetime_obj.time(), time(hour=12))

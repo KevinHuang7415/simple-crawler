@@ -6,15 +6,14 @@ import logger
 
 LOGGER = logger.get_logger(__name__)
 
-FORMAT_MODEL = '%Y-%m-%d %H:%M:%S'
-FORMAT_FULL = '%a %b %d %H:%M:%S %Y'
-FORMAT_ALT = '%m/%d/%Y %H:%M:%S'
-FORMAT_PTT = '%m/%d'
+_FORMAT_FULL = '%a %b %d %H:%M:%S %Y'
+_FORMAT_ALT = '%m/%d/%Y %H:%M:%S'
+_FORMAT_PTT = '%m/%d'
 
 
 def to_ptt_date(date_=date.today()):
     '''Date time object to PTT format string.'''
-    return date_.strftime(FORMAT_PTT).lstrip('0')
+    return date_.strftime(_FORMAT_PTT).lstrip('0')
 
 
 def _gen_date(ptt_date):
@@ -69,17 +68,17 @@ def check_expired(ptt_date, term_date=15):
 
 def alt_to_full(datetime_str):
     '''Transform datetime string in format alter to full'''
-    return datetime.strptime(datetime_str, FORMAT_ALT).strftime(FORMAT_FULL)
+    return datetime.strptime(datetime_str, _FORMAT_ALT).strftime(_FORMAT_FULL)
 
 
 def to_full_datetime(ptt_date):
     '''Transform date in Ptt format to the full format.'''
     date_ = _gen_date(ptt_date)
     if date_:
-        return datetime.combine(date_, time(hour=12)).strftime(FORMAT_FULL)
+        return datetime.combine(date_, time(hour=12)).strftime(_FORMAT_FULL)
     return None
 
 
 def to_datetime(datetime_str):
     '''Transform date in Ptt format to the full format.'''
-    return datetime.strptime(datetime_str, FORMAT_FULL)
+    return datetime.strptime(datetime_str, _FORMAT_FULL)
