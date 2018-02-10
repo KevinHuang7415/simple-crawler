@@ -1,6 +1,7 @@
 ﻿'''
 Definitions about HTML BBS elements.
 '''
+from contextlib import suppress
 import asyncio
 import requests
 import aiohttp
@@ -91,29 +92,30 @@ class Board(AbstractPage):
 
     def _get_content(self, page):
         '''Transfer HTML content to BeautifulSoup object'''
-        if page:
+        with suppress(TypeError):
             self.parser = dp.build_parser(dp.PageType.board, page)
 
     def find_prev_page_url(self):
         '''Find URL of previous page.'''
-        parser = self.parser
-        if not parser:
+        try:
+            self.url = self.parser.find_prev_page_url()
+        except AttributeError:
             LOGGER.error('No content for parsing previous page link.')
             raise ValueError
-
-        self.url = parser.find_prev_page_url()
-        if not self.url:
-            LOGGER.info('No previous page link found.')
+        else:
+            if not self.url:
+                LOGGER.info('No previous page link found.')
 
     def all_articles_meta(self):
         '''Retrieve meta for all articles in current page.'''
-        parser = self.parser
-        if not parser:
+        latest_page = self.latest_page
+        try:
+            article_meta_list = self.parser.all_articles_meta(latest_page)
+        except AttributeError:
             LOGGER.error('No content for parsing article blocks.')
             raise ValueError
 
-        article_meta_list = parser.all_articles_meta(self.latest_page)
-        self.latest_page = False
+        latest_page = False
 
         before_remove = len(article_meta_list)
 
@@ -145,17 +147,16 @@ class Article(AbstractPage):
 
     def _get_content(self, page):
         '''Get complete article content.'''
-        if page:
+        with suppress(TypeError):
             self.parser = dp.build_parser(dp.PageType.article, page)
 
     def parse_content(self):
         '''Get complete article content.'''
-        parser = self.parser
-        if not parser:
+        try:
+            content, create_time, last_edit_time = self.parser.parse_article()
+        except AttributeError:
             LOGGER.error('No content for parsing article.')
             raise ValueError
-
-        content, create_time, last_edit_time = parser.parse_article()
 
         # both create_time and last_edit_time will not be None at same time
         if not last_edit_time:

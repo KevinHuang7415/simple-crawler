@@ -15,11 +15,6 @@ class PageType(Enum):
 
 class DOMParser(object):
     '''DOM parser to support ptt module.'''
-    def __new__(cls, page):
-        if page:
-            return object.__new__(cls)
-        return None
-
     def __repr__(self):
         return f'{self.__class__.__name__}()'
 
@@ -32,9 +27,6 @@ class DOMParser(object):
 
 class BoardParser(DOMParser):
     '''DOM parser to support ptt.Board module.'''
-    def __new__(cls, page):
-        return super().__new__(cls, page)
-
     def __init__(self, page):
         self.dom = BeautifulSoup(page, 'html.parser')
 
@@ -88,11 +80,8 @@ class ArticleParser(DOMParser):
     '''DOM parser to support ptt.Board module.'''
 
     EDIT = '※ 編輯'
-    PATTERN_TIME = re.compile('時間')
     PATTERN_EDIT = re.compile(EDIT)
-
-    def __new__(cls, page):
-        return super().__new__(cls, page)
+    PATTERN_TIME = re.compile('時間')
 
     def __init__(self, page):
         soup = BeautifulSoup(page, 'html.parser')
@@ -150,9 +139,10 @@ class ArticleParser(DOMParser):
             self.PATTERN_TIME.search(tag.text)
         )
 
-        if tag:
+        try:
             return tag.next_sibling.text.strip()
-        return None
+        except AttributeError:
+            return None
 
     def __find_in_modified_metalines(self):
         '''Find modified metalines in page content'''
@@ -161,9 +151,10 @@ class ArticleParser(DOMParser):
             self.PATTERN_TIME.search(tag.text)
         )
 
-        if tag:
+        try:
             return tag.next_sibling.text.strip()
-        return None
+        except AttributeError:
+            return None
 
     def __find_last_in_f2(self, start_str):
         '''Find last f2 tag in page content'''

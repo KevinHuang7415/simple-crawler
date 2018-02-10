@@ -41,10 +41,10 @@ class AbstractPageTestCase(unittest.TestCase):
 
 def retrieve_dom(self, pagetype, page):
     '''A monkey patch for AbstractPage.retrieve_dom.'''
-    if not page:
+    try:
+        self.parser = dp.build_parser(pagetype, page)
+    except (KeyError, TypeError):
         raise ValueError
-
-    self.parser = dp.build_parser(pagetype, page)
 
 
 class BoardTestCase(unittest.TestCase):
@@ -62,7 +62,7 @@ class BoardTestCase(unittest.TestCase):
 
         cls.board_list = [
             ptt.Board(cls.BOARD_NAME, date_diff)
-            for index in range(len(cls.page_list))
+            for _ in range(len(cls.page_list))
         ]
 
         cls.retrieve_dom = ptt.Board.retrieve_dom
