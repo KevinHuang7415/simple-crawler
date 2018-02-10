@@ -71,6 +71,7 @@ class BoardTestCase(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         ptt.Board.retrieve_dom = cls.retrieve_dom
+        ptt.CLIENT.close()
 
     def setUp(self):
         '''The test case level setup.'''
