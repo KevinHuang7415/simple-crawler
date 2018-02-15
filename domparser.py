@@ -3,7 +3,7 @@ DOM parser which using BeautifulSoup.
 '''
 from enum import Enum
 import re
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, SoupStrainer
 import datetimehelper as dh
 
 
@@ -21,14 +21,15 @@ class DOMParser(object):
     @staticmethod
     def _find_tag(tag, name, *classnames):
         '''Helper for find series functions.'''
-        return tag.name == name and tag.attrs and 'class' in tag.attrs and\
+        return tag.name == name and tag.has_attr('class') and\
             set(classnames).issubset(tag['class'])
 
 
 class BoardParser(DOMParser):
     '''DOM parser to support ptt.Board module.'''
     def __init__(self, page):
-        self.dom = BeautifulSoup(page, 'html.parser')
+        only_body = SoupStrainer('body')
+        self.dom = BeautifulSoup(page, 'html.parser', parse_only=only_body)
 
     def __repr__(self):
         return f'{self.__class__.__name__}('f'{self.dom!r})'
@@ -84,8 +85,10 @@ class ArticleParser(DOMParser):
     PATTERN_TIME = re.compile('時間')
 
     def __init__(self, page):
-        soup = BeautifulSoup(page, 'html.parser')
-        self.dom = soup.find(id='main-content')
+        only_main_content = SoupStrainer(id='main-content')
+        self.dom = BeautifulSoup(
+            page, 'html.parser', parse_only=only_main_content
+        )
 
     def __repr__(self):
         return f'{self.__class__.__name__}('f'{self.dom!r})'
