@@ -2,9 +2,7 @@
 Unit tests for service module.
 '''
 import logging
-import time
 import unittest
-import win32serviceutil
 import data.services as services
 
 logging.disable(logging.CRITICAL)

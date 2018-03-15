@@ -1,4 +1,4 @@
-﻿'''
+'''
 Unit tests for crawler module.
 '''
 import logging
@@ -49,7 +49,7 @@ class CrawlerTestCase(unittest.TestCase):
         '''Unit test for crawler.setup.'''
         for service in services.SERVICES:
             self.assertEqual(services.query_status(service),
-                services.StatusCode.SERVICE_RUNNING)
+                             services.StatusCode.SERVICE_RUNNING)
 
     def test_shutdown(self):
         '''Unit test for crawler.shutdown.'''
@@ -59,7 +59,7 @@ class CrawlerTestCase(unittest.TestCase):
 
         for service in services.SERVICES:
             self.assertEqual(services.query_status(service),
-                services.StatusCode.SERVICE_STOPPED)
+                             services.StatusCode.SERVICE_STOPPED)
 
     @unittest.skip('Not a unit for unit test. Integration testing required.')
     def test_crawler(self):

@@ -1,9 +1,12 @@
+'''
+View functions for this application.
+'''
 from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import Paginator
 from django.shortcuts import render
-from .models import SoftJob
 import loggers.helpers as log_helper
+from .models import SoftJob
 
 LOGGER = log_helper.get_logger(__name__)
 
@@ -34,15 +37,17 @@ def article_detail(request, article_id):
         article = SoftJob.objects.get(id=article_id)
     except ObjectDoesNotExist:
         LOGGER.info('No article with ID [%d].', article_id)
+
         return render(request, 'error.html', {
             'reason': 'Wrong ID.',
             'year': datetime.now().year
         })
     else:
         url_full = f'https://www.ptt.cc{article.url}'
+
         LOGGER.info('Return article [%d] with source [%s].',
-            article_id, url_full
-        )
+                    article_id, url_full)
+
         return render(request, 'detail.html', {
             'article': article,
             'url_full': url_full,

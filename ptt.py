@@ -47,13 +47,13 @@ class AbstractPage(object):
             async with CLIENT.get(self.PTT_URL + self.url) as resp:
                 if resp.status == 200:
                     return await resp.text()
-                else:
-                    LOGGER.warning(
-                        'Invalid URL:[%s] , status code [%d]',
-                        resp.url,
-                        resp.status
-                    )
-                    return None
+
+                LOGGER.warning(
+                    'Invalid URL:[%s] , status code [%d]',
+                    resp.url,
+                    resp.status
+                )
+                return None
         except aiohttp.ClientError:
             LOGGER.exception('Connection error.')
             return None
