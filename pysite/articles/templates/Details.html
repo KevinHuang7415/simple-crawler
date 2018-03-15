@@ -1,46 +1,20 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ article.title }}</title>
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static "styles/bootstrap.css" %}" />
-    <link rel="stylesheet" type="text/css" href="{% static "styles/site.css" %}" />
-</head>
+{% block title %}{{ article.title }}{% endblock %}
 
-<body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="/">SoftJob</a>
-            </div>
-        </div>
-    </div>
-    <div class="container body-content">
+{% block content %}
+<h2>SoftJob</h2>
 
-        <h2>SoftJob</h2>
-
-        <div>
-            <h4>{{ article.author }}</h4>
-            <h4>{{ article.date }}</h4>
-            <h4>
-                <a href="{{ url_full }}">{{ article.title }}</a>
-            </h4>
-            <hr />
-            <pre>{{ article.content }}</pre>
-        </div>
-        <p>
-            <a href="/">Back to List</a>
-        </p>
-
-        <hr />
-        <footer>
-            <p>&copy; {{ year }} - SoftJob</p>
-        </footer>
-    </div>
-</body>
-
-</html>
+<div>
+    <h4>{{ article.author }}</h4>
+    <h4>{{ article.date }}</h4>
+    <h4>
+        <a href="{{ url_full }}">{{ article.title }}</a>
+    </h4>
+    <hr />
+    <pre>{{ article.content }}</pre>
+</div>
+<p>
+    <a href="/">Back to List</a>
+</p>
+{% endblock %}

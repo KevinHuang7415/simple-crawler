@@ -1,78 +1,53 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Articles</title>
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static "styles/bootstrap.css" %}" />
-    <link rel="stylesheet" type="text/css" href="{% static "styles/site.css" %}" />
-</head>
+{% block title %}Articles{% endblock %}
 
-<body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="/">SoftJob</a>
-            </div>
-        </div>
-    </div>
-    <div class="container body-content">
-        <h2>Index</h2>
+{% block content %}
+<h2>Index</h2>
 
-        <table class="table">
-            <tr>
-                <th>
-                    Date
-                </th>
-                <th>
-                    Author
-                </th>
-                <th>
-                    Title
-                </th>
-                <th></th>
-            </tr>
-            {% for article in articles %}
-                <tr>
-                    <th>
-                        {{ article.date }}
-                    </th>
-                    <th>
-                        {{ article.author }}
-                    </th>
-                    <th>
-                        <a href="/articles/details/{{ article.id }}">{{ article.title }} </a>
-                    </th>
-                </tr>
-            {% endfor %}
-        </table>
+<table class="table">
+    <tr>
+        <th>
+            Date
+        </th>
+        <th>
+            Author
+        </th>
+        <th>
+            Title
+        </th>
+        <th></th>
+    </tr>
+    {% for article in articles %}
+        <tr>
+            <th>
+                {{ article.date }}
+            </th>
+            <th>
+                {{ article.author }}
+            </th>
+            <th>
+                <a href="/articles/details/{{ article.id }}">{{ article.title }} </a>
+            </th>
+        </tr>
+    {% endfor %}
+</table>
 
-        <div class="pagination">
-            <span class="step-links">
-                {% if articles.has_previous %}
-                <a href="/articles/1">&laquo; first</a>
-                <a href="/articles/{{ articles.previous_page_number }}">previous</a>
-                {% endif %}
+<div class="pagination">
+    <span class="step-links">
+        {% if articles.has_previous %}
+        <a href="/articles/1">&laquo; first</a>
+        <a href="/articles/{{ articles.previous_page_number }}">previous</a>
+        {% endif %}
 
-                <span class="current">
-                    Page {{ articles.number }} of {{ articles.paginator.num_pages }}.
-                </span>
+        <span class="current">
+            Page {{ articles.number }} of {{ articles.paginator.num_pages }}.
+        </span>
 
-                {% if articles.has_next %}
-                <a href="/articles/{{ articles.next_page_number }}">next</a>
-                <a href="/articles/{{ articles.paginator.num_pages }}">last &raquo;</a>
-                {% endif %}
-            </span>
-        </div>
-
-        <hr />
-        <footer>
-            <p>&copy; {{ year }} - SoftJob</p>
-        </footer>
-    </div>
-</body>
-
-</html>
+        {% if articles.has_next %}
+        <a href="/articles/{{ articles.next_page_number }}">next</a>
+        <a href="/articles/{{ articles.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}
