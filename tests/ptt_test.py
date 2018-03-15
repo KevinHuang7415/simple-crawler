@@ -70,6 +70,7 @@ class BoardTestCase(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        '''The class level cleanup.'''
         ptt.Board.retrieve_dom = cls.retrieve_dom
         ptt.CLIENT.close()
 
@@ -177,6 +178,7 @@ class ArticleTestCase(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        '''The class level cleanup.'''
         ptt.Article.retrieve_dom = cls.retrieve_dom
 
     def setUp(self):
