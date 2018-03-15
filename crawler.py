@@ -6,8 +6,6 @@ import config
 import datetimehelper as dh
 import logger
 import ptt
-from data import services
-
 LOGGER = logger.get_logger(__name__)
 
 
@@ -17,13 +15,11 @@ def setup():
 
     logger.load_config()
 
-    services.launch_database()
-
 
 def shutdown():
     '''Prepare for shutdown.'''
     ptt.CLIENT.close()
-    services.terminate_database()
+
     logger.shutdown()
 
 
@@ -126,8 +122,8 @@ def update_article(article, title, content, last_edit_time):
 
 def main():
     '''Main function.'''
-    setup()
     try:
+        setup()
         crawler()
     except Exception:
         LOGGER.exception('Unexpected error.')
