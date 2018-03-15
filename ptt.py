@@ -9,7 +9,7 @@ import domparser as dp
 import logger
 
 LOGGER = logger.get_logger(__name__)
-CLIENT = aiohttp.ClientSession()
+CLIENT = aiohttp.ClientSession(loop=asyncio.get_event_loop())
 
 
 class AbstractPage(object):
@@ -165,3 +165,15 @@ class Article(AbstractPage):
 
         return content, dh.to_datetime(create_time),\
             dh.to_datetime(last_edit_time)
+
+
+def close_session():
+    '''Close aiohttp session.'''
+    task = asyncio.ensure_future(CLIENT.close())
+    wait_completion(task)
+
+
+def wait_completion(task):
+    '''Wait the async task got finished.'''
+    loop = asyncio.get_event_loop()
+    return loop.run_until_complete(task)

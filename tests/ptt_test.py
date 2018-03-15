@@ -72,7 +72,7 @@ class BoardTestCase(unittest.TestCase):
     def tearDownClass(cls):
         '''The class level cleanup.'''
         ptt.Board.retrieve_dom = cls.retrieve_dom
-        ptt.CLIENT.close()
+        ptt.close_session()
 
     def setUp(self):
         '''The test case level setup.'''

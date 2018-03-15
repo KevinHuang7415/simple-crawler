@@ -18,16 +18,9 @@ def setup():
 
 def shutdown():
     '''Prepare for shutdown.'''
-    task = asyncio.ensure_future(ptt.CLIENT.close())
-    wait_completion(task)
+    ptt.close_session()
 
     logger.shutdown()
-
-
-def wait_completion(task):
-    '''Wait the async task got finished.'''
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(task)
 
 
 def crawler():
@@ -55,7 +48,7 @@ def crawler():
         retrieve_articles(*article_meta_list)
 
     pending = asyncio.Task.all_tasks()
-    wait_completion(asyncio.gather(*pending))
+    ptt.wait_completion(asyncio.gather(*pending))
 
     LOGGER.info('%d articles handled.', total)
     LOGGER.info('Job finished.')
