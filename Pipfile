@@ -13,6 +13,8 @@ django = ">=2.0.0"
 "pywin32" = ">=2.2.0"
 aiohttp = ">=2.3.0"
 "psycopg2" = "*"
+celery = "*"
+redis = "*"
 
 
 [dev-packages]
