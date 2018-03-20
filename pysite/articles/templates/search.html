@@ -1,0 +1,27 @@
+{% extends "index.html" %}
+
+{% block title %}Search{% endblock %}
+
+{% block H2 %}
+<h2>Search for: {{ key_word }}</h2>
+{% endblock %}
+
+{% block pager %}
+<div class="pagination">
+    <span class="step-links">
+        {% if articles.has_previous %}
+        <a href="/articles/search/{{ key_word }}/1">&laquo; first</a>
+        <a href="/articles/search/{{ key_word }}/{{ articles.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ articles.number }} of {{ articles.paginator.num_pages }}.
+        </span>
+
+        {% if articles.has_next %}
+        <a href="/articles/search/{{ key_word }}/{{ articles.next_page_number }}">next</a>
+        <a href="/articles/search/{{ key_word }}/{{ articles.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}
