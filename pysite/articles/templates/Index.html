@@ -3,7 +3,9 @@
 {% block title %}Articles{% endblock %}
 
 {% block content %}
-<h2>Index</h2>
+
+{% block H2 %}
+{% endblock %}
 
 <table class="table">
     <tr>
@@ -33,6 +35,7 @@
     {% endfor %}
 </table>
 
+{% block pager %}
 <div class="pagination">
     <span class="step-links">
         {% if articles.has_previous %}
@@ -50,4 +53,5 @@
         {% endif %}
     </span>
 </div>
-{% endblock %}
+{% endblock pager %}
+{% endblock content %}
