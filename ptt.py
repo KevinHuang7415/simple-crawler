@@ -12,7 +12,7 @@ LOGGER = logger.get_logger(__name__)
 CLIENT = aiohttp.ClientSession(loop=asyncio.get_event_loop())
 
 
-class AbstractPage(object):
+class AbstractPage:
     """description of class"""
 
     PTT_URL = 'https://www.ptt.cc'

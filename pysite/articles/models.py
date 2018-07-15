@@ -7,7 +7,7 @@ from django.db import models
 class AbstractArticle(models.Model):
     '''Abstract article model.'''
 
-    class Meta(object):
+    class Meta:
         '''Model meta.'''
         abstract = True
 
@@ -26,7 +26,7 @@ class AbstractArticle(models.Model):
 class SoftJob(AbstractArticle):
     '''SoftJob model.'''
 
-    class Meta(object):
+    class Meta:
         '''Model meta.'''
         db_table = 'SoftJob'
         ordering = ['-create_time']

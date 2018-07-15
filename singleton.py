@@ -6,7 +6,7 @@ Class which needs to be singleton just inherits this one.
 # ref: https://stackoverflow.com/a/6798042/6247004
 
 
-class Singleton(object):
+class Singleton:
     '''Base singleton class'''
 
     _instances = {}
