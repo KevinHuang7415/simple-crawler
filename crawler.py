@@ -39,7 +39,7 @@ def crawler():
 
     total = 0
     while board.has_prev_page:
-        board.retrieve_dom(0)
+        board.retrieve_dom()
         article_meta_list = parse_board(board)
 
         count = len(article_meta_list)
@@ -48,8 +48,11 @@ def crawler():
 
         retrieve_articles(*article_meta_list)
 
-    pending = asyncio.Task.all_tasks()
-    ptt.wait_completion(asyncio.gather(*pending))
+    try:
+        pending = asyncio.all_tasks()
+        ptt.wait_completion(asyncio.gather(*pending))
+    except RuntimeError:
+        LOGGER.exception('Unexpected error.')
 
     LOGGER.info('%d articles handled.', total)
     LOGGER.info('Job finished.')

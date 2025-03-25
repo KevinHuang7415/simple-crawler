@@ -1,7 +1,6 @@
 '''
 View functions for this application.
 '''
-from datetime import datetime
 import string
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator

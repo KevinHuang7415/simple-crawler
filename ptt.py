@@ -27,22 +27,21 @@ class AbstractPage:
         '''Setup the URL with full uri.'''
         self.url = uri
 
-    def retrieve_dom(self, sleep_time=0.4):
+    def retrieve_dom(self):
         '''Retrieve DOM from URL.'''
-        task = asyncio.ensure_future(self._request_page(sleep_time))
+        task = asyncio.ensure_future(self._request_page())
 
         loop = asyncio.get_event_loop()
         page = loop.run_until_complete(task)
 
         self._get_content(page)
 
-    async def _request_page(self, sleep_time=0.4):
+    async def _request_page(self):
         '''Get web page content.'''
         if not self.url:
             LOGGER.error('URL is not set.')
             raise ValueError
 
-        asyncio.sleep(sleep_time)
         try:
             async with CLIENT.get(self.PTT_URL + self.url) as resp:
                 if resp.status == 200:
