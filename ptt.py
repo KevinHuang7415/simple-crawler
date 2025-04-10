@@ -4,6 +4,7 @@ Definitions about HTML BBS elements.
 from contextlib import suppress
 import asyncio
 import aiohttp
+from data import models
 import datetimehelper as dh
 import domparser as dp
 import logger
@@ -104,6 +105,15 @@ class Board(AbstractPage):
             if not self.url:
                 LOGGER.info('No previous page link found.')
 
+    def parse_board(self):
+        '''Parse board page for required information.'''
+
+        try:
+            self.find_prev_page_url()
+            return self.all_articles_meta()
+        except ValueError:
+            return list()
+
     def all_articles_meta(self):
         '''Retrieve meta for all articles in current page.'''
         latest_page = self.latest_page
@@ -164,6 +174,47 @@ class Article(AbstractPage):
 
         return content, dh.to_datetime(create_time),\
             dh.to_datetime(last_edit_time)
+
+    async def save_article(self):
+        '''Save article with newly retrieved data.'''
+        try:
+            content, create_time, last_edit_time = self.parse_content()
+        except ValueError:
+            LOGGER.warning('Failed to parse for article [%s]', self)
+            return
+
+        row_article = models.find_article(self.meta['href'])
+        if not row_article:
+            models.create_article(
+                self.meta['date'],
+                self.meta['author'],
+                self.meta['title'],
+                self.meta['href'],
+                content,
+                create_time,
+                last_edit_time
+            )
+        else:
+            self.update_article(
+                row_article,
+                self.meta['title'],
+                content,
+                last_edit_time
+            )
+
+
+    def update_article(self, article, title, content, last_edit_time):
+        '''Check which column to update then do update.'''
+        if article.title == title:
+            title = None
+
+        if len(article.content) == len(content) and article.content == content:
+            content = None
+
+        if article.edit_time == last_edit_time:
+            last_edit_time = None
+
+        models.update_article(article, title, content, last_edit_time)
 
 
 def close_session():
